@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: cs203
+  datasource:
+    url: jdbc:mysql://localhost:3306/tariff?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME:dev_user}   # Default value as fallback
+    password: ${DB_PASSWORD}            # No default - forces setting env var
+  jpa:
+    show-sql: true
