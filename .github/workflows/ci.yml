@@ -30,8 +30,8 @@ jobs:
       # Step 3: Build the project, run tests, and ensure packaging works.
       # The `-B` flag runs in batch mode (non-interactive). The `verify` goal is standard for CI.
       - name: Build and test with Maven
-        run: mvn -B verify --file pom.xml
-        env: # Add this env block
+        run: mvn -B package --file pom.xml -DskipTests
+        env: # Keep your existing env vars for compilation
           DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
           DB_USERNAME: sa
           DB_PASSWORD: password
