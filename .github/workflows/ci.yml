@@ -30,12 +30,9 @@ jobs:
       # Step 3: Build the project, run tests, and ensure packaging works.
       # The `-B` flag runs in batch mode (non-interactive). The `verify` goal is standard for CI.
       - name: Build and test with Maven
-        run: mvn -B -e verify --file pom.xml
-
-      # Upload test reports only if the previous step fails
-      - name: Upload surefire reports on failure
-        if: failure() # This step only runs if the previous step failed
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-reports
-          path: target/surefire-reports/
+        run: mvn -B verify --file pom.xml
+        env: # Add this env block
+          DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          DB_USERNAME: sa
+          DB_PASSWORD: password
+          DB_DRIVER: org.h2.Driver
