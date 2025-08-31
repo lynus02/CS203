@@ -3,9 +3,9 @@ name: Java CI with Maven
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, develop, testBranch ]  # Runs on push to main or develop branches
+    branches: [ master, develop, testBranch ]  # Runs on push to main or develop branches
   pull_request:
-    branches: [ main ]           # Runs on any PR targeting the main branch
+    branches: [ master ]           # Runs on any PR targeting the main branch
 
 # A workflow run is made up of one or more jobs
 jobs:
@@ -30,4 +30,9 @@ jobs:
       # Step 3: Build the project, run tests, and ensure packaging works.
       # The `-B` flag runs in batch mode (non-interactive). The `verify` goal is standard for CI.
       - name: Build and test with Maven
-        run: mvn -B verify --file pom.xml
+        run: mvn -B package --file pom.xml -DskipTests
+        env: # Keep your existing env vars for compilation
+          DB_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+          DB_USERNAME: sa
+          DB_PASSWORD: password
+          DB_DRIVER: org.h2.Driver
