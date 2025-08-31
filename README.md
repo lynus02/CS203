@@ -1,5 +1,5 @@
 # TARIFF Calculation
-An application built with Spring Boot
+An application built with Spring Boot with Maven
 
 ## Development Prerequisites
 - **Java JDK 21**
