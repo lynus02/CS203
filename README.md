@@ -10,7 +10,7 @@ Follow these steps to get the development environment running.
 
 1. **Clone the Repository**
 ```bash
-git clone <>
+git clone https://github.com/lynus02/CS203.git
 ```
 
 2. **Install and Configure MySQL**
