@@ -1,6 +1,7 @@
 # TARIFF Calculation
 An application built with Spring Boot
 
+
 ## Development Prerequisites
 - **Java JDK 21**
 - **MySQL Community Server**
