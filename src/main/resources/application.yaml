@@ -2,7 +2,7 @@ spring:
   application:
     name: cs203
   datasource:
-    url: jdbc:mysql://cs203db.cze64es4494n.ap-southeast-1.rds.amazonaws.com:3306/tariff
+    url: ${DB_URL}
     username: ${DB_USERNAME:dev_user}   # Default value as fallback
     password: ${DB_PASSWORD}            # No default - forces setting env var
   jpa:
