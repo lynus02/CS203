@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+//    private final UserMapper userMapper;
 
     @GetMapping
     public String getAllUsers() {
