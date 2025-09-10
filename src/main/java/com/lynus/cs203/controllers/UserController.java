@@ -1,5 +1,7 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.mappers.UserMapper;
+import com.lynus.cs203.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @GetMapping
     public String getAllUsers() {
