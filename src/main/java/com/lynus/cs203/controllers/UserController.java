@@ -1,45 +1,113 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.dtos.request.ChangePasswordRequest;
+import com.lynus.cs203.dtos.request.CreateUserRequest;
+import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.mappers.UserMapper;
 import com.lynus.cs203.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Set;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository userRepository;
-//    private final UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @GetMapping
-    public String getAllUsers() {
-        return "List of users";
+    public Iterable<UserDto> getAllUsers(
+            @RequestParam(required = false, defaultValue = "", name = "sort") String sort
+    ) {
+        if (!Set.of("name", "email").contains(sort)) {
+            sort = "name";
+        }
+
+        return userRepository.findAll(Sort.by(sort))
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public String getUser() {
-        return "User details by ID";
+    public ResponseEntity<UserDto> getUser(
+            @PathVariable(name = "id") Long id
+    ) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PostMapping
-    public String registerUser() {
-        return "Create a new user";
+    public ResponseEntity<UserDto> createUser(
+            @RequestBody CreateUserRequest request,
+            UriComponentsBuilder uriBuilder
+    ) {
+        var user = userMapper.toEntity(request);
+        userRepository.save(user);
+
+        var userDto = userMapper.toDto(user);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(userDto);
     }
 
     @PutMapping("/{id}")
-    public String updateUser() {
-        return "Update user details";
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UpdateUserRequest request
+    ) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userMapper.update(request, user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser() {
-        return "Delete a user";
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable(name = "id") Long id
+    ) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/change-password")
-    public String changePassword() {
-        return "Change user password";
+    public ResponseEntity<Void> changePassword(
+            @PathVariable(name = "id") Long id,
+            @RequestBody ChangePasswordRequest request
+    ) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if(!user.getPassword().equals(request.getOldPassword())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        user.setPassword(request.getNewPassword());
+        userRepository.save(user);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
