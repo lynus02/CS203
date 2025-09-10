@@ -34,4 +34,5 @@ build/
 
 # Environment Variables
 .env
-.env.local
+application.yaml
+application-*.yaml
