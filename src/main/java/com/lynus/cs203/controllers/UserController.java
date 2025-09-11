@@ -6,6 +6,7 @@ import com.lynus.cs203.dtos.request.UpdateUserRequest;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.mappers.UserMapper;
 import com.lynus.cs203.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -49,10 +51,17 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
-            @RequestBody CreateUserRequest request,
+    public ResponseEntity<?> createUser(
+            @Valid @RequestBody CreateUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
+        // Check if email is unique
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("email", "Email is already in use")
+            );
+        }
+
         var user = userMapper.toEntity(request);
         userRepository.save(user);
 
@@ -64,7 +73,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable(name = "id") Long id,
-            @RequestBody UpdateUserRequest request
+            @Valid @RequestBody UpdateUserRequest request
     ) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
@@ -93,7 +102,7 @@ public class UserController {
     @PostMapping("/{id}/change-password")
     public ResponseEntity<Void> changePassword(
             @PathVariable(name = "id") Long id,
-            @RequestBody ChangePasswordRequest request
+            @Valid @RequestBody ChangePasswordRequest request
     ) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
@@ -101,7 +110,7 @@ public class UserController {
         }
 
         if(!user.getPassword().equals(request.getOldPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         user.setPassword(request.getNewPassword());
