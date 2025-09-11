@@ -2,11 +2,15 @@ spring:
   application:
     name: cs203
   datasource:
-#    url: jdbc:mysql://cs203db.cze64es4494n.ap-southeast-1.rds.amazonaws.com:3306/tariff
-#    username: admin
-#    password: CS203issofun
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME:dev_user}
+#    password: ${DB_PASSWORD}
+
     url: jdbc:mysql://localhost:3306/tariff?createDatabaseIfNotExist=true
-    username: root
+    username: root   # Default value as fallback
     password: password123
   jpa:
     show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
