@@ -2,6 +2,7 @@ package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.entities.HSCode;
 import com.lynus.cs203.repositories.HSCodeRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,36 +29,39 @@ public class SuggestionController {
     }
 
     @GetMapping("/search")
-    public List<HSCode> search(@RequestParam String query) {
-        return hsCodeRepository.findByDescriptionContainingIgnoreCaseOrHsCodeContainingIgnoreCase(query, query);
+    public ResponseEntity<List<HSCode>> search(@RequestParam String query) {
+        List<HSCode> result = hsCodeRepository.findByDescriptionContainingIgnoreCaseOrHsCodeContainingIgnoreCase(query, query);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/hsDescriptions")
-    public List<String> suggestDescription(@RequestParam String query) {
-        return hsDescription.stream()
+    public ResponseEntity<List<String>> suggestDescription(@RequestParam String query) {
+        List<String> result = hsDescription.stream()
                 .filter(desc -> desc.toLowerCase().contains(query.toLowerCase()))
                 .toList();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/hscodes")
-    public List<String> suggestHsCodes(@RequestParam String query) {
-        return hsCodes.stream()
+    public ResponseEntity<List<String>> suggestHsCodes(@RequestParam String query) {
+        List<String> result = hsCodes.stream()
                 .filter(code -> code.toLowerCase().contains(query.toLowerCase()))
                 .toList();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/hsCodeByDescription")
-    public String getHsCodeByDescription(@RequestParam String description) {
+    public ResponseEntity<String> getHsCodeByDescription(@RequestParam String description) {
         return hsCodeRepository.findByDescription(description)
-                .map(HSCode::getHsCode)
-                .orElse("");
+                .map(HSCode -> ResponseEntity.ok(HSCode.getHsCode()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/hsDescriptionByCode")
-    public String getHsDescriptionByCode(@RequestParam String hsCode) {
+    public ResponseEntity<String> getHsDescriptionByCode(@RequestParam String hsCode) {
         return hsCodeRepository.findByHsCode(hsCode)
-                .map(HSCode::getDescription)
-                .orElse("");
+                .map(HSCode -> ResponseEntity.ok(HSCode.getDescription()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
