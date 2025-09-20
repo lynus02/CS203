@@ -7,9 +7,11 @@ import lombok.Data;
 
 @Data
 public class UpdateUserRequest {
-    @NotBlank(message = "Name is required")
     @Size(max = 255, message = "Name must be at most 255 characters")
-    private String name;
+    private String firstName;
+
+    @Size(max = 255, message = "Name must be at most 255 characters")
+    private String lastName;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")

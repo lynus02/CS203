@@ -1,26 +1,136 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.dtos.response.ErrorResponse;
+import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
+import com.lynus.cs203.exceptions.InvalidPasswordException;
+import com.lynus.cs203.exceptions.UserNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(
-            MethodArgumentNotValidException ex
+    public ResponseEntity<ErrorResponse> handleValidationErrors(
+            MethodArgumentNotValidException e
     ) {
         var errors = new HashMap<String, String>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
+        e.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
         });
 
-        return ResponseEntity.badRequest().body(errors);
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.BAD_REQUEST.value())
+                .error("Validation Failed")
+                .message("Validation errors in request")
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(
+            UserNotFoundException e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.NOT_FOUND.value())
+                .error("User Not Found")
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
+            EmailAlreadyExistsException e
+    ) {
+        var errors = Map.of("email", "Email already exists");
+
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.BAD_REQUEST.value())
+                .error("Email Conflict")
+                .message(e.getMessage())
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPassword(
+            InvalidPasswordException e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.UNAUTHORIZED.value())
+                .error("Invalid Password")
+                .message("Provided password is incorrect")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            BadCredentialsException e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.UNAUTHORIZED.value())
+                .error("Authentication Failed")
+                .message("Invalid username or password")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.FORBIDDEN.value())
+                .error("Access Denied")
+                .message("You do not have permission to access this resource")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status (HttpStatus.CONFLICT.value())
+                .error("Data Conflict")
+                .message("Database constraint violated")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneral(
+            Exception e
+    ) {
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message("An unexpected error occurred. Please try again later.")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
 }
