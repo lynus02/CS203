@@ -40,7 +40,11 @@ interface TariffResult {
   tradeAgreement?: TradeAgreement;
 }
 
-export function CustomsDutyCalculator() {
+interface CustomsDutyCalculatorProps {
+  onResultsChange?: (results: TariffResult | null) => void;
+}
+
+export function CustomsDutyCalculator({ onResultsChange }: CustomsDutyCalculatorProps) {
   const [productValue, setProductValue] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productSearch, setProductSearch] = useState("");
@@ -147,7 +151,7 @@ export function CustomsDutyCalculator() {
     const dutyAmount = (value * finalTariffRate) / 100;
     const totalCost = value + dutyAmount;
 
-    setResult({
+    const calculationResult = {
       product: selectedProduct,
       originCountry,
       destinationCountry,
@@ -157,8 +161,12 @@ export function CustomsDutyCalculator() {
       finalTariffRate,
       dutyAmount,
       totalCost,
-      tradeAgreement
-    });
+      tradeAgreement,
+      productValue: value
+    };
+
+    setResult(calculationResult);
+    onResultsChange?.(calculationResult);
   };
 
   const clearCalculation = () => {
@@ -169,6 +177,7 @@ export function CustomsDutyCalculator() {
     setDestinationCountry("");
     setImportDate(new Date());
     setResult(null);
+    onResultsChange?.(null);
   };
 
   return (

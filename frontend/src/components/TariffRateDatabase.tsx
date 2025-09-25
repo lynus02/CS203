@@ -14,7 +14,6 @@ interface TariffRate {
   description: string;
   country: string;
   rate: number;
-  type: "Ad Valorem" | "Specific" | "Compound";
   lastUpdated: string;
   category: string;
   tradeAgreements?: string[];
@@ -273,7 +272,7 @@ export function TariffRateDatabase() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="country-filter">Filter by Country</Label>
+            <Label htmlFor="country-filter">Filter by Destination Country</Label>
             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
               <SelectTrigger>
                 <SelectValue placeholder="All countries">
@@ -339,9 +338,8 @@ export function TariffRateDatabase() {
                 <TableHead>HS Code</TableHead>
                 <TableHead>Food Product Description</TableHead>
                 <TableHead>Food Category</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Rate</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>Destination Country</TableHead>
+                <TableHead>MFN Rate</TableHead>
                 <TableHead>Trade Agreements</TableHead>
                 <TableHead>Updated</TableHead>
               </TableRow>
@@ -365,11 +363,6 @@ export function TariffRateDatabase() {
                   <TableCell>
                     <Badge variant={rate.rate === 0 ? "secondary" : "default"}>
                       {rate.type === "Specific" ? `${rate.rate}` : `${rate.rate}%`}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="text-xs">
-                      {rate.type}
                     </Badge>
                   </TableCell>
                   <TableCell>

@@ -11,6 +11,10 @@ import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User 
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("customs");
+  
+  // Shared state for calculated values
+  const [customsResults, setCustomsResults] = useState(null);
+  const [shippingResults, setShippingResults] = useState(null);
 
   const features = [
     {
@@ -20,7 +24,7 @@ export default function App() {
     },
     {
       icon: Ship,
-      title: "Shipping Cost Calculator",
+      title: "Shipping Cost Calculator", 
       description: "Estimate shipping costs for air, sea, and ground transportation"
     },
     {
@@ -87,18 +91,10 @@ export default function App() {
 
         {/* Main Calculator Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full" style={{ gridTemplateColumns: "75% 25%" }}>
             <TabsTrigger value="customs" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
               <span className="hidden sm:inline">Food Duty</span>
-            </TabsTrigger>
-            <TabsTrigger value="shipping" className="flex items-center gap-2">
-              <Ship className="h-4 w-4" />
-              <span className="hidden sm:inline">Shipping</span>
-            </TabsTrigger>
-            <TabsTrigger value="landed" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              <span className="hidden sm:inline">Landed Cost</span>
             </TabsTrigger>
             <TabsTrigger value="database" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
@@ -107,15 +103,39 @@ export default function App() {
           </TabsList>
 
           <TabsContent value="customs" className="mt-6">
-            <CustomsDutyCalculator />
-          </TabsContent>
+            <div className="space-y-6">
+              {/* Food Duty Calculator */}
+              <CustomsDutyCalculator onResultsChange={setCustomsResults} />
+              
+              {/* Shipping Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Ship className="h-5 w-5" />
+                    Shipping Cost Calculator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ShippingCalculator onResultsChange={setShippingResults} />
+                </CardContent>
+              </Card>
 
-          <TabsContent value="shipping" className="mt-6">
-            <ShippingCalculator />
-          </TabsContent>
-
-          <TabsContent value="landed" className="mt-6">
-            <TotalLandedCostCalculator />
+              {/* Total Landed Cost Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    Total Landed Cost
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <TotalLandedCostCalculator 
+                    customsResults={customsResults}
+                    shippingResults={shippingResults}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="database" className="mt-6">
@@ -141,10 +161,10 @@ export default function App() {
                 </p>
               </div>
               <div className="space-y-2">
-                <Badge variant="secondary">FOB vs CIF</Badge>
+                <Badge variant="secondary">Food Safety</Badge>
                 <p className="text-sm">
-                  Free On Board (FOB) prices exclude shipping. Cost, Insurance, and Freight (CIF) 
-                  includes shipping to destination port.
+                  Food imports require additional documentation like health certificates, 
+                  FDA registration, and may face inspection delays at customs.
                 </p>
               </div>
               <div className="space-y-2">

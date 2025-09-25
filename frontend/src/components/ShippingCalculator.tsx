@@ -14,7 +14,11 @@ interface ShippingResult {
   totalShippingCost: number;
 }
 
-export function ShippingCalculator() {
+interface ShippingCalculatorProps {
+  onResultsChange?: (results: ShippingResult | null) => void;
+}
+
+export function ShippingCalculator({ onResultsChange }: ShippingCalculatorProps) {
   const [weight, setWeight] = useState("");
   const [dimensions, setDimensions] = useState({ length: "", width: "", height: "" });
   const [shippingMethod, setShippingMethod] = useState("");
@@ -76,12 +80,15 @@ export function ShippingCalculator() {
       const insuranceCost = (insValue * selectedMethod.insuranceRate) / 100;
       const totalShippingCost = shippingCost + insuranceCost;
       
-      setResult({
+      const calculationResult = {
         shippingCost,
         transitTime: selectedMethod.transitBase,
         insuranceCost,
         totalShippingCost
-      });
+      };
+      
+      setResult(calculationResult);
+      onResultsChange?.(calculationResult);
     }
   };
 
@@ -92,6 +99,7 @@ export function ShippingCalculator() {
     setDistance("");
     setInsuranceValue("");
     setResult(null);
+    onResultsChange?.(null);
   };
 
   return (
