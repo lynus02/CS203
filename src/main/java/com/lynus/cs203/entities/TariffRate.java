@@ -16,7 +16,9 @@ public class TariffRate {
     private int trade_id;
 
     private String reporter_code;
-    private String reporter_name;
+
+    @Column(name = "reporter_name")
+    private String reporterName;
 
     @Column(name = "product_code_6")
     private String productCode6;
