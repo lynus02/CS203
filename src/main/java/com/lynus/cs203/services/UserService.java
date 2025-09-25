@@ -4,24 +4,27 @@ import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
 import com.lynus.cs203.dtos.response.UserDto;
-import com.lynus.cs203.entities.UserProfile;
+import com.lynus.cs203.entities.*;
 import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.exceptions.InvalidPasswordException;
 import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.mappers.UserMapper;
-import com.lynus.cs203.entities.User;
 import com.lynus.cs203.repositories.UserProfileRepository;
 import com.lynus.cs203.repositories.UserRepository;
+import com.lynus.cs203.repositories.UserRoleRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -29,9 +32,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final UserProfileRepository userProfileRepository;
+    private final UserRoleRepository userRoleRepository;
 
     /* DTO Methods */
     public List<UserDto> getAllUsersAsDto(String sort) {
+        log.debug("Converting {} users to DTOs with sort: {}", getAllUsers(sort).size(), sort);
         List<User> users = getAllUsers(sort);
         return users.stream()
                 .map(userMapper::toDto)
@@ -39,98 +44,136 @@ public class UserService {
     }
 
     public UserDto getUserByEmailAsDto(String email) {
+        log.debug("Converting user with email {} to DTO", email);
         User user = getUserByEmail(email);
         return userMapper.toDto(user);
     }
 
     public UserDto getUserByIdAsDto(String id) {
+        log.debug("Converting user with ID {} to DTO", id);
         User user = getUserById(id);
         return userMapper.toDto(user);
     }
 
     public UserDto createUserAsDto(CreateUserRequest request) {
+        log.debug("Creating user and converting to DTO for email: {}", request.getEmail());
         User user = createUser(request);
         return userMapper.toDto(user);
     }
 
     public UserDto updateUserAsDto(String id, UpdateUserRequest request) {
+        log.debug("Updating user {} and converting to DTO", id);
         User user = updateUser(id, request);
         return userMapper.toDto(user);
     }
 
     public void deleteUser(String id) {
+        log.info("Deleting user with ID: {}", id);
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
         userRepository.delete(user);
+        log.info("Successfully deleted user: {}", id);
     }
 
     public void changePassword(String id, ChangePasswordRequest request) {
+        log.info("Changing password for user: {}", id);
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            log.warn("Invalid old password provided for user: {}", id);
             throw new InvalidPasswordException("Old password is incorrect");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+        log.info("Successfully changed password for user: {}", id);
     }
 
     /* Entity Methods */
-    private List<User> getAllUsers(String sort) {
+    public List<User> getAllUsers(String sort) {
+        log.info("Retrieving all users with sort parameter: {}", sort);
         String validSort = Set.of("email", "createdAt", "updatedAt").contains(sort) ? sort : "createdAt";
+        log.debug("Using sort parameter: {}", validSort);
 
         // Use EntityGraph to fetch profiles eagerly
-        return userRepository.findAll(Sort.by(validSort));
+        List<User> users = userRepository.findAll(Sort.by(validSort));
+        log.info("Retrieved {} users from database", users.size());
+        return users;
     }
 
-    private User getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
+        log.info("Retrieving user by email: {}", email);
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found")
                 );
     }
 
-    private User getUserById(String id) {
+    public User getUserById(String id) {
+        log.info("Retrieving user by ID: {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
-    private User createUser(CreateUserRequest request) {
+    public User createUser(CreateUserRequest request) {
+        log.info("Creating new user with email: {}", request.getEmail());
+
         // Check if email is unique
         if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Attempted to create user with existing email: {}", request.getEmail());
             throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
         }
 
+        log.debug("Mapping create request to user entity");
         var user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setIsActive(true);
+        user.setCreatedAt(java.time.Instant.now());
+        user.setUpdatedAt(java.time.Instant.now());
+
+        // Save user first to get the generated ID
+        log.debug("Saving user entity to database");
         User savedUser = userRepository.save(user);
+        log.debug("Generated user ID: {}", savedUser.getUserId());
 
-        // Create user profile
+        // Now create user profile with the saved user
+        log.debug("Creating user profile for user: {}", savedUser.getUserId());
         UserProfile profile = new UserProfile();
-        profile.setUserId(savedUser.getUserId());
         profile.setFirstName(request.getFirstName());
         profile.setLastName(request.getLastName());
-        userProfileRepository.save(profile.getUser());
+        profile.setUser(savedUser);
 
-        // Reload user to include profile
-        savedUser = userRepository.findById(savedUser.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found after creation"));
+        // Save the profile
+        UserProfile savedProfile = userProfileRepository.save(profile);
+        log.debug("Saved user profile for user: {}", savedUser.getUserId());
 
+        // Set the profile back to the user to ensure the relationship is complete
+        savedUser.setUserProfile(savedProfile);
+
+        // Assign default USER role
+        log.debug("Assigning default USER role to user: {}", savedUser.getUserId());
+        assignRole(savedUser.getUserId(), Role.USER);
+
+        log.info("Successfully created user with ID: {}", savedUser.getUserId());
         return savedUser;
     }
 
-    private User updateUser(String id, UpdateUserRequest request) {
+    public User updateUser(String id, UpdateUserRequest request) {
+        log.info("Updating user with ID: {}", id);
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
+        log.debug("Mapping update request to user entity");
         userMapper.update(request, user);
 
         // Update profile if name fields are provided
         if (request.getFirstName() != null || request.getLastName() != null) {
+            log.debug("Updating user profile for user: {}", id);
             UserProfile profile = user.getUserProfile();
             if (profile == null) {
+                log.debug("Creating new profile for user: {}", id);
                 profile = new UserProfile();
                 profile.setUserId(user.getUserId());
                 profile.setUser(user);
@@ -142,16 +185,70 @@ public class UserService {
             if (request.getLastName() != null) {
                 profile.setLastName(request.getLastName());
             }
-            userProfileRepository.save(profile.getUser());
+            userProfileRepository.save(profile);
+            log.debug("Saved updated profile for user: {}", id);
         }
 
+        log.debug("Saving updated user entity to database");
         User updatedUser = userRepository.save(user);
 
         // Reload user to include updated profile
+        log.debug("Reloading user with updated profile information");
         updatedUser = userRepository.findById(updatedUser.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found after update"));
 
+        log.info("Successfully updated user: {}", id);
         return updatedUser;
+    }
+
+    public void assignRole(String userId, Role role) {
+        log.info("Assigning role {} to user: {}", role.getName(), userId);
+
+        User user = getUserById(userId);
+
+        // Check if user already has this role
+        if (hasRole(userId, role)) {
+            log.debug("User {} already has role {}", userId, role.getName());
+            return;
+        }
+
+        UserRole userRole = new UserRole();
+        UserRoleId userRoleId = new UserRoleId();
+        userRoleId.setUserId(userId);
+        userRoleId.setRoleId((short) role.getId());
+
+        userRole.setId(userRoleId);
+        userRole.setUser(user);
+        userRole.setRole(role);
+        userRole.setAssignedAt(LocalDateTime.now());
+
+        userRoleRepository.save(userRole);
+        log.info("Successfully assigned role {} to user: {}", role.getName(), userId);
+    }
+
+    public boolean hasRole(String userId, Role role) {
+        return userRoleRepository.existsByUserUserIdAndRole(userId, role);
+    }
+
+    public void removeRole(String userId, Role role) {
+        log.info("Removing role {} from user: {}", role.getName(), userId);
+        userRoleRepository.deleteByUserUserIdAndRole(userId, role);
+        log.info("Successfully removed role {} from user: {}", role.getName(), userId);
+    }
+
+    public List<String> getUserRoles(String userId) {
+        log.info("Retrieving roles for user: {}", userId);
+
+        // Verify user exists
+        getUserById(userId);
+
+        List<String> roles = userRoleRepository.findByUserUserId(userId)
+                .stream()
+                .map(userRole -> userRole.getRole().getName())
+                .toList();
+
+        log.info("Found {} roles for user: {}", roles.size(), userId);
+        return roles;
     }
 
 }

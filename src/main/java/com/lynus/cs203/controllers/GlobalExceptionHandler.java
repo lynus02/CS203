@@ -4,6 +4,7 @@ import com.lynus.cs203.dtos.response.ErrorResponse;
 import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.exceptions.InvalidPasswordException;
 import com.lynus.cs203.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +18,20 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException e
     ) {
+        log.warn("Validation error occurred: {}", e.getMessage());
+
         var errors = new HashMap<String, String>();
 
         e.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
+            log.debug("Validation error - Field: {}, Message: {}", error.getField(), error.getDefaultMessage());
         });
 
         var errorResponse = ErrorResponse.builder()
@@ -43,6 +48,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(
             UserNotFoundException e
     ) {
+        log.warn("User not found: {}", e.getMessage());
+
         var errorResponse = ErrorResponse.builder()
                 .status (HttpStatus.NOT_FOUND.value())
                 .error("User Not Found")
@@ -56,6 +63,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
             EmailAlreadyExistsException e
     ) {
+        log.warn("Email already exists: {}", e.getMessage());
+
         var errors = Map.of("email", "Email already exists");
 
         var errorResponse = ErrorResponse.builder()
@@ -72,6 +81,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidPassword(
             InvalidPasswordException e
     ) {
+        log.warn("Invalid password attempt: {}", e.getMessage());
+
         var errorResponse = ErrorResponse.builder()
                 .status (HttpStatus.UNAUTHORIZED.value())
                 .error("Invalid Password")
@@ -85,6 +96,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentials(
             BadCredentialsException e
     ) {
+        log.warn("Authentication failed: {}", e.getMessage());
+
         var errorResponse = ErrorResponse.builder()
                 .status (HttpStatus.UNAUTHORIZED.value())
                 .error("Authentication Failed")
@@ -98,6 +111,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccessDenied(
             AccessDeniedException e
     ) {
+        log.warn("Access denied: {}", e.getMessage());
+
         var errorResponse = ErrorResponse.builder()
                 .status (HttpStatus.FORBIDDEN.value())
                 .error("Access Denied")
@@ -111,6 +126,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException e
     ) {
+        log.error("Database constraint violation: {}", e.getMessage(), e);
+
         var errorResponse = ErrorResponse.builder()
                 .status (HttpStatus.CONFLICT.value())
                 .error("Data Conflict")
@@ -124,6 +141,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneral(
             Exception e
     ) {
+        log.error("Unhandled exception occurred: {}", e.getMessage(), e);
+
         var errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("Internal Server Error")

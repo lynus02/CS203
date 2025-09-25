@@ -4,6 +4,7 @@ import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
 import com.lynus.cs203.dtos.response.UserDto;
+import com.lynus.cs203.entities.Role;
 import com.lynus.cs203.entities.User;
 import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.exceptions.InvalidPasswordException;
@@ -14,9 +15,11 @@ import com.lynus.cs203.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,25 +28,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public ResponseEntity<?> getAllUsers(
-            @RequestParam(required = false, defaultValue = "name") String sort
-    ) {
-        List<UserDto> users = userService.getAllUsersAsDto(sort);
-        return ResponseEntity.ok(users);
+    // Helper method to get authenticated user ID
+    private String getCurrentUserId() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (String) authentication.getPrincipal();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(
-            @PathVariable String id
-    ) {
-        UserDto user = userService.getUserByIdAsDto(id);
+    @GetMapping("/profile")
+    public ResponseEntity<UserDto> getCurrentUserProfile() {
+        log.info("GET /users/profile - Retrieving current user profile");
+
+        String userId = getCurrentUserId();
+        UserDto user = userService.getUserByIdAsDto(userId);
+
+        log.info("Successfully retrieved profile for current user: {}", userId);
         return ResponseEntity.ok(user);
     }
 
@@ -52,34 +57,109 @@ public class UserController {
             @Valid @RequestBody CreateUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
+        log.info("POST /users - Creating new user with email: {}", request.getEmail());
+
         UserDto userDto = userService.createUserAsDto(request);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getUserId()).toUri();
+
+        log.info("Successfully created user with ID: {} for email: {}", userDto.getUserId(), request.getEmail());
         return  ResponseEntity.created(uri).body(userDto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(
-            @PathVariable String id,
+    @PutMapping("/profile")
+    public ResponseEntity<UserDto> updateCurrentUserProfile(
             @Valid @RequestBody UpdateUserRequest request
     ) {
-        UserDto userDto = userService.updateUserAsDto(id, request);
+        log.info("PUT /users/profile - Updating current user profile");
+
+        String userId = getCurrentUserId();
+        UserDto userDto = userService.updateUserAsDto(userId, request);
+
+        log.info("Successfully updated profile for current user: {}", userId);
         return ResponseEntity.ok(userDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable String id
-    ) {
-        userService.deleteUser(id);
+    @DeleteMapping("/profile")
+    public ResponseEntity<Void> deleteCurrentUser() {
+        log.info("DELETE /users/profile - Deleting current user");
+
+        String userId = getCurrentUserId();
+        userService.deleteUser(userId);
+
+        log.info("Successfully deleted current user: {}", userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/change-password")
-    public ResponseEntity<Void> changePassword(
-            @PathVariable String id,
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
     ) {
-        userService.changePassword(id, request);
-        return ResponseEntity.noContent().build();
+        log.info("POST /users/change-password - Changing password for current user");
+
+        String userId = getCurrentUserId();
+        userService.changePassword(userId, request);
+
+        log.info("Successfully changed password for current user: {}", userId);
+
+        Map<String, String> response = Map.of(
+                "message", "Password changed successfully"
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/roles/{roleName}")
+    public ResponseEntity<Map<String, String>> assignRole(
+            @PathVariable String id,
+            @PathVariable String roleName) {
+        log.info("POST /users/{}/roles/{} - Assigning role to user", id, roleName);
+
+        try {
+            Role role = Role.fromName(roleName.toUpperCase());
+            userService.assignRole(id, role);
+
+            Map<String, String> response = Map.of(
+                    "message", "Role assigned successfully",
+                    "userId", id,
+                    "role", roleName.toUpperCase()
+            );
+
+            log.info("Successfully assigned role {} to user: {}", roleName, id);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid role name provided: {}", roleName);
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Invalid role name: " + roleName,
+                    "validRoles", "USER, ADMIN"
+            );
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    @DeleteMapping("/{id}/roles/{roleName}")
+    public ResponseEntity<Map<String, String>> removeRole(
+            @PathVariable String id,
+            @PathVariable String roleName) {
+        log.info("DELETE /users/{}/roles/{} - Removing role from user", id, roleName);
+
+        try {
+            Role role = Role.fromName(roleName.toUpperCase());
+            userService.removeRole(id, role);
+
+            Map<String, String> response = Map.of(
+                    "message", "Role removed successfully",
+                    "userId", id,
+                    "role", roleName.toUpperCase()
+            );
+
+            log.info("Successfully removed role {} from user: {}", roleName, id);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid role name provided: {}", roleName);
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Invalid role name: " + roleName,
+                    "validRoles", "USER, ADMIN"
+            );
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 }

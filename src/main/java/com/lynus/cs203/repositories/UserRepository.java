@@ -16,13 +16,13 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByEmail(String email);
 
-    @EntityGraph(attributePaths = "profile")
+    @EntityGraph(attributePaths = "userProfile")
     List<User> findAll(Sort sort);
 
-    @EntityGraph(attributePaths = "profile")
+    @EntityGraph(attributePaths = "userProfile")
     Optional<User> findById(String id);
 
-    @EntityGraph(attributePaths = "profile")
+    @EntityGraph(attributePaths = "userProfile")
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userProfile WHERE u.email = :email")
     Optional<User> findByEmailWithProfile(@Param("email") String email);
 

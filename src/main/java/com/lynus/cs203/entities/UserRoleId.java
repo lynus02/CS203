@@ -16,29 +16,23 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class UserRoleId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1786489680629702034L;
-
-    @Size(max = 36)
-    @NotNull
-    @Column(name = "user_id", nullable = false, length = 36)
+    @Column(name = "user_id", length = 36)
     private String userId;
 
-    @Column(name = "role_id", columnDefinition = "tinyint UNSIGNED not null")
+    @Column(name = "role_id", columnDefinition = "tinyint UNSIGNED")
     private Short roleId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        UserRoleId entity = (UserRoleId) o;
-        return Objects.equals(this.roleId, entity.roleId) &&
-                Objects.equals(this.userId, entity.userId);
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRoleId that = (UserRoleId) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(roleId, that.roleId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, userId);
+        return Objects.hash(userId, roleId);
     }
 
 }

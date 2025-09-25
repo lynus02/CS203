@@ -1,5 +1,6 @@
 package com.lynus.cs203.entities;
 
+import com.lynus.cs203.config.RoleConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,21 +20,16 @@ public class UserRole {
     @EmbeddedId
     private UserRoleId id;
 
-    @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @MapsId("roleId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "role_id", nullable = false)
+    @Convert(converter = RoleConverter.class)
+    @Column(name = "role_id", nullable = false, insertable = false, updatable = false)
     private Role role;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "assigned_at", nullable = false)
-    private Instant assignedAt;
+    private LocalDateTime assignedAt = LocalDateTime.now();
 
 }

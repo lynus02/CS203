@@ -4,9 +4,7 @@ import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.entities.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -48,8 +46,9 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "isActive", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "updatedAt", expression = "java(java.time.Instant.now())")
     @Mapping(target = "userProfile", ignore = true)
     @Mapping(target = "userRoles", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(UpdateUserRequest request, @MappingTarget User user);
 }
