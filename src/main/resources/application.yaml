@@ -1,4 +1,5 @@
 spring:
+  debug: true
   application:
     name: cs203
   config:
@@ -7,7 +8,7 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-#    url: jdbc:mysql://localhost:3306/tariff?createDatabaseIfNotExist=true
+#    url: jdbc:mysql://localhost:3306/INSERT_tariff_data?createDatabaseIfNotExist=true
 #    username: root
 #    password: password123
   flyway:

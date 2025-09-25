@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CountryRepository extends JpaRepository<Country, Long> {
-    Optional<Country> findByCountryCode(Long countryCode);
-    List<Country> findByNameContainingIgnoreCase(String name);
+    Optional<Country> findByCountryCode(String countryCode);
 
 }

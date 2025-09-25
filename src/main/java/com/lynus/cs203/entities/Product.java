@@ -13,7 +13,7 @@ public class Product {
 
     @Getter
     @Column(name = "Product_Code")
-    private String productCode; // hsCode
+    private Integer productCode; // hsCode
 
     @Getter
     @Column(name = "HS_Description")
@@ -28,7 +28,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productCode, String productDescription, String uomCode, String foodCategory) {
+    public Product(Integer productCode, String productDescription, String uomCode, String foodCategory) {
         this.productCode = productCode;
         this.productDescription = productDescription;
         this.uomCode = uomCode;

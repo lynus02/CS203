@@ -24,8 +24,7 @@ public class Tariff {
 
     }
 
-    public Tariff(Long id, Product product, Country country, double tariffRate) {
-        this.tradeId = id;
+    public Tariff(Product product, Country country, double tariffRate) {
         this.product = product;
         this.country = country;
         this.tariffRate = tariffRate;
