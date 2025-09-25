@@ -24,7 +24,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return new User(
-                user.getEmail(),
+                user.getUserId(),
+//                user.getEmail(),
                 user.getPassword(),
                 getAuthorities(user)
         );

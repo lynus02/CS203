@@ -8,6 +8,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "firstName", expression = "java(getFirstName(user))")
@@ -25,6 +29,10 @@ public interface UserMapper {
 
     default String getAvatarUrl(User user) {
         return user.getUserProfile() != null ? user.getUserProfile().getAvatarUrl() : null;
+    }
+
+    default LocalDateTime map(Instant instant) {
+        return instant != null ? LocalDateTime.ofInstant(instant, ZoneOffset.UTC) : null;
     }
 
     @Mapping(target = "userId", ignore = true)

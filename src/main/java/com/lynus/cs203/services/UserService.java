@@ -38,6 +38,11 @@ public class UserService {
                 .toList();
     }
 
+    public UserDto getUserByEmailAsDto(String email) {
+        User user = getUserByEmail(email);
+        return userMapper.toDto(user);
+    }
+
     public UserDto getUserByIdAsDto(String id) {
         User user = getUserById(id);
         return userMapper.toDto(user);
@@ -77,13 +82,18 @@ public class UserService {
         String validSort = Set.of("email", "createdAt", "updatedAt").contains(sort) ? sort : "createdAt";
 
         // Use EntityGraph to fetch profiles eagerly
-        return userRepository.findAllUsers(Sort.by(validSort));
+        return userRepository.findAll(Sort.by(validSort));
+    }
+
+    private User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found")
+                );
     }
 
     private User getUserById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id)
-                );
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     private User createUser(CreateUserRequest request) {
