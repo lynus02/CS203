@@ -8,6 +8,7 @@ import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Upload, FileText, CheckCircle, AlertCircle, X, Download, Eye } from "lucide-react";
 import { Alert, AlertDescription } from "./ui/alert";
+import * as React from "react";
 
 interface CertificateData {
   id: string;
