@@ -26,6 +26,7 @@ public class TariffController {
 
         // tariff calculation // to be done by zhao yun
 
+
         return "tariff_result"; // html to show result of calculated tariff
     }
 
