@@ -1,3 +1,4 @@
+@ -0,0 +1,53 @@
 const API_BASE_URL = '/api';
 
 export class ApiService {
@@ -44,4 +45,10 @@ export class ApiService {
     static delete<T> (endpoint: string): Promise<T> {
         return this.request<T>(endpoint, { method: 'DELETE' });
     }
+}
+
+export async function fetchProductSuggestions(query: string) {
+    const res = await fetch(`/api/tariff-rates/suggest?q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error("Failed to fetch suggestions");
+    return res.json();
 }
