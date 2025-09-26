@@ -3,6 +3,7 @@ package com.lynus.cs203.services;
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.PasswordChangeResponse;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.entities.*;
 import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
@@ -76,7 +77,7 @@ public class UserService {
         log.info("Successfully deleted user: {}", id);
     }
 
-    public void changePassword(String id, ChangePasswordRequest request) {
+    public PasswordChangeResponse changePassword(String id, ChangePasswordRequest request) {
         log.info("Changing password for user: {}", id);
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
@@ -88,7 +89,12 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+
         log.info("Successfully changed password for user: {}", id);
+        return PasswordChangeResponse.builder()
+                .message("Password changed successfully")
+                .userId(user.getUserId())
+                .build();
     }
 
     /* Entity Methods */
@@ -249,6 +255,11 @@ public class UserService {
 
         log.info("Found {} roles for user: {}", roles.size(), userId);
         return roles;
+    }
+
+    public boolean adminExists() {
+        log.debug("Checking if admin exists");
+        return userRoleRepository.existsByRole(Role.ADMIN);
     }
 
 }

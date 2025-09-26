@@ -3,6 +3,7 @@ package com.lynus.cs203.controllers;
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.PasswordChangeResponse;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.entities.Role;
 import com.lynus.cs203.entities.User;
@@ -53,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(
+    public ResponseEntity<UserDto> createUser(
             @Valid @RequestBody CreateUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
@@ -91,19 +92,15 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Map<String, String>> changePassword(
+    public ResponseEntity<PasswordChangeResponse> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
     ) {
         log.info("POST /users/change-password - Changing password for current user");
 
         String userId = getCurrentUserId();
-        userService.changePassword(userId, request);
+        PasswordChangeResponse response = userService.changePassword(userId, request);
 
         log.info("Successfully changed password for current user: {}", userId);
-
-        Map<String, String> response = Map.of(
-                "message", "Password changed successfully"
-        );
         return ResponseEntity.ok(response);
     }
 

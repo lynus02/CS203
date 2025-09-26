@@ -1,9 +1,7 @@
 package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.dtos.response.ErrorResponse;
-import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
-import com.lynus.cs203.exceptions.InvalidPasswordException;
-import com.lynus.cs203.exceptions.UserNotFoundException;
+import com.lynus.cs203.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -90,6 +88,42 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRoleException(
+            InvalidRoleException e
+    ) {
+        log.warn("Invalid role provided: {}", e.getMessage());
+
+        var errors = Map.of("role", "Invalid role name provided");
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Invalid Role")
+                .message(e.getMessage())
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(AdminAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAdminAlreadyExistsException(
+            AdminAlreadyExistsException e
+    ) {
+        log.warn("Admin already exists: {}", e.getMessage());
+
+        var errors = Map.of("admin", "Admin setup already completed");
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Admin Already Exists")
+                .message(e.getMessage())
+                .errors(errors)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

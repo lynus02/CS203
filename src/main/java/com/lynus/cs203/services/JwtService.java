@@ -73,9 +73,16 @@ public class JwtService {
         return getClaims(token).getSubject();
     }
 
-    public List extractRoles(String token) {
+    public List<String> extractRoles(String token) {
         log.debug("Extracting roles from JWT token");
-        return getClaims(token).get("roles", List.class);
+        Object rolesObj = getClaims(token).get("roles");
+        if (rolesObj instanceof List<?> rolesList) {
+            return rolesList.stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .toList();
+        }
+        return List.of();
     }
 
     public String extractEmail(String token) {
