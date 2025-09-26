@@ -53,7 +53,7 @@ public class AdminController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping
+    @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers(
             @Parameter(
                     description = "Sort parameter for users",
