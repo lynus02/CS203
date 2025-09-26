@@ -4,6 +4,7 @@ import com.lynus.cs203.dtos.response.ErrorResponse;
 import com.lynus.cs203.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -166,6 +167,36 @@ public class GlobalExceptionHandler {
                 .status (HttpStatus.CONFLICT.value())
                 .error("Data Conflict")
                 .message("Database constraint violated")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentException e
+    ) {
+        log.warn("Invalid argument provided: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Invalid Input")
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectResultSizeDataAccess(
+            IncorrectResultSizeDataAccessException e
+    ) {
+        log.error("Database query returned multiple results when expecting single result: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error("Data Integrity Issue")
+                .message("Multiple records found where only one was expected. Please contact support.")
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);

@@ -69,6 +69,9 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                             .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
 
+                            // Public endpoints
+                            .requestMatchers("/tariffs/**").permitAll()
+
                             // Swagger and API docs
                             .requestMatchers("/v3/api-docs/**").permitAll()
                             .requestMatchers("/swagger-ui/**").permitAll()
