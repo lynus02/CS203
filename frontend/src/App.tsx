@@ -7,14 +7,49 @@ import { CustomsDutyCalculator } from "./components/CustomsDutyCalculator";
 import { ShippingCalculator } from "./components/ShippingCalculator";
 import { TotalLandedCostCalculator } from "./components/TotalLandedCostCalculator";
 import { TariffRateDatabase } from "./components/TariffRateDatabase";
+import LoginPage from "./components/LoginPage";
+import SignupPage from "./components/SignupPage";
 import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User } from "lucide-react";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("customs");
-  
+
   // Shared state for calculated values
   const [customsResults, setCustomsResults] = useState(null);
   const [shippingResults, setShippingResults] = useState(null);
+
+  // Login state management
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState<boolean>(false);
+  const [user, setUser] = useState(null);
+
+  // Login handlers
+  const handleLogin = (userData) => {
+    setUser(userData); //stores the logged-in user's data in state
+    setShowLogin(false); //hides the login page after successful login
+  };
+
+  const handleLogout = () => {
+    setUser(null); //clears the user state to log out
+  };
+
+  const handleShowLogin = () => {
+    setShowLogin(true); //shows the login page
+  };
+
+  const handleBackFromLogin = () => {
+    setShowLogin(false); //hides the login page and returns to main app
+  };
+
+    const handleSignUp = () => {
+        setShowLogin(false);   // Hide login page
+        setShowSignup(true);   // Show signup page
+    };
+
+    const handleSignupSuccess = (userData) => {
+        setUser(userData);
+        setShowSignup(false);
+    };
 
   const features = [
     {
@@ -39,6 +74,24 @@ export default function App() {
     }
   ];
 
+    if (showSignup) {
+        return (
+            <SignupPage
+                onSignup={handleSignupSuccess} // You'll need this function too
+                onBack={() => setShowSignup(false)}
+                onLogin={() => {
+                    setShowSignup(false);
+                    setShowLogin(true);
+                }}
+            />
+        );
+    }
+
+    // Show login page if showLogin is true
+  if (showLogin) {
+    return <LoginPage onLogin={handleLogin} onBack={handleBackFromLogin} onSignUp={handleSignUp} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Navigation Bar */}
@@ -51,11 +104,21 @@ export default function App() {
               <span className="text-xl font-medium">FoodTariff Pro</span>
             </div>
             
-            {/* Login Button */}
-            <Button variant="outline" className="flex items-center gap-2">
-              <LogIn className="h-4 w-4" />
-              Login
-            </Button>
+            {/* Login/User Button */}
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
+                <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={handleShowLogin} className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Login
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -34,6 +34,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.springframework.ai</groupId>
+
                 <artifactId>spring-ai-bom</artifactId>
                 <version>${spring-ai.version}</version>
                 <type>pom</type>
