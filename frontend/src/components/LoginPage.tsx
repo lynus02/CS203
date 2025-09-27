@@ -1,9 +1,10 @@
 // LoginPage.tsx
 import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail, ArrowLeft } from 'lucide-react';
+import {Eye, EyeOff, Lock, Mail, ArrowLeft, Globe} from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+
 
 // TypeScript interfaces
 interface LoginFormData {
@@ -111,6 +112,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         <div className="mt-[700px] w-[400px] h-[600px] justify-center bg-gray-50">
             <Card >
                 <CardHeader>
+                    {/* Logo and Brand */}
+                    <div className="flex items-center justify-between pb-6 border-b border-gray-300 pb-2">
+                        {/* Logo and Brand */}
+                        <a href="/" className="flex items-center gap-2 hover:opacity-80">
+                        <Globe className="h-6 w-6 text-primary" />
+                        <span className="text-xl font-medium">FoodTariff Pro</span>
+                        </a>
+                    </div>
                     <div className="flex items-center gap-3 mb-4">
                         {onBack && (
                             <Button
