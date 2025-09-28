@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tariff_data")
+@Table(name = "tariff")
 public class TariffRate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

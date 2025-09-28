@@ -19,15 +19,19 @@ public class TariffRateController {
         this.tariffRateRepository = tariffRateRepository;
     }
 
-    @GetMapping("/size={size}")
-    public List<TariffRate> getTariffRatesBySize(@PathVariable int size, @RequestParam(required = false) String country) {
+    @GetMapping
+    public List<TariffRate> getTariffRates(
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String country) {
         int cappedSize = Math.min(size, 25);
         if (country != null && !country.isEmpty()) {
-            return tariffRateRepository.findByReporterNameContainingIgnoreCase(
-                    country, PageRequest.of(0, cappedSize)).getContent();
+            return tariffRateRepository
+                    .findByReporterNameContainingIgnoreCase(country, PageRequest.of(0, cappedSize))
+                    .getContent();
         }
         return tariffRateRepository.findAll(PageRequest.of(0, cappedSize)).getContent();
     }
+
 
     @GetMapping("/hs-descriptions")
     public Page<TariffRate> getHsDescriptions(

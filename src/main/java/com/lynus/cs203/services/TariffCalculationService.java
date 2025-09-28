@@ -23,15 +23,30 @@ public class TariffCalculationService {
         this.countryRepository = countryRepository;
     }
 
+    public double getTariffRate(Integer productCode, String countryParam) {
+        Product product = productRepository.findByProductCode(productCode)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product code: " + productCode));
 
-    public double calculateTariff(Integer productCode, String countryCode, double customsValue) {
+        Country country = countryRepository.findByCountryCode(countryParam)
+                .orElseGet(() -> countryRepository.findByCountryName(countryParam)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid country: " + countryParam)));
+
+        Tariff tariff = tariffRepository.findByProductAndCountry(product, country)
+                .orElseThrow(() -> new IllegalArgumentException("No tariff found for this product-country combination"));
+
+        return tariff.getTariffRate();
+    }
+
+    public double calculateTariff(Integer productCode, String countryParam, double customsValue) {
         // Find product
         Product product = productRepository.findByProductCode(productCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product code: " + productCode));
 
         // Find country
-        Country country = countryRepository.findByCountryCode(countryCode)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid country code: " + countryCode));
+        Country country = countryRepository.findByCountryCode(countryParam)
+                .orElseGet(() -> countryRepository.findByCountryName(countryParam)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid country: " + countryParam)));
+
 
         // Find tariff
         Tariff tariff = tariffRepository.findByProductAndCountry(product, country)
