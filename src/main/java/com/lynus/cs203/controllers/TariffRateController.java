@@ -19,32 +19,14 @@ public class TariffRateController {
         this.tariffRateRepository = tariffRateRepository;
     }
 
-    @GetMapping
-    public List<TariffRate> getTariffRates(
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String country) {
+    @GetMapping("/size={size}")
+    public List<TariffRate> getTariffRatesBySize(@PathVariable int size, @RequestParam(required = false) String country) {
         int cappedSize = Math.min(size, 25);
         if (country != null && !country.isEmpty()) {
-            return tariffRateRepository
-                    .findByReporterNameContainingIgnoreCase(country, PageRequest.of(0, cappedSize))
-                    .getContent();
+            return tariffRateRepository.findByReporterNameContainingIgnoreCase(
+                    country, PageRequest.of(0, cappedSize)).getContent();
         }
         return tariffRateRepository.findAll(PageRequest.of(0, cappedSize)).getContent();
-    }
-
-
-    @GetMapping("/hs-descriptions")
-    public Page<TariffRate> getHsDescriptions(
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) String productCode6,
-            @RequestParam(required = false) String country,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return tariffRateRepository.findByHsDescriptionContainingIgnoreCaseAndProductCode6ContainingIgnoreCaseAndReporterNameContainingIgnoreCase(
-                description == null ? "" : description,
-                productCode6 == null ? "" : productCode6,
-                country == null ? "" : country,
-                PageRequest.of(page, size));
     }
 
     @GetMapping("/suggest")

@@ -13,13 +13,12 @@ import { CountryFlag } from "./ui/country-flags";
 // import { format } from "date-fns";
 
 interface Product {
-    productId: number;            // from backend
-    productCode: number;          // HS code
-    productDescription: string;   // description/name
-    uomCode?: string;             // optional (unit of measure)
-    foodCategory: string;         // category
-    baseTariffRate?: number;      // optional, may come from backend
-    reporterName?: string;        // optional, transient field
+    id: string;
+    name: string;
+    hsCode: string;
+    category: string;
+    baseTariffRate: number;
+    reporterName?: string;
 }
 
 interface TradeAgreement {
@@ -54,48 +53,29 @@ export function CustomsDutyCalculator() {
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-    // // Food product database with HS codes
-    // const products: Product[] = [
-    //     { id: "1", name: "Fresh Beef Ribeye Steaks", hsCode: "0201.10.50", category: "Meat & Poultry", baseTariffRate: 26.4 },
-    //     { id: "2", name: "Fresh Pork Tenderloin", hsCode: "0203.12.90", category: "Meat & Poultry", baseTariffRate: 1.4 },
-    //     { id: "3", name: "Fresh Chicken Breast", hsCode: "0207.14.10", category: "Meat & Poultry", baseTariffRate: 17.6 },
-    //     { id: "4", name: "Whole Milk Powder", hsCode: "0402.10.05", category: "Dairy Products", baseTariffRate: 13.8 },
-    //     { id: "5", name: "Aged Cheddar Cheese", hsCode: "0406.90.54", category: "Dairy Products", baseTariffRate: 17.5 },
-    //     { id: "6", name: "Fresh Atlantic Salmon", hsCode: "0302.12.00", category: "Seafood", baseTariffRate: 0 },
-    //     { id: "7", name: "Frozen Shrimp", hsCode: "0306.17.00", category: "Seafood", baseTariffRate: 0 },
-    //     { id: "8", name: "Fresh Bananas", hsCode: "0803.90.30", category: "Fruits & Vegetables", baseTariffRate: 0 },
-    //     { id: "9", name: "Fresh Avocados", hsCode: "0804.40.00", category: "Fruits & Vegetables", baseTariffRate: 11.2 },
-    //     { id: "10", name: "Arabica Coffee Beans", hsCode: "0901.21.00", category: "Coffee & Tea", baseTariffRate: 0 },
-    //     { id: "11", name: "Black Tea Leaves", hsCode: "0902.30.00", category: "Coffee & Tea", baseTariffRate: 6.4 },
-    //     { id: "12", name: "Extra Virgin Olive Oil", hsCode: "1509.10.20", category: "Oils & Fats", baseTariffRate: 5 },
-    //     { id: "13", name: "Basmati Rice", hsCode: "1006.30.90", category: "Grains & Legumes", baseTariffRate: 2.1 },
-    //     { id: "14", name: "Organic Quinoa", hsCode: "1008.50.90", category: "Grains & Legumes", baseTariffRate: 0.6 },
-    //     { id: "15", name: "Dark Chocolate (70% Cocoa)", hsCode: "1806.32.70", category: "Confectionery", baseTariffRate: 5.1 },
-    //     { id: "16", name: "Raw Cane Sugar", hsCode: "1701.14.20", category: "Sugar & Sweeteners", baseTariffRate: 1.4 },
-    //     { id: "17", name: "Orange Juice Concentrate", hsCode: "2009.11.00", category: "Beverages", baseTariffRate: 7.9 },
-    //     { id: "18", name: "Premium Red Wine", hsCode: "2204.21.30", category: "Beverages", baseTariffRate: 6.3 },
-    //     { id: "19", name: "Canned Tuna in Oil", hsCode: "1604.14.30", category: "Preserved Foods", baseTariffRate: 12.5 },
-    //     { id: "20", name: "Dried Dates", hsCode: "0804.10.80", category: "Dried Fruits & Nuts", baseTariffRate: 2.9 }
-    // ];
-
-    useEffect(() => {
-        if (productSearch.length < 2) {
-            setSuggestedProducts([]);
-            return;
-        }
-        setLoadingSuggestions(true);
-
-        const timeout = setTimeout(() => {
-            fetch(`/api/products/search?q=${encodeURIComponent(productSearch)}`)
-                .then((res) => res.json())
-                .then((data) => setSuggestedProducts(data))
-                .catch((err) => console.error("Error fetching products:", err))
-                .finally(() => setLoadingSuggestions(false));
-        }, 300); // debounce
-
-        return () => clearTimeout(timeout);
-    }, [productSearch]);
-
+    // Food product database with HS codes
+    const products: Product[] = [
+        { id: "1", name: "Fresh Beef Ribeye Steaks", hsCode: "0201.10.50", category: "Meat & Poultry", baseTariffRate: 26.4 },
+        { id: "2", name: "Fresh Pork Tenderloin", hsCode: "0203.12.90", category: "Meat & Poultry", baseTariffRate: 1.4 },
+        { id: "3", name: "Fresh Chicken Breast", hsCode: "0207.14.10", category: "Meat & Poultry", baseTariffRate: 17.6 },
+        { id: "4", name: "Whole Milk Powder", hsCode: "0402.10.05", category: "Dairy Products", baseTariffRate: 13.8 },
+        { id: "5", name: "Aged Cheddar Cheese", hsCode: "0406.90.54", category: "Dairy Products", baseTariffRate: 17.5 },
+        { id: "6", name: "Fresh Atlantic Salmon", hsCode: "0302.12.00", category: "Seafood", baseTariffRate: 0 },
+        { id: "7", name: "Frozen Shrimp", hsCode: "0306.17.00", category: "Seafood", baseTariffRate: 0 },
+        { id: "8", name: "Fresh Bananas", hsCode: "0803.90.30", category: "Fruits & Vegetables", baseTariffRate: 0 },
+        { id: "9", name: "Fresh Avocados", hsCode: "0804.40.00", category: "Fruits & Vegetables", baseTariffRate: 11.2 },
+        { id: "10", name: "Arabica Coffee Beans", hsCode: "0901.21.00", category: "Coffee & Tea", baseTariffRate: 0 },
+        { id: "11", name: "Black Tea Leaves", hsCode: "0902.30.00", category: "Coffee & Tea", baseTariffRate: 6.4 },
+        { id: "12", name: "Extra Virgin Olive Oil", hsCode: "1509.10.20", category: "Oils & Fats", baseTariffRate: 5 },
+        { id: "13", name: "Basmati Rice", hsCode: "1006.30.90", category: "Grains & Legumes", baseTariffRate: 2.1 },
+        { id: "14", name: "Organic Quinoa", hsCode: "1008.50.90", category: "Grains & Legumes", baseTariffRate: 0.6 },
+        { id: "15", name: "Dark Chocolate (70% Cocoa)", hsCode: "1806.32.70", category: "Confectionery", baseTariffRate: 5.1 },
+        { id: "16", name: "Raw Cane Sugar", hsCode: "1701.14.20", category: "Sugar & Sweeteners", baseTariffRate: 1.4 },
+        { id: "17", name: "Orange Juice Concentrate", hsCode: "2009.11.00", category: "Beverages", baseTariffRate: 7.9 },
+        { id: "18", name: "Premium Red Wine", hsCode: "2204.21.30", category: "Beverages", baseTariffRate: 6.3 },
+        { id: "19", name: "Canned Tuna in Oil", hsCode: "1604.14.30", category: "Preserved Foods", baseTariffRate: 12.5 },
+        { id: "20", name: "Dried Dates", hsCode: "0804.10.80", category: "Dried Fruits & Nuts", baseTariffRate: 2.9 }
+    ];
 
     // const countries = [
     //   "United States", "Canada", "Mexico", "China", "Japan", "South Korea",
@@ -184,33 +164,21 @@ export function CustomsDutyCalculator() {
         if (productOpen) {
             setLoadingSuggestions(true);
             const url = destinationCountry
-                ? `/api/tariff-rates?size=${MAX_SUGGESTION_SIZE}&country=${encodeURIComponent(destinationCountry)}`
-                : `/api/tariff-rates?size=${MAX_SUGGESTION_SIZE}`;
+                ? `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}?country=${encodeURIComponent(destinationCountry)}`
+                : `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}`;
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     // Map TariffRate to Product shape
-                    // setSuggestedProducts(
-                    //     data.map((rate: any) => ({
-                    //         productId: rate.trade_id,
-                    //         productCode: rate.productCode6,
-                    //         productDescription: rate.hsDescription,
-                    //         foodCategory: rate.food_category,
-                    //         baseTariffRate: rate.value,
-                    //         reporterName: rate.reporterName
-                    //     }))
-                    // );
-                    setSuggestedProducts(
-                        (Array.isArray(data) ? data : []).map((rate: any) => ({
-                            productId: rate.trade_id ?? rate.productId ?? 0,
-                            productCode: Number(rate.productCode6 ?? rate.productCode ?? 0),
-                            productDescription: rate.hsDescription ?? rate.productDescription ?? "",
-                            foodCategory: rate.food_category ?? rate.foodCategory ?? "",
-                            baseTariffRate: typeof rate.value === "number" ? rate.value : undefined,
+                    setSuggestedProducts(data
+                        .map((rate: any) => ({
+                            id: rate.trade_id.toString(),
+                            name: rate.hsDescription,
+                            hsCode: rate.productCode6,
+                            category: rate.food_category,
+                            baseTariffRate: rate.value,
                             reporterName: rate.reporterName
-                        }))
-                    );
-
+                        })));
                 })
                 .finally(() => setLoadingSuggestions(false));
         }
@@ -236,22 +204,10 @@ export function CustomsDutyCalculator() {
         }
     }, [productSearch, destinationCountry]);
 
-    // const filteredProducts = products.filter(product =>
-    //     product.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-    //     product.hsCode.includes(productSearch)
-    // );
-
-    // const filteredProducts = suggestedProducts.filter(product =>
-    //     product.productDescription.toLowerCase().includes(productSearch.toLowerCase()) ||
-    //     product.productCode.toString().includes(productSearch)
-    // );
-
-    const filteredProducts = suggestedProducts.filter(p =>
-        p.productDescription.toLowerCase().includes(productSearch.toLowerCase()) ||
-        String(p.productCode).includes(productSearch)
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+        product.hsCode.includes(productSearch)
     );
-
-
 
     const findApplicableTradeAgreement = (origin: string, destination: string): TradeAgreement | undefined => {
         return tradeAgreements.find(agreement =>
@@ -261,41 +217,42 @@ export function CustomsDutyCalculator() {
     };
 
     const calculateTariff = () => {
+        // console.log("selectedProduct:", selectedProduct);
+        // console.log("productValue:", productValue);
+        // console.log("originCountry:", originCountry);
+        // console.log("destinationCountry:", destinationCountry);
         if (!selectedProduct || !productValue || !originCountry || !destinationCountry) {
             return;
         }
 
         const value = parseFloat(productValue);
+        let baseTariffRate = selectedProduct.baseTariffRate;
+        let finalTariffRate = baseTariffRate;
+        let tradeAgreementReduction = 0;
 
-        fetch("/tariffs/calculate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                productCode: selectedProduct.productCode,
-                countryCode: destinationCountry,
-                customsValue: parseFloat(productValue)
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Tariff API response:", data); // Debug log
+        // Check for applicable trade agreements
+        const tradeAgreement = findApplicableTradeAgreement(originCountry, destinationCountry);
 
-                const baseTariffRate = Number(data.baseTariffRate ?? 0);
-                const dutyAmount = Number(data.dutyAmount ?? 0);
-                const totalCost = Number(data.totalCost ?? (value + dutyAmount));
+        if (tradeAgreement) {
+            tradeAgreementReduction = (baseTariffRate * tradeAgreement.reduction) / 100;
+            finalTariffRate = baseTariffRate - tradeAgreementReduction;
+        }
 
-                setResult({
-                    product: selectedProduct!,
-                    originCountry,
-                    destinationCountry,
-                    importDate,
-                    baseTariffRate,
-                    tradeAgreementReduction: 0,
-                    finalTariffRate: baseTariffRate,
-                    dutyAmount,
-                    totalCost,
-                });
-            })
+        const dutyAmount = (value * finalTariffRate) / 100;
+        const totalCost = value + dutyAmount;
+
+        setResult({
+            product: selectedProduct,
+            originCountry,
+            destinationCountry,
+            importDate,
+            baseTariffRate,
+            tradeAgreementReduction,
+            finalTariffRate,
+            dutyAmount,
+            totalCost,
+            tradeAgreement
+        });
     };
 
     const clearCalculation = () => {
@@ -330,11 +287,9 @@ export function CustomsDutyCalculator() {
                                 style={{ minWidth: 0 }}
                             >
                 <span className="truncate block" style={{ maxWidth: "70%" }}>
-
-                    {selectedProduct
-                        ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`
-                        : "Search products by name or HS code..."}
-
+                  {selectedProduct
+                      ? `${selectedProduct.name} (${selectedProduct.hsCode})`
+                      : "Search products by name or HS code..."}
                 </span>
                                 <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -359,19 +314,21 @@ export function CustomsDutyCalculator() {
                                     <CommandGroup>
                                         {suggestedProducts.map((product) => (
                                             <CommandItem
-                                                key={product.productId}
-                                                value={`${product.productDescription} ${product.productCode}`}
+                                                key={product.id}
+                                                value={`${product.name} ${product.hsCode}`}
                                                 onSelect={() => {
                                                     setSelectedProduct(product);
+                                                    if (product.reporterName) {
+                                                        setDestinationCountry(product.reporterName);
+                                                    }
                                                     setProductOpen(false);
                                                     setProductSearch("");
                                                 }}
                                             >
                                                 <div className="flex flex-col">
-                                                    <div className="font-medium">{product.productDescription}</div>
+                                                    <div className="font-medium">{product.name}</div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        HS: {product.productCode} • {product.foodCategory} •
-                                                        {product.baseTariffRate ? ` Base Rate: ${product.baseTariffRate}%` : ""}
+                                                        HS: {product.hsCode} • {product.category} • Base Rate: {product.baseTariffRate}%
                                                     </div>
                                                 </div>
                                             </CommandItem>
@@ -382,73 +339,6 @@ export function CustomsDutyCalculator() {
                         </PopoverContent>
                     </Popover>
                 </div>
-
-        {/*        /!* Product Selection *!/*/}
-        {/*        <div className="space-y-2">*/}
-        {/*            <Label>Product Selection</Label>*/}
-        {/*            <Popover open={productOpen} onOpenChange={setProductOpen}>*/}
-        {/*                <PopoverTrigger asChild>*/}
-        {/*                    <Button*/}
-        {/*                        variant="outline"*/}
-        {/*                        role="combobox"*/}
-        {/*                        aria-expanded={productOpen}*/}
-        {/*                        className="w-full flex justify-between items-center"*/}
-        {/*                        style={{ minWidth: 0 }}*/}
-        {/*                    >*/}
-        {/*<span className="truncate block" style={{ maxWidth: "70%" }}>*/}
-        {/*  {selectedProduct*/}
-        {/*      ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`*/}
-        {/*      : "Search products by name or HS code..."}*/}
-        {/*</span>*/}
-        {/*                        <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />*/}
-        {/*                    </Button>*/}
-        {/*                </PopoverTrigger>*/}
-        {/*                <PopoverContent className="w-full p-0">*/}
-        {/*                    <Command>*/}
-        {/*                        <CommandInput*/}
-        {/*                            placeholder="Search products..."*/}
-        {/*                            value={productSearch}*/}
-        {/*                            onValueChange={setProductSearch}*/}
-        {/*                        />*/}
-        {/*                        <CommandList>*/}
-        {/*                            <CommandEmpty>*/}
-        {/*                                {loadingSuggestions ? (*/}
-        {/*                                    <div className="py-4 text-center text-muted-foreground">*/}
-        {/*                                        Loading products...*/}
-        {/*                                    </div>*/}
-        {/*                                ) : (*/}
-        {/*                                    "No products found."*/}
-        {/*                                )}*/}
-        {/*                            </CommandEmpty>*/}
-        {/*                            <CommandGroup>*/}
-        {/*                                {suggestedProducts.map((product) => (*/}
-        {/*                                    <CommandItem*/}
-        {/*                                        key={product.productId}*/}
-        {/*                                        value={`${product.productDescription} ${product.productCode}`}*/}
-        {/*                                        onSelect={() => {*/}
-        {/*                                            setSelectedProduct(product);*/}
-        {/*                                            setProductOpen(false);*/}
-        {/*                                            setProductSearch("");*/}
-        {/*                                        }}*/}
-        {/*                                    >*/}
-        {/*                                        <div className="flex flex-col">*/}
-        {/*                                            <div className="font-medium">{product.productDescription}</div>*/}
-        {/*                                            <div className="text-sm text-muted-foreground">*/}
-        {/*                                                HS: {product.productCode} • {product.foodCategory}*/}
-        {/*                                                {product.baseTariffRate*/}
-        {/*                                                    ? ` • Base Rate: ${product.baseTariffRate}%`*/}
-        {/*                                                    : ""}*/}
-        {/*                                            </div>*/}
-        {/*                                        </div>*/}
-        {/*                                    </CommandItem>*/}
-        {/*                                ))}*/}
-        {/*                            </CommandGroup>*/}
-        {/*                        </CommandList>*/}
-        {/*                    </Command>*/}
-        {/*                </PopoverContent>*/}
-        {/*            </Popover>*/}
-        {/*        </div>*/}
-
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Product Value */}
@@ -565,9 +455,9 @@ export function CustomsDutyCalculator() {
                             <div>
                                 <h4 className="font-medium mb-2">Product Details</h4>
                                 <div className="space-y-1 text-sm">
-                                    <div><strong>Product:</strong> {result.product.productDescription}</div>
-                                    <div><strong>HS Code:</strong> {result.product.productCode}</div>
-                                    <div><strong>Category:</strong> {result.product.foodCategory}</div>
+                                    <div><strong>Product:</strong> {result.product.name}</div>
+                                    <div><strong>HS Code:</strong> {result.product.hsCode}</div>
+                                    <div><strong>Category:</strong> {result.product.category}</div>
                                     <div><strong>Value:</strong> ${parseFloat(productValue).toLocaleString()}</div>
                                 </div>
                             </div>
