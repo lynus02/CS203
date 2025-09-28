@@ -9,20 +9,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -30,6 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,6 +56,7 @@ public class SecurityConfig {
                     log.debug("Setting session management to stateless");
                     c.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> {
                     log.debug("Disabling CSRF protection");
                     csrf.disable();
@@ -71,6 +71,7 @@ public class SecurityConfig {
 
                             // Public endpoints
                             .requestMatchers("/tariffs/**").permitAll()
+                            .requestMatchers("/").permitAll()
 
                             // Swagger and API docs
                             .requestMatchers("/v3/api-docs/**").permitAll()
@@ -84,7 +85,7 @@ public class SecurityConfig {
                             .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
 
                             // All other endpoints require authentication
-                            .anyRequest().authenticated();
+                            .anyRequest().permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> {

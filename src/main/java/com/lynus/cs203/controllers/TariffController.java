@@ -30,9 +30,6 @@ import java.util.Map;
 public class TariffController {
 
     private final TariffCalculationService tariffCalculationService;
-    public TariffController(TariffCalculationService tariffCalculationService) {
-        this.tariffCalculationService = tariffCalculationService;
-    }
 
     @GetMapping("/tariff-form")
     public String showTariffForm() {
