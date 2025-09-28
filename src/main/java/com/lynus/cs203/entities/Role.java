@@ -1,35 +1,33 @@
 package com.lynus.cs203.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+@RequiredArgsConstructor
 @Getter
-@Setter
-@Entity
-@Table(name = "roles")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id", columnDefinition = "tinyint UNSIGNED not null")
-    private Short id;
+public enum Role {
+    USER(1, "USER", "Regular user with limited access"),
+    ADMIN(2, "ADMIN", "Administrator with full access");
 
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    private final int id;
+    private final String name;
+    private final String description;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+    public static Role fromId(int id) {
+        for (Role role : Role.values()) {
+            if (role.getId() == id) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("No role found with id: " + id);
+    }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
-    private Set<UserRole> userRoles = new LinkedHashSet<>();
-
+    public static Role fromName(String name) {
+        for (Role role : Role.values()) {
+            if (role.getName().equalsIgnoreCase(name)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("No role found with name: " + name);
+    }
 }

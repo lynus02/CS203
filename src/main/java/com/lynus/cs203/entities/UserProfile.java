@@ -1,5 +1,6 @@
 package com.lynus.cs203.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,12 +26,10 @@ public class UserProfile {
     private User user;
 
     @Size(max = 100)
-    @NotNull
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
     @Size(max = 100)
-    @NotNull
     @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 

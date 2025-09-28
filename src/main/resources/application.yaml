@@ -19,3 +19,7 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpiration: 300 # 5 minutes
+    refreshTokenExpiration: 604800 # 7 days
