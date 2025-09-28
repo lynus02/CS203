@@ -267,14 +267,20 @@ export function CustomsDutyCalculator() {
 
         const value = parseFloat(productValue);
 
-        fetch(`/calculate-tariff?productCode=${selectedProduct.productCode}&countryCode=${encodeURIComponent(originCountry)}&customsValue=${value}`, {
+        fetch("/tariffs/calculate", {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                productCode: selectedProduct.productCode,
+                countryCode: destinationCountry,
+                customsValue: parseFloat(productValue)
+            })
         })
             .then(res => res.json())
             .then(data => {
                 console.log("Tariff API response:", data); // Debug log
 
-                const baseTariffRate = Number(data.baseTariffRate ?? 0);  // make sure it's a number
+                const baseTariffRate = Number(data.baseTariffRate ?? 0);
                 const dutyAmount = Number(data.dutyAmount ?? 0);
                 const totalCost = Number(data.totalCost ?? (value + dutyAmount));
 
@@ -290,36 +296,6 @@ export function CustomsDutyCalculator() {
                     totalCost,
                 });
             })
-
-        // const value = Number(productValue) || 0;
-        // let baseTariffRate = data.baseTariffRate ?? 0;
-        // let finalTariffRate = baseTariffRate;
-        // let tradeAgreementReduction = 0;
-        //
-        //
-        // // Check for applicable trade agreements
-        // const tradeAgreement = findApplicableTradeAgreement(originCountry, destinationCountry);
-        //
-        // if (tradeAgreement) {
-        //     tradeAgreementReduction = (baseTariffRate * tradeAgreement.reduction) / 100;
-        //     finalTariffRate = baseTariffRate - tradeAgreementReduction;
-        // }
-        //
-        // const dutyAmount = (value * finalTariffRate) / 100;
-        // const totalCost = value + dutyAmount;
-        //
-        // setResult({
-        //     product: selectedProduct,
-        //     originCountry,
-        //     destinationCountry,
-        //     importDate,
-        //     baseTariffRate,
-        //     tradeAgreementReduction,
-        //     finalTariffRate,
-        //     dutyAmount,
-        //     totalCost,
-        //     tradeAgreement
-        // });
     };
 
     const clearCalculation = () => {
@@ -341,74 +317,6 @@ export function CustomsDutyCalculator() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                {/*/!* Product Selection *!/*/}
-                {/*<div className="space-y-2">*/}
-                {/*    <Label>Product Selection</Label>*/}
-                {/*    <Popover open={productOpen} onOpenChange={setProductOpen}>*/}
-                {/*        <PopoverTrigger asChild>*/}
-                {/*            <Button*/}
-                {/*                variant="outline"*/}
-                {/*                role="combobox"*/}
-                {/*                aria-expanded={productOpen}*/}
-                {/*                className="w-full flex justify-between items-center"*/}
-                {/*                style={{ minWidth: 0 }}*/}
-                {/*            >*/}
-                {/*<span className="truncate block" style={{ maxWidth: "70%" }}>*/}
-                {/*  /!*{selectedProduct*!/*/}
-                {/*  /!*    ? `${selectedProduct.name} (${selectedProduct.hsCode})`*!/*/}
-                {/*  /!*    : "Search products by name or HS code..."}*!/*/}
-                {/*    {selectedProduct*/}
-                {/*        ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`*/}
-                {/*        : "Search products by name or HS code..."}*/}
-
-                {/*</span>*/}
-                {/*                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />*/}
-                {/*            </Button>*/}
-                {/*        </PopoverTrigger>*/}
-                {/*        <PopoverContent className="w-full p-0">*/}
-                {/*            <Command>*/}
-                {/*                <CommandInput*/}
-                {/*                    placeholder="Search products..."*/}
-                {/*                    value={productSearch}*/}
-                {/*                    onValueChange={setProductSearch}*/}
-                {/*                />*/}
-                {/*                <CommandList>*/}
-                {/*                    <CommandEmpty>*/}
-                {/*                        {loadingSuggestions ? (*/}
-                {/*                            <div className="py-4 text-center text-muted-foreground">*/}
-                {/*                                Loading products...*/}
-                {/*                            </div>*/}
-                {/*                        ) : (*/}
-                {/*                            "No products found."*/}
-                {/*                        )}*/}
-                {/*                    </CommandEmpty>*/}
-                {/*                    <CommandGroup>*/}
-                {/*                        {suggestedProducts.map((product) => (*/}
-                {/*                            <CommandItem*/}
-                {/*                                key={product.productId}*/}
-                {/*                                value={`${product.productDescription} ${product.productCode}`}*/}
-                {/*                                onSelect={() => {*/}
-                {/*                                    setSelectedProduct(product);*/}
-                {/*                                    setProductOpen(false);*/}
-                {/*                                    setProductSearch("");*/}
-                {/*                                }}*/}
-                {/*                            >*/}
-                {/*                                <div className="flex flex-col">*/}
-                {/*                                    <div className="font-medium">{product.productDescription}</div>*/}
-                {/*                                    <div className="text-sm text-muted-foreground">*/}
-                {/*                                        HS: {product.productCode} • {product.foodCategory} •*/}
-                {/*                                        {product.baseTariffRate ? ` Base Rate: ${product.baseTariffRate}%` : ""}*/}
-                {/*                                    </div>*/}
-                {/*                                </div>*/}
-                {/*                            </CommandItem>*/}
-                {/*                        ))}*/}
-                {/*                    </CommandGroup>*/}
-                {/*                </CommandList>*/}
-                {/*            </Command>*/}
-                {/*        </PopoverContent>*/}
-                {/*    </Popover>*/}
-                {/*</div>*/}
-
                 {/* Product Selection */}
                 <div className="space-y-2">
                     <Label>Product Selection</Label>
@@ -421,11 +329,13 @@ export function CustomsDutyCalculator() {
                                 className="w-full flex justify-between items-center"
                                 style={{ minWidth: 0 }}
                             >
-        <span className="truncate block" style={{ maxWidth: "70%" }}>
-          {selectedProduct
-              ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`
-              : "Search products by name or HS code..."}
-        </span>
+                <span className="truncate block" style={{ maxWidth: "70%" }}>
+
+                    {selectedProduct
+                        ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`
+                        : "Search products by name or HS code..."}
+
+                </span>
                                 <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
@@ -460,10 +370,8 @@ export function CustomsDutyCalculator() {
                                                 <div className="flex flex-col">
                                                     <div className="font-medium">{product.productDescription}</div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        HS: {product.productCode} • {product.foodCategory}
-                                                        {product.baseTariffRate
-                                                            ? ` • Base Rate: ${product.baseTariffRate}%`
-                                                            : ""}
+                                                        HS: {product.productCode} • {product.foodCategory} •
+                                                        {product.baseTariffRate ? ` Base Rate: ${product.baseTariffRate}%` : ""}
                                                     </div>
                                                 </div>
                                             </CommandItem>
@@ -474,6 +382,72 @@ export function CustomsDutyCalculator() {
                         </PopoverContent>
                     </Popover>
                 </div>
+
+        {/*        /!* Product Selection *!/*/}
+        {/*        <div className="space-y-2">*/}
+        {/*            <Label>Product Selection</Label>*/}
+        {/*            <Popover open={productOpen} onOpenChange={setProductOpen}>*/}
+        {/*                <PopoverTrigger asChild>*/}
+        {/*                    <Button*/}
+        {/*                        variant="outline"*/}
+        {/*                        role="combobox"*/}
+        {/*                        aria-expanded={productOpen}*/}
+        {/*                        className="w-full flex justify-between items-center"*/}
+        {/*                        style={{ minWidth: 0 }}*/}
+        {/*                    >*/}
+        {/*<span className="truncate block" style={{ maxWidth: "70%" }}>*/}
+        {/*  {selectedProduct*/}
+        {/*      ? `${selectedProduct.productDescription} (HS: ${selectedProduct.productCode})`*/}
+        {/*      : "Search products by name or HS code..."}*/}
+        {/*</span>*/}
+        {/*                        <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />*/}
+        {/*                    </Button>*/}
+        {/*                </PopoverTrigger>*/}
+        {/*                <PopoverContent className="w-full p-0">*/}
+        {/*                    <Command>*/}
+        {/*                        <CommandInput*/}
+        {/*                            placeholder="Search products..."*/}
+        {/*                            value={productSearch}*/}
+        {/*                            onValueChange={setProductSearch}*/}
+        {/*                        />*/}
+        {/*                        <CommandList>*/}
+        {/*                            <CommandEmpty>*/}
+        {/*                                {loadingSuggestions ? (*/}
+        {/*                                    <div className="py-4 text-center text-muted-foreground">*/}
+        {/*                                        Loading products...*/}
+        {/*                                    </div>*/}
+        {/*                                ) : (*/}
+        {/*                                    "No products found."*/}
+        {/*                                )}*/}
+        {/*                            </CommandEmpty>*/}
+        {/*                            <CommandGroup>*/}
+        {/*                                {suggestedProducts.map((product) => (*/}
+        {/*                                    <CommandItem*/}
+        {/*                                        key={product.productId}*/}
+        {/*                                        value={`${product.productDescription} ${product.productCode}`}*/}
+        {/*                                        onSelect={() => {*/}
+        {/*                                            setSelectedProduct(product);*/}
+        {/*                                            setProductOpen(false);*/}
+        {/*                                            setProductSearch("");*/}
+        {/*                                        }}*/}
+        {/*                                    >*/}
+        {/*                                        <div className="flex flex-col">*/}
+        {/*                                            <div className="font-medium">{product.productDescription}</div>*/}
+        {/*                                            <div className="text-sm text-muted-foreground">*/}
+        {/*                                                HS: {product.productCode} • {product.foodCategory}*/}
+        {/*                                                {product.baseTariffRate*/}
+        {/*                                                    ? ` • Base Rate: ${product.baseTariffRate}%`*/}
+        {/*                                                    : ""}*/}
+        {/*                                            </div>*/}
+        {/*                                        </div>*/}
+        {/*                                    </CommandItem>*/}
+        {/*                                ))}*/}
+        {/*                            </CommandGroup>*/}
+        {/*                        </CommandList>*/}
+        {/*                    </Command>*/}
+        {/*                </PopoverContent>*/}
+        {/*            </Popover>*/}
+        {/*        </div>*/}
 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
