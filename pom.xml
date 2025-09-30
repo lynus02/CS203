@@ -149,9 +149,9 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
-                    <url>${env.DB_URL}</url>
-                    <user>${env.DB_USERNAME}</user>
-                    <password>${env.DB_PASSWORD}</password>
+                    <url>${DB_URL}</url>
+                    <user>${DB_USERNAME}</user>
+                    <password>${DB_PASSWORD}</password>
                     <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>

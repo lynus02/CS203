@@ -165,14 +165,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
 
             setSignupSuccess(true);
 
-            if (onSignup) {
-                onSignup(userData);
-            }
-
-            // Redirect to login after a short delay
-            setTimeout(() => {
-                onLogin();
-            }, 2000);
+            onSignup(userData);
 
         } catch (error) {
             const errorMessage = error.response?.data?.message ||
