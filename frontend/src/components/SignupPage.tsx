@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Eye, EyeOff, User, Mail, ArrowLeft, Globe } from 'lucide-react';
+import {Eye, EyeOff, User, Mail, ArrowLeft, Globe, Lock} from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from "./ui/card";
@@ -235,7 +235,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         <div className="flex justify-start min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
-                <div className="w-full border-b border-gray-300 px-8 py-4 flex items-center">
+                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
                         <Globe className="h-6 w-6 text-primary" />
                         <span className="text-xl font-medium">FoodTariff Pro</span>
@@ -259,11 +259,13 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                 <ArrowLeft className="h-6 w-6" />
                                             </Button>
                                         )}
-                                        <h1 className="text-[40px] font-bold">Sign Up</h1>
+                                        <div>
+                                            <h1 className="text-[40px] font-bold">Sign Up</h1>
+                                            <p className="text-lg text-muted-foreground">
+                                                Create your account to get started
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p className="text-lg text-muted-foreground">
-                                        Create your account to get started
-                                    </p>
                                 </div>
 
                                 <div className="flex-1 flex flex-col justify-center">
@@ -280,16 +282,19 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                     <label htmlFor="firstName" className="text-base font-medium">
                                                         First Name
                                                     </label>
-                                                    <div className="relative">
-                                                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                                    <div className="relative flex items-center">
+                                                        <User
+                                                            className="absolute text-muted-foreground h-5 w-5"
+                                                            style={{ left: '12px' }} />
                                                         <Input
                                                             id="firstName"
                                                             name="firstName"
                                                             type="text"
                                                             value={formData.firstName}
                                                             onChange={handleChange}
-                                                            className={`pl-12 pr-4 py-3 text-base h-12 ${errors.firstName ? 'border-red-500' : ''}`}
-                                                            placeholder="First name"
+                                                            style={{ paddingLeft: '3rem' }}
+                                                            className={`pr-4 py-3 text-base h-12 ${errors.firstName ? 'border-red-500' : ''}`}
+                                                            placeholder="First Name"
                                                             disabled={isLoading}
                                                         />
                                                     </div>
@@ -301,8 +306,10 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                     <label htmlFor="lastName" className="text-base font-medium">
                                                         Last Name
                                                     </label>
-                                                    <div className="relative">
-                                                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                                    <div className="relative flex items-center">
+                                                        <User
+                                                            className="absolute text-muted-foreground h-5 w-5"
+                                                            style={{ left: '12px' }} />
                                                         <Input
                                                             id="lastName"
                                                             name="lastName"
@@ -310,6 +317,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                             value={formData.lastName}
                                                             onChange={handleChange}
                                                             className={`pl-12 pr-4 py-3 text-base h-12 ${errors.lastName ? 'border-red-500' : ''}`}
+                                                            style={{ paddingLeft: '3rem' }}
                                                             placeholder="Last name"
                                                             disabled={isLoading}
                                                         />
@@ -324,15 +332,19 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                 <label htmlFor="email" className="text-base font-medium">
                                                     Email Address
                                                 </label>
-                                                <div className="relative">
-                                                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                                <div className="relative flex items-center">
+                                                    <Mail
+                                                        className="absolute text-muted-foreground h-5 w-5"
+                                                        style={{ left: '12px' }}
+                                                    />
                                                     <Input
                                                         id="email"
                                                         name="email"
                                                         type="email"
                                                         value={formData.email}
                                                         onChange={handleChange}
-                                                        className={`pl-12 pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
+                                                        style={{ paddingLeft: '3rem' }}
+                                                        className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
                                                         placeholder="Enter your email"
                                                         disabled={isLoading}
                                                     />
@@ -346,15 +358,20 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                 <label htmlFor="password" className="text-base font-medium">
                                                     Password
                                                 </label>
-                                                <div className="relative">
+                                                <div className="relative flex items-center">
+                                                    <Lock
+                                                        className="absolute text-muted-foreground h-5 w-5"
+                                                        style={{ left: '12px' }} />
+
                                                     <Input
                                                         id="password"
                                                         name="password"
                                                         type={showPassword ? 'text' : 'password'}
                                                         value={formData.password}
                                                         onChange={handleChange}
-                                                        className={`pl-4 pr-12 py-3 text-base h-12 ${errors.password ? 'border-red-500' : ''}`}
-                                                        placeholder="Create a password"
+                                                        style={{ paddingLeft: '3rem' }}
+                                                        className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
+                                                        placeholder="Enter your password"
                                                         disabled={isLoading}
                                                     />
                                                     <button

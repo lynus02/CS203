@@ -127,7 +127,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         <div className="flex justify-start min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
-                <div className="w-full border-b border-gray-300 px-8 py-4 flex items-center">
+                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
                         <Globe className="h-6 w-6 text-primary" />
                         <span className="text-xl font-medium">FoodTariff Pro</span>
@@ -169,15 +169,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                         <label htmlFor="email" className="text-base font-medium">
                                             Email Address
                                         </label>
-                                        <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <div className="relative flex items-center">
+                                            <Mail
+                                                className="absolute text-muted-foreground h-5 w-5"
+                                                style={{ left: '12px' }}
+                                            />
                                             <Input
                                                 id="email"
                                                 name="email"
                                                 type="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className={`pl-12 pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
+                                                style={{ paddingLeft: '3rem' }}
+                                                className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
                                                 placeholder="Enter your email"
                                                 disabled={isLoading}
                                             />
@@ -191,15 +195,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                         <label htmlFor="password" className="text-base font-medium">
                                             Password
                                         </label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                                        <div className="relative flex items-center">
+                                            <Lock
+                                                className="absolute text-muted-foreground h-5 w-5"
+                                                style={{ left: '12px' }} />
+
                                             <Input
                                                 id="password"
                                                 name="password"
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={formData.password}
                                                 onChange={handleChange}
-                                                className={`pl-12 pr-12 py-3 text-base h-12 ${errors.password ? 'border-red-500' : ''}`}
+                                                style={{ paddingLeft: '3rem' }}
+                                                className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
                                                 placeholder="Enter your password"
                                                 disabled={isLoading}
                                             />
