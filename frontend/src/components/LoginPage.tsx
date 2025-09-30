@@ -4,6 +4,7 @@ import {Eye, EyeOff, Lock, Mail, ArrowLeft, Globe} from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import api from "../services/api";
 
 // TypeScript interfaces
 interface LoginFormData {
@@ -84,18 +85,36 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         setErrors({});
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Call backend login endpoint
+            const response = await api.post('/auth/login', {
+                email: formData.email,
+                password: formData.password
+            });
+
+            const { token } = response.data;
+            console.log('Received token:', token);
+            localStorage.setItem('token', token);
+
+            // Fetch user profile after login
+            const userProfile = await api.get('/auth/me');
+            const user = userProfile.data;
 
             const userData: UserData = {
-                id: '1',
-                name: 'Demo User',
-                email: formData.email,
-                token: 'mock-jwt-token',
-                role: 'user'
+                id: user.id,
+                name: user.firstName + ' ' + user.lastName,
+                email: user.email,
+                token: token,
+                role: Array.isArray(user.roles) ? user.roles[0] : user.role
             };
 
             onLogin(userData);
-        } catch (error) {
+        } catch (error: any) {
+            console.error('Login error details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+
             setErrors({
                 submit: 'Login failed. Please check your credentials and try again.'
             });

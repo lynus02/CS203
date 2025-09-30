@@ -71,6 +71,8 @@ public class SecurityConfig {
 
                             // Public endpoints
                             .requestMatchers("/tariffs/**").permitAll()
+                            .requestMatchers("/products/**").permitAll()
+                            .requestMatchers("/tariff-rates/**").permitAll()
                             .requestMatchers("/").permitAll()
 
                             // Swagger and API docs
@@ -85,7 +87,7 @@ public class SecurityConfig {
                             .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
 
                             // All other endpoints require authentication
-                            .anyRequest().permitAll();
+                            .anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> {

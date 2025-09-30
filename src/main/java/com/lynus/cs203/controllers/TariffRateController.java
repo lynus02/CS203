@@ -2,22 +2,21 @@ package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.entities.TariffRate;
 import com.lynus.cs203.repositories.TariffRateRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/tariff-rates")
-@CrossOrigin // Allow frontend to access this endpoint
+@RequestMapping("/tariff-rates")
+@CrossOrigin
+@RequiredArgsConstructor
 public class TariffRateController {
-
     private final TariffRateRepository tariffRateRepository;
-
-    public TariffRateController(TariffRateRepository tariffRateRepository) {
-        this.tariffRateRepository = tariffRateRepository;
-    }
 
     @GetMapping("/size={size}")
     public List<TariffRate> getTariffRatesBySize(@PathVariable int size, @RequestParam(required = false) String country) {

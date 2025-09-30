@@ -1,0 +1,31 @@
+// services/tariffApi.js
+import api from './api.ts';
+
+// Suggest products based on search and country
+export const suggestProducts = async (query: string, country?: string, page = 0, size = 20) => {
+    const params: any = { q: query, page, size };
+    if (country) params.country = country;
+    const response = await api.get('/tariff-rates/suggest', { params });
+    return response.data;
+};
+
+// Get product suggestions by country and size
+export const getTariffRatesBySize = async (size: number, country?: string) => {
+    let url = `/tariff-rates/size=${size}`;
+    if (country) url += `?country=${encodeURIComponent(country)}`;
+    const response = await api.get(url);
+    return response.data;
+};
+
+// Calculate tariff for a product
+export const calculateTariff = async (productCode: string, countryCode: string, customsValue: number) => {
+    const payload = { productCode, countryCode, customsValue };
+    const response = await api.post('/tariffs/calculate', payload);
+    return response.data;
+};
+
+// Example: get all products (if needed)
+export const getAllProducts = async () => {
+    const response = await api.get('/products');
+    return response.data;
+};

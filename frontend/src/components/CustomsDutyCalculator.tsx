@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
-// import { format } from "date-fns";
+import { suggestProducts, getTariffRatesBySize } from "../services/tariff";
 
 interface Product {
     id: string;
@@ -160,25 +160,20 @@ export function CustomsDutyCalculator() {
     ];
 
     const MAX_SUGGESTION_SIZE = 20;
+
     useEffect(() => {
         if (productOpen) {
             setLoadingSuggestions(true);
-            const url = destinationCountry
-                ? `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}?country=${encodeURIComponent(destinationCountry)}`
-                : `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}`;
-            fetch(url)
-                .then(res => res.json())
+            getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
                 .then(data => {
-                    // Map TariffRate to Product shape
-                    setSuggestedProducts(data
-                        .map((rate: any) => ({
-                            id: rate.trade_id.toString(),
-                            name: rate.hsDescription,
-                            hsCode: rate.productCode6,
-                            category: rate.food_category,
-                            baseTariffRate: rate.value,
-                            reporterName: rate.reporterName
-                        })));
+                    setSuggestedProducts(data.map((rate: any) => ({
+                        id: rate.trade_id?.toString(),
+                        name: rate.hsDescription,
+                        hsCode: rate.productCode6,
+                        category: rate.food_category,
+                        baseTariffRate: rate.value,
+                        reporterName: rate.reporterName
+                    })));
                 })
                 .finally(() => setLoadingSuggestions(false));
         }
@@ -187,22 +182,67 @@ export function CustomsDutyCalculator() {
     useEffect(() => {
         if (productSearch.length > 0) {
             setLoadingSuggestions(true);
-            fetch(`/api/tariff-rates/suggest?q=${encodeURIComponent(productSearch)}&country=${encodeURIComponent(destinationCountry)}&size=20`)
-                .then(res => res.json())
+            suggestProducts(productSearch, destinationCountry, 0, 20)
                 .then(data => {
-                    setSuggestedProducts(data.content
-                        .map((rate: any) => ({
-                            id: rate.trade_id.toString(),
-                            name: rate.hsDescription,
-                            hsCode: rate.productCode6,
-                            category: rate.food_category,
-                            baseTariffRate: rate.value,
-                            reporterName: rate.reporterName
-                        })));
+                    const rates = data.content || data; // handle both array and paged response
+                    setSuggestedProducts(rates.map((rate: any) => ({
+                        id: rate.trade_id?.toString(),
+                        name: rate.hsDescription,
+                        hsCode: rate.productCode6,
+                        category: rate.food_category,
+                        baseTariffRate: rate.value,
+                        reporterName: rate.reporterName
+                    })));
                 })
                 .finally(() => setLoadingSuggestions(false));
         }
     }, [productSearch, destinationCountry]);
+
+
+
+    // useEffect(() => {
+    //     if (productOpen) {
+    //         setLoadingSuggestions(true);
+    //         const url = destinationCountry
+    //             ? `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}?country=${encodeURIComponent(destinationCountry)}`
+    //             : `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}`;
+    //         fetch(url)
+    //             .then(res => res.json())
+    //             .then(data => {
+    //                 // Map TariffRate to Product shape
+    //                 setSuggestedProducts(data
+    //                     .map((rate: any) => ({
+    //                         id: rate.trade_id.toString(),
+    //                         name: rate.hsDescription,
+    //                         hsCode: rate.productCode6,
+    //                         category: rate.food_category,
+    //                         baseTariffRate: rate.value,
+    //                         reporterName: rate.reporterName
+    //                     })));
+    //             })
+    //             .finally(() => setLoadingSuggestions(false));
+    //     }
+    // }, [productOpen, destinationCountry]);
+
+    // useEffect(() => {
+    //     if (productSearch.length > 0) {
+    //         setLoadingSuggestions(true);
+    //         fetch(`/api/tariff-rates/suggest?q=${encodeURIComponent(productSearch)}&country=${encodeURIComponent(destinationCountry)}&size=20`)
+    //             .then(res => res.json())
+    //             .then(data => {
+    //                 setSuggestedProducts(data.content
+    //                     .map((rate: any) => ({
+    //                         id: rate.trade_id.toString(),
+    //                         name: rate.hsDescription,
+    //                         hsCode: rate.productCode6,
+    //                         category: rate.food_category,
+    //                         baseTariffRate: rate.value,
+    //                         reporterName: rate.reporterName
+    //                     })));
+    //             })
+    //             .finally(() => setLoadingSuggestions(false));
+    //     }
+    // }, [productSearch, destinationCountry]);
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(productSearch.toLowerCase()) ||

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "System Setup", description = "System initialization and setup operations")
 @Slf4j
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/setup")

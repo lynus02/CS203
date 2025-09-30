@@ -31,6 +31,7 @@ export default function App() {
 
   const handleLogout = () => {
     setUser(null); //clears the user state to log out
+    localStorage.removeItem('token'); //removes the token from local storage
   };
 
   const handleShowLogin = () => {

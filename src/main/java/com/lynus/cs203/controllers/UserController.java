@@ -40,6 +40,7 @@ import java.util.Set;
 
 @Tag(name = "User Management", description = "User management and profile operations")
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin
 @Slf4j
 @RestController
 @RequiredArgsConstructor

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Authentication", description = "Authentication and user session management")
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin
 @Slf4j
 @AllArgsConstructor
 @RestController

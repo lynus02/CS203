@@ -22,20 +22,15 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-@Tag(name = "Tariff Calculation", description = "Tariff calculation operations")
+@Tag(name = "Tariff Calculation", description = "Tariff calculation operations and rate lookup operations")
 @Slf4j
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/tariffs")
 @RestController
 public class TariffController {
 
     private final TariffCalculationService tariffCalculationService;
-
-    @GetMapping("/tariff-form")
-    public String showTariffForm() {
-        // return the view name (without ".html")
-        return "tariff_form";
-    }
 
     @Operation(
             summary = "Calculate tariff amount",
@@ -71,6 +66,7 @@ public class TariffController {
         return ResponseEntity.ok(response);
 
     }
+
 
 
 }

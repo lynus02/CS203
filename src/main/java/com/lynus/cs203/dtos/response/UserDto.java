@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -61,5 +62,11 @@ public class UserDto {
             format = "date-time"
     )
     private LocalDateTime updatedAt;
+
+    @Schema(
+            description = "List of user roles",
+            example = "[\"USER\", \"ADMIN\"]"
+    )
+    private List<String> roles;
 
 }
