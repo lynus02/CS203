@@ -5,13 +5,13 @@ import api from './api.ts';
 export const suggestProducts = async (query: string, country?: string, page = 0, size = 20) => {
     const params: any = { q: query, page, size };
     if (country) params.country = country;
-    const response = await api.get('/tariff-rates/suggest', { params });
+    const response = await api.get('/tariffs/suggest', { params });
     return response.data;
 };
 
 // Get product suggestions by country and size
 export const getTariffRatesBySize = async (size: number, country?: string) => {
-    let url = `/tariff-rates/size=${size}`;
+    let url = `/tariffs/size=${size}`;
     if (country) url += `?country=${encodeURIComponent(country)}`;
     const response = await api.get(url);
     return response.data;

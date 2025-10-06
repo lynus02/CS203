@@ -7,11 +7,9 @@ import com.lynus.cs203.entities.Product;
 import com.lynus.cs203.entities.Tariff;
 import com.lynus.cs203.repositories.CountryRepository;
 import com.lynus.cs203.repositories.ProductRepository;
-import com.lynus.cs203.repositories.TariffRateRepository;
 import com.lynus.cs203.repositories.TariffRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Slf4j
