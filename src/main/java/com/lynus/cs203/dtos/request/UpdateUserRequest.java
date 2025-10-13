@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 @Schema(description = "Request object for updating user details")
 public class UpdateUserRequest {
