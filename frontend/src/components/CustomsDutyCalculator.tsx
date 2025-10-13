@@ -314,6 +314,62 @@ export function CustomsDutyCalculator() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Country of Origin */}
+                    <div className="space-y-2">
+                        <Label htmlFor="origin-country">Country of Origin</Label>
+                        <Select value={originCountry} onValueChange={setOriginCountry}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select origin country">
+                                    {originCountry && (
+                                        <div className="flex items-center gap-2">
+                                            <CountryFlag country={originCountry} />
+                                            {originCountry}
+                                        </div>
+                                    )}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {countries.map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                        <div className="flex items-center gap-2">
+                                            <CountryFlag country={country} />
+                                            {country}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Destination Country */}
+                    <div className="space-y-2">
+                        <Label htmlFor="destination-country">Destination Country</Label>
+                        <Select value={destinationCountry} onValueChange={setDestinationCountry}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select destination">
+                                    {destinationCountry && (
+                                        <div className="flex items-center gap-2">
+                                            <CountryFlag country={destinationCountry} />
+                                            {destinationCountry}
+                                        </div>
+                                    )}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {countries.map((country) => (
+                                    <SelectItem key={country} value={country}>
+                                        <div className="flex items-center gap-2">
+                                            <CountryFlag country={country} />
+                                            {country}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
                 {/* Product Selection */}
                 <div className="space-y-2">
                     <Label>Product Selection</Label>
@@ -380,8 +436,7 @@ export function CustomsDutyCalculator() {
                     </Popover>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Product Value */}
+                {/* Product Value */}
                     <div className="space-y-2">
                         <Label htmlFor="product-value">Product Value (USD)</Label>
                         <Input
@@ -417,60 +472,6 @@ export function CustomsDutyCalculator() {
                         </Popover>
                     </div>
 
-                    {/* Country of Origin */}
-                    <div className="space-y-2">
-                        <Label htmlFor="origin-country">Country of Origin</Label>
-                        <Select value={originCountry} onValueChange={setOriginCountry}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select origin country">
-                                    {originCountry && (
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={originCountry} />
-                                            {originCountry}
-                                        </div>
-                                    )}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Destination Country */}
-                    <div className="space-y-2">
-                        <Label htmlFor="destination-country">Destination Country</Label>
-                        <Select value={destinationCountry} onValueChange={setDestinationCountry}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select destination">
-                                    {destinationCountry && (
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={destinationCountry} />
-                                            {destinationCountry}
-                                        </div>
-                                    )}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">

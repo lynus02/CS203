@@ -115,7 +115,7 @@ export default function App() {
                 </Button>
               </div>
             ) : (
-              <Button variant="outline" onClick={handleShowLogin} className="flex items-center gap-2">
+              <Button variant="outline" onClick={handleShowLogin} className="bg-primary text-white flex items-center gap-2">
                 <LogIn className="h-4 w-4" />
                 Login
               </Button>
@@ -155,7 +155,7 @@ export default function App() {
 
         {/* Main Calculator Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full" style={{ gridTemplateColumns: "75% 25%" }}>
+          <TabsList className="bg-primary grid w-full" style={{ gridTemplateColumns: "75% 25%" }}>
             <TabsTrigger value="customs" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
               <span className="hidden sm:inline">Food Duty</span>
