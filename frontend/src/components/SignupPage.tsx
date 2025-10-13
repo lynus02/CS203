@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {Eye, EyeOff, User, Mail, ArrowLeft, Globe, Lock} from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Card, CardContent } from "./ui/card";
+import {Card, CardContent, CardTitle, CardHeader} from "./ui/card";
 import api from '../services/api';
 
 // TypeScript interfaces
@@ -225,10 +225,10 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
     }
 
     return (
-        <div className="flex justify-start min-h-screen bg-white">
+        <div className="flex min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
-                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center">
+                <div className="w-full border-b border-gray-300 !px-20 py-8 flex items-center justify-end">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
                         <Globe className="h-6 w-6 text-primary" />
                         <span className="text-xl font-medium">FoodTariff Pro</span>
@@ -236,10 +236,11 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                 </div>
 
                 {/* Centered Signup Box */}
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 h-[500px] w-[700px]">
+                <div className="flex flex-1 items-center justify-center py-8">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
                         <Card className="h-full">
-                            <div className="h-full flex flex-col">
+                            <CardHeader>
+                              <div className="flex flex-col">
                                 <div className="mb-6">
                                     <div className="flex items-center gap-3 mb-4">
                                         {onBack && (
@@ -252,14 +253,14 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                 <ArrowLeft className="h-6 w-6" />
                                             </Button>
                                         )}
-                                        <div>
-                                            <h1 className="text-[40px] font-bold">Sign Up</h1>
-                                            <p className="text-lg text-muted-foreground">
-                                                Create your account to get started
-                                            </p>
-                                        </div>
+                                        <CardTitle style={{ fontSize: '25px' }} className="font-bold">Register Now</CardTitle>
                                     </div>
+                                    <p className="text-lg text-muted-foreground">
+                                        Create your account to get started
+                                    </p>
                                 </div>
+                              </div>
+                            </CardHeader>
 
                                 <div className="flex-1 flex flex-col justify-center">
                                     <CardContent className="flex-1 flex flex-col justify-center">
@@ -451,7 +452,6 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                         )}
                                     </CardContent>
                                 </div>
-                            </div>
                         </Card>
                     </div>
                 </div>
