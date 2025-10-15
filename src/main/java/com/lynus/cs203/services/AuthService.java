@@ -4,6 +4,7 @@ import com.lynus.cs203.config.JwtConfig;
 import com.lynus.cs203.dtos.request.LoginRequest;
 import com.lynus.cs203.dtos.response.JwtResponse;
 import com.lynus.cs203.entities.User;
+import com.lynus.cs203.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,12 +54,21 @@ public class AuthService {
 
     private void authenticateCredentials(LoginRequest request) {
         log.debug("Authenticating user credentials for: {}", request.getEmail());
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            User user = userService.getUserByEmail(request.getEmail());
+            if (user == null) {
+                log.warn("Authentication failed: User not found for email {}", request.getEmail());
+                throw new UserNotFoundException("User not found");
+            }
+            throw e;
+        }
     }
 
     private void validateRefreshToken(String refreshToken) {

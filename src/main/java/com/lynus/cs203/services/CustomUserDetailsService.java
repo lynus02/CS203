@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("Loading user details for email: {}", email);
 
         var user = userRepository.findByEmailWithProfile(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         log.debug("Found user with ID: {} for email: {}", user.getUserId(), email);
 
