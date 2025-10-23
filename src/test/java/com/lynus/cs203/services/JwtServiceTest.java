@@ -8,11 +8,13 @@ import com.lynus.cs203.entities.UserRole;
 import com.lynus.cs203.repositories.UserRoleRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.org.checkerframework.checker.fenum.qual.SwingHorizontalOrientation;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -35,6 +37,7 @@ class JwtServiceTest {
     private JwtService jwtService;
 
     @Test
+    @DisplayName("Should generate access token successfully for valid user")
     void generateAccessToken_WhenValidUser_ShouldReturnToken() {
         // Arrange
         User user = createTestUser();
@@ -59,6 +62,44 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should handle null UserProfile when generating access token")
+    void generateAccessToken_WhenUserHasNullUserProfile_ShouldHandleNullProfile() {
+        // Arrange
+        User user = createTestUser();
+        user.setUserProfile(null); // Set UserProfile to null
+
+        int tokenExpiration = 3600;
+        SecretKey secretKey = createTestSecretKey();
+
+        when(jwtConfig.getAccessTokenExpiration()).thenReturn(tokenExpiration);
+        when(jwtConfig.getSecretKey()).thenReturn(secretKey);
+        when(userRoleRepository.findByUserUserId("userId")).thenReturn(createTestUserRoles());
+
+        // Act
+        String result = jwtService.generateAccessToken(user);
+
+        // Assert
+        assertThat(result).isNotNull().isNotEmpty();
+
+        // Verify the token can be parsed and has null values for firstName/lastName
+        var parsedClaims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(result)
+                .getPayload();
+
+        assertThat(parsedClaims.get("firstName")).isNull();
+        assertThat(parsedClaims.get("lastName")).isNull();
+        assertThat(parsedClaims.getSubject()).isEqualTo("userId");
+        assertThat(parsedClaims.get("email")).isEqualTo("test@example.com");
+
+        verify(jwtConfig).getAccessTokenExpiration();
+        verify(jwtConfig).getSecretKey();
+        verify(userRoleRepository).findByUserUserId("userId");
+    }
+
+    @Test
+    @DisplayName("Should generate refresh token successfully for valid user")
     void generateRefreshToken_WhenValidUser_ShouldReturnToken() {
         // Arrange
         User user = createTestUser();
@@ -83,6 +124,81 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should handle null firstName and lastName when generating access token")
+    void generateAccessToken_WhenUserProfileHasNullNames_ShouldHandleNullNames() {
+        // Arrange
+        User user = createTestUser();
+        user.getUserProfile().setFirstName(null); // Set firstName to null
+        user.getUserProfile().setLastName(null);  // Set lastName to null
+
+        int tokenExpiration = 3600;
+        SecretKey secretKey = createTestSecretKey();
+
+        when(jwtConfig.getAccessTokenExpiration()).thenReturn(tokenExpiration);
+        when(jwtConfig.getSecretKey()).thenReturn(secretKey);
+        when(userRoleRepository.findByUserUserId("userId")).thenReturn(createTestUserRoles());
+
+        // Act
+        String result = jwtService.generateAccessToken(user);
+
+        // Assert
+        assertThat(result).isNotNull().isNotEmpty();
+
+        // Verify the token can be parsed and has null values for firstName/lastName
+        var parsedClaims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(result)
+                .getPayload();
+
+        assertThat(parsedClaims.get("firstName")).isNull();
+        assertThat(parsedClaims.get("lastName")).isNull();
+        assertThat(parsedClaims.getSubject()).isEqualTo("userId");
+        assertThat(parsedClaims.get("email")).isEqualTo("test@example.com");
+
+        verify(jwtConfig).getAccessTokenExpiration();
+        verify(jwtConfig).getSecretKey();
+        verify(userRoleRepository).findByUserUserId("userId");
+    }
+
+    @Test
+    @DisplayName("Should handle null UserProfile when generating refresh token")
+    void generateRefreshToken_WhenUserHasNullUserProfile_ShouldHandleNullProfile() {
+        // Arrange
+        User user = createTestUser();
+        user.setUserProfile(null); // Set profile to null
+
+        int tokenExpiration = 604800;
+        SecretKey secretKey = createTestSecretKey();
+
+        when(jwtConfig.getRefreshTokenExpiration()).thenReturn(tokenExpiration);
+        when(jwtConfig.getSecretKey()).thenReturn(secretKey);
+        when(userRoleRepository.findByUserUserId("userId")).thenReturn(createTestUserRoles());
+
+        // Act
+        String result = jwtService.generateRefreshToken(user);
+
+        // Assert
+        assertThat(result).isNotNull().isNotEmpty();
+
+        // Verify the token can be parsed and has null values for firstName/lastName
+        var parsedClaims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(result)
+                .getPayload();
+
+        assertThat(parsedClaims.get("firstName")).isNull();
+        assertThat(parsedClaims.get("lastName")).isNull();
+        assertThat(parsedClaims.getSubject()).isEqualTo("userId");
+
+        verify(jwtConfig).getRefreshTokenExpiration();
+        verify(jwtConfig).getSecretKey();
+        verify(userRoleRepository).findByUserUserId("userId");
+    }
+
+    @Test
+    @DisplayName("Should validate token successfully when token is valid")
     void validateToken_WhenValidToken_ShouldReturnTrue() {
         // Arrange
         SecretKey secretKey = createTestSecretKey();
@@ -99,6 +215,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should invalidate token when token is expired")
     void validateToken_WhenExpiredToken_ShouldReturnFalse() {
         // Arrange
         SecretKey secretKey = createTestSecretKey();
@@ -115,6 +232,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should invalidate token when token is invalid")
     void validateToken_WhenInvalidToken_ShouldReturnFalse() {
         // Arrange
         String invalidToken = "invalid.token.here";
@@ -131,6 +249,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should extract userId successfully from valid token")
     void extractUserId_WhenValidToken_ShouldReturnUserId() {
         // Arrange
         SecretKey secretKey = createTestSecretKey();
@@ -147,6 +266,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should extract roles successfully from valid token")
     void extractRoles_WhenValidToken_ShouldReturnRoles() {
         // Arrange
         SecretKey secretKey = createTestSecretKey();
@@ -163,6 +283,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("Should extract email successfully from valid token")
     void extractEmail_WhenValidToken_ShouldReturnEmail() {
         // Arrange
         SecretKey secretKey = createTestSecretKey();
@@ -175,6 +296,40 @@ class JwtServiceTest {
 
         // Assert
         assertThat(result).isEqualTo("test@example.com");
+        verify(jwtConfig).getSecretKey();
+    }
+
+    @Test
+    @DisplayName("Should extract firstName successfully from valid token")
+    void extractFirstName_WhenValidToken_ShouldReturnFirstName() {
+        // Arrange
+        SecretKey secretKey = createTestSecretKey();
+        String validToken = generateValidTestToken(secretKey);
+
+        when(jwtConfig.getSecretKey()).thenReturn(secretKey);
+
+        // Act
+        String result = jwtService.extractFirstName(validToken);
+
+        // Assert
+        assertThat(result).isEqualTo("John");
+        verify(jwtConfig).getSecretKey();
+    }
+
+    @Test
+    @DisplayName("Should extract lastName successfully from valid token")
+    void extractLastName_WhenValidToken_ShouldReturnLastName() {
+        //Arrange
+        SecretKey secretKey = createTestSecretKey();
+        String validToken = generateValidTestToken(secretKey);
+
+        when(jwtConfig.getSecretKey()).thenReturn(secretKey);
+
+        // Act
+        String result = jwtService.extractLastName(validToken);
+
+        // Assert
+        assertThat(result).isEqualTo("Doe");
         verify(jwtConfig).getSecretKey();
     }
 

@@ -3,6 +3,7 @@ package com.lynus.cs203.services;
 import com.lynus.cs203.dtos.request.LoginRequest;
 import com.lynus.cs203.dtos.response.JwtResponse;
 import com.lynus.cs203.entities.User;
+import com.lynus.cs203.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,15 +84,41 @@ class AuthServiceTest {
                 .password("wrongPassword")
                 .build();
 
+        User user = new User();
+        user.setUserId("userId");
+        user.setEmail("test@example.com");
+
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
+        when(userService.getUserByEmail(request.getEmail())).thenReturn(user);
 
         // Act & Assert
         assertThatThrownBy(() -> authService.authenticateUser(request, response))
                 .isInstanceOf(BadCredentialsException.class);
 
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userService, never()).getUserByEmail(anyString());
+        verify(userService).getUserByEmail(anyString());
+        verify(jwtService, never()).generateAccessToken(any());
+        verify(jwtService, never()).generateRefreshToken(any());
+        verify(cookieService, never()).setRefreshTokenCookie(any(), anyString());
+    }
+
+    @Test
+    void authenticateUser_WhenUserNotFound_ShouldThrowException() {
+        // Arrange
+        LoginRequest request = LoginRequest.builder()
+                .email("nonexistent@example.com")
+                .password("Password@123")
+                .build();
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
+        when(userService.getUserByEmail(request.getEmail())).thenReturn(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> authService.authenticateUser(request, response))
+                .isInstanceOf(UserNotFoundException.class);
+        verify(userService).getUserByEmail(request.getEmail());
         verify(jwtService, never()).generateAccessToken(any());
         verify(jwtService, never()).generateRefreshToken(any());
         verify(cookieService, never()).setRefreshTokenCookie(any(), anyString());

@@ -67,13 +67,13 @@ public class GlobalExceptionHandler {
         var errors = Map.of("email", "Email already exists");
 
         var errorResponse = ErrorResponse.builder()
-                .status (HttpStatus.BAD_REQUEST.value())
+                .status (HttpStatus.CONFLICT.value())
                 .error("Email Conflict")
                 .message(e.getMessage())
                 .errors(errors)
                 .build();
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)

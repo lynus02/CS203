@@ -51,7 +51,15 @@ public class UserController {
     // Helper method to get authenticated user ID
     private String getCurrentUserId() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (String) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof String) {
+            return (String) principal;
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            return ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else {
+            throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
+        }
     }
 
     @Operation(
