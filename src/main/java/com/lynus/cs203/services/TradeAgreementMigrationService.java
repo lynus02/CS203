@@ -73,7 +73,7 @@ public class TradeAgreementMigrationService {
 
                         // check if this country relationship already exists
                         boolean relationshipExists = agreementCountryRepository
-                                .findByAgreementIdAndCountryName(agreement, country)
+                                .findByAgreementAndCountry(agreement, country)
                                 .isPresent();
 
                         if (!relationshipExists) {

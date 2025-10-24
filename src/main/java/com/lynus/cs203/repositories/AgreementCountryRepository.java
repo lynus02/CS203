@@ -21,5 +21,5 @@ public interface AgreementCountryRepository extends JpaRepository<AgreementCount
     @Query("Select ac.agreement from AgreementCountry ac where ac.country = :countryName")
     List<Long> findAgreementsByCountryName(@Param("countryName") String countryName);
 
-    Optional<AgreementCountry> findByAgreementIdAndCountryName(TradeAgreement agreement, Country country);
+    Optional<AgreementCountry> findByAgreementAndCountry(TradeAgreement agreement, Country country);
 }
