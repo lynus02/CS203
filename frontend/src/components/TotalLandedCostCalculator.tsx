@@ -22,21 +22,31 @@ export function TotalLandedCostCalculator({ customsResults, shippingResults }: T
   const [quantity, setQuantity] = useState("");
   const [result, setResult] = useState<LandedCostResult | null>(null);
 
-  useEffect(() => {
-    // Automatically calculate when both customs and shipping results are available
-    if (customsResults && shippingResults) {
-      calculateLandedCost();
-    }
-  }, [customsResults, shippingResults, quantity]);
+    useEffect(() => {
+        if (customsResults?.dutyAmount !== undefined && shippingResults) {
+            calculateLandedCost()
+        }
+    }, [customsResults?.dutyAmount, shippingResults, quantity])
 
-  const calculateLandedCost = () => {
+
+    const calculateLandedCost = () => {
     if (!customsResults || !shippingResults) {
       return;
     }
 
-    const productValue = customsResults.productValue || 0;
-    const shippingCost = shippingResults.totalShippingCost || 0;
-    const customsDuty = customsResults.dutyAmount || 0;
+    const productValue =
+        customsResults.productValue ??
+        (customsResults.totalCost && customsResults.dutyAmount
+            ? customsResults.totalCost - customsResults.dutyAmount
+            : 0);
+
+      const shippingCost =
+          shippingResults?.totalShippingCost ??
+          shippingResults?.shippingCost ??
+          shippingResults?.cost ??
+          0;
+
+      const customsDuty = customsResults.dutyAmount || 0;
     const qty = parseFloat(quantity) || 1;
 
     // Calculate total landed cost
@@ -80,36 +90,48 @@ export function TotalLandedCostCalculator({ customsResults, shippingResults }: T
           onChange={(e) => setQuantity(e.target.value)}
         />
       </div>
-      
+
       {/* Auto-calculated results */}
       {(customsResults || shippingResults) && (
         <div className="p-4 bg-muted rounded-lg">
           <h3 className="mb-4">Total Landed Cost Breakdown</h3>
-          
+
           <div className="space-y-3">
-            {customsResults && (
-              <>
-                <div className="flex justify-between items-center">
-                  <span>Product Value:</span>
-                  <span>${(customsResults.productValue || 0).toFixed(2)}</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span>Customs Duty:</span>
-                  <span>${(customsResults.dutyAmount || 0).toFixed(2)}</span>
-                </div>
-              </>
+            {customsResults ? (
+                <>
+                    <div className="flex justify-between items-center">
+                        <span>Product Value:</span>
+                        <span>${(
+                            customsResults.productValue ??
+                            (customsResults.totalCost && customsResults.dutyAmount
+                                ? customsResults.totalCost - customsResults.dutyAmount
+                                : 0)
+                        ).toFixed(2)}
+                              </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span>Customs Duty:</span>
+                        <span>${(customsResults.dutyAmount || 0).toFixed(2)}</span>
+                    </div>
+                </>
+            ): (
+                <div className="text-muted-foreground">No customs data available yet</div>
             )}
-            
-            {shippingResults && (
-              <div className="flex justify-between items-center">
-                <span>Shipping Cost:</span>
-                <span>${(shippingResults.totalShippingCost || 0).toFixed(2)}</span>
-              </div>
-            )}
-            
-            <Separator />
-            
+
+              {shippingResults && (
+                  <div className="flex justify-between items-center">
+                      <span>Shipping Cost:</span>
+                      <span>${(
+                          shippingResults.totalShippingCost ??
+                          shippingResults.shippingCost ??
+                          shippingResults.cost ??
+                          0
+                      ).toFixed(2)}</span>
+                  </div>
+              )}
+
+              <Separator />
+
             {result && (
               <>
                 <div className="flex justify-between items-center text-lg">
@@ -118,7 +140,7 @@ export function TotalLandedCostCalculator({ customsResults, shippingResults }: T
                     ${result.totalLandedCost.toFixed(2)}
                   </Badge>
                 </div>
-                
+
                 {parseFloat(quantity) > 1 && (
                   <div className="flex justify-between items-center">
                     <span>Cost Per Unit:</span>
@@ -128,10 +150,10 @@ export function TotalLandedCostCalculator({ customsResults, shippingResults }: T
               </>
             )}
           </div>
-          
+
           <div className="mt-4 p-3 bg-primary/10 rounded-lg">
             <p className="text-sm text-muted-foreground">
-              This total is automatically calculated from your food duty and shipping calculations above. 
+              This total is automatically calculated from your food duty and shipping calculations above.
               Complete both sections for the full landed cost.
             </p>
           </div>

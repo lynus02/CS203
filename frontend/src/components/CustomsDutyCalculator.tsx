@@ -4,7 +4,6 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
@@ -41,7 +40,7 @@ interface TariffResult {
     tradeAgreement?: TradeAgreement;
 }
 
-export function CustomsDutyCalculator() {
+export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (data: any) => void }) {
     const [productValue, setProductValue] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
@@ -52,36 +51,6 @@ export function CustomsDutyCalculator() {
     const [productOpen, setProductOpen] = useState(false);
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-
-    // Food product database with HS codes
-    // const products: Product[] = [
-    //     { id: "1", name: "Fresh Beef Ribeye Steaks", hsCode: "0201.10.50", category: "Meat & Poultry", baseTariffRate: 26.4 },
-    //     { id: "2", name: "Fresh Pork Tenderloin", hsCode: "0203.12.90", category: "Meat & Poultry", baseTariffRate: 1.4 },
-    //     { id: "3", name: "Fresh Chicken Breast", hsCode: "0207.14.10", category: "Meat & Poultry", baseTariffRate: 17.6 },
-    //     { id: "4", name: "Whole Milk Powder", hsCode: "0402.10.05", category: "Dairy Products", baseTariffRate: 13.8 },
-    //     { id: "5", name: "Aged Cheddar Cheese", hsCode: "0406.90.54", category: "Dairy Products", baseTariffRate: 17.5 },
-    //     { id: "6", name: "Fresh Atlantic Salmon", hsCode: "0302.12.00", category: "Seafood", baseTariffRate: 0 },
-    //     { id: "7", name: "Frozen Shrimp", hsCode: "0306.17.00", category: "Seafood", baseTariffRate: 0 },
-    //     { id: "8", name: "Fresh Bananas", hsCode: "0803.90.30", category: "Fruits & Vegetables", baseTariffRate: 0 },
-    //     { id: "9", name: "Fresh Avocados", hsCode: "0804.40.00", category: "Fruits & Vegetables", baseTariffRate: 11.2 },
-    //     { id: "10", name: "Arabica Coffee Beans", hsCode: "0901.21.00", category: "Coffee & Tea", baseTariffRate: 0 },
-    //     { id: "11", name: "Black Tea Leaves", hsCode: "0902.30.00", category: "Coffee & Tea", baseTariffRate: 6.4 },
-    //     { id: "12", name: "Extra Virgin Olive Oil", hsCode: "1509.10.20", category: "Oils & Fats", baseTariffRate: 5 },
-    //     { id: "13", name: "Basmati Rice", hsCode: "1006.30.90", category: "Grains & Legumes", baseTariffRate: 2.1 },
-    //     { id: "14", name: "Organic Quinoa", hsCode: "1008.50.90", category: "Grains & Legumes", baseTariffRate: 0.6 },
-    //     { id: "15", name: "Dark Chocolate (70% Cocoa)", hsCode: "1806.32.70", category: "Confectionery", baseTariffRate: 5.1 },
-    //     { id: "16", name: "Raw Cane Sugar", hsCode: "1701.14.20", category: "Sugar & Sweeteners", baseTariffRate: 1.4 },
-    //     { id: "17", name: "Orange Juice Concentrate", hsCode: "2009.11.00", category: "Beverages", baseTariffRate: 7.9 },
-    //     { id: "18", name: "Premium Red Wine", hsCode: "2204.21.30", category: "Beverages", baseTariffRate: 6.3 },
-    //     { id: "19", name: "Canned Tuna in Oil", hsCode: "1604.14.30", category: "Preserved Foods", baseTariffRate: 12.5 },
-    //     { id: "20", name: "Dried Dates", hsCode: "0804.10.80", category: "Dried Fruits & Nuts", baseTariffRate: 2.9 }
-    // ];
-
-    // const countries = [
-    //   "United States", "Canada", "Mexico", "China", "Japan", "South Korea",
-    //   "Germany", "France", "United Kingdom", "Italy", "Spain", "Australia",
-    //   "Singapore", "Thailand", "Vietnam", "India", "Brazil", "Chile"
-    // ];
 
     const countries = [
         'Albania',
@@ -198,57 +167,6 @@ export function CustomsDutyCalculator() {
         }
     }, [productSearch, destinationCountry]);
 
-
-
-    // useEffect(() => {
-    //     if (productOpen) {
-    //         setLoadingSuggestions(true);
-    //         const url = destinationCountry
-    //             ? `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}?country=${encodeURIComponent(destinationCountry)}`
-    //             : `/api/tariff-rates/size=${MAX_SUGGESTION_SIZE}`;
-    //         fetch(url)
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 // Map TariffRate to Product shape
-    //                 setSuggestedProducts(data
-    //                     .map((rate: any) => ({
-    //                         id: rate.trade_id.toString(),
-    //                         name: rate.hsDescription,
-    //                         hsCode: rate.productCode6,
-    //                         category: rate.food_category,
-    //                         baseTariffRate: rate.value,
-    //                         reporterName: rate.reporterName
-    //                     })));
-    //             })
-    //             .finally(() => setLoadingSuggestions(false));
-    //     }
-    // }, [productOpen, destinationCountry]);
-
-    // useEffect(() => {
-    //     if (productSearch.length > 0) {
-    //         setLoadingSuggestions(true);
-    //         fetch(`/api/tariff-rates/suggest?q=${encodeURIComponent(productSearch)}&country=${encodeURIComponent(destinationCountry)}&size=20`)
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 setSuggestedProducts(data.content
-    //                     .map((rate: any) => ({
-    //                         id: rate.trade_id.toString(),
-    //                         name: rate.hsDescription,
-    //                         hsCode: rate.productCode6,
-    //                         category: rate.food_category,
-    //                         baseTariffRate: rate.value,
-    //                         reporterName: rate.reporterName
-    //                     })));
-    //             })
-    //             .finally(() => setLoadingSuggestions(false));
-    //     }
-    // }, [productSearch, destinationCountry]);
-
-    // const filteredProducts = products.filter(product =>
-    //     product.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-    //     product.hsCode.includes(productSearch)
-    // );
-
     const findApplicableTradeAgreement = (origin: string, destination: string): TradeAgreement | undefined => {
         return tradeAgreements.find(agreement =>
             (agreement.countries.includes(origin) && agreement.countries.includes(destination)) ||
@@ -280,9 +198,9 @@ export function CustomsDutyCalculator() {
 
         const dutyAmount = (value * finalTariffRate) / 100;
         const totalCost = value + dutyAmount;
-
-        setResult({
+        const result = {
             product: selectedProduct,
+            productValue: value,
             originCountry,
             destinationCountry,
             importDate,
@@ -292,7 +210,11 @@ export function CustomsDutyCalculator() {
             dutyAmount,
             totalCost,
             tradeAgreement
-        });
+        }
+
+        //console.log("Sending customs result to parent:", result);
+        setResult(result);
+        onResultsChange?.(result);
     };
 
     const clearCalculation = () => {
