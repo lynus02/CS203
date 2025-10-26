@@ -5,6 +5,7 @@ import com.lynus.cs203.dtos.response.AdminCreationResponse;
 import com.lynus.cs203.dtos.response.SetupStatusResponse;
 import com.lynus.cs203.entities.*;
 import com.lynus.cs203.exceptions.AdminAlreadyExistsException;
+import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.repositories.UserRepository;
 import com.lynus.cs203.repositories.UserRoleRepository;
 import com.lynus.cs203.services.SetupService;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -247,5 +249,26 @@ public class SetUpServiceIntegrationTest {
         Optional<UserRole> adminRole = userRoleRepository.findById(expectedId);
         assertThat(adminRole).isPresent();
         assertThat(adminRole.get().getId().getRoleId()).isEqualTo(expectedId.getRoleId());
+    }
+
+    @Test
+    @DisplayName("Should throw RuntimeException when user creation fails")
+    void whenUserCreationFails_thenThrowRuntimeException() {
+        // Given
+        long userCount = userRepository.count();
+        userRoleRepository.delete(testAdminUserRole);
+
+        CreateUserRequest createUserRequest = CreateUserRequest.builder()
+                .email("admin@example.com")     // Duplicate email to cause failure
+                .password("Password@123")
+                .firstName("Admin")
+                .lastName("User")
+                .build();
+
+        assertThatThrownBy(() -> setupService.createFirstAdmin(createUserRequest))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Failed to create admin user");
+
+        assertThat(userRepository.count()).isEqualTo(userCount);
     }
 }

@@ -3,10 +3,12 @@ package com.lynus.cs203.controllers;
 import com.lynus.cs203.dtos.response.ErrorResponse;
 import com.lynus.cs203.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.json.JsonParseException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -125,6 +127,21 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, JsonParseException.class})
+    public ResponseEntity<ErrorResponse> handleJsonParseException(
+            Exception e
+    ) {
+        log.warn("Invalid JSON format: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Malformed JSON")
+                .message("Invalid JSON format")
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
