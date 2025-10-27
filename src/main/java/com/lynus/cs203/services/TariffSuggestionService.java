@@ -24,18 +24,18 @@ public class TariffSuggestionService {
         boolean isNumeric = q.matches("\\d+");
         if (country != null && !country.isEmpty()) {
             if (isNumeric) {
-                return suggestByCountryAndCode(country, Integer.valueOf(q), page, size);
+                return suggestByCountryAndCodeContaining(country, Integer.valueOf(q), page, size);
             } else {
                 return suggestByCountryAndDescription(country, q, page, size);
             }
         } else {
-            return suggestByDescriptionOrCode(q, isNumeric ? Integer.valueOf(q) : -1, page, size);
+            return suggestByDescriptionOrCodeContaining(q, isNumeric ? Integer.valueOf(q) : -1, page, size);
         }
     }
 
-    private Page<TariffDto> suggestByCountryAndCode(String country, Integer code, int page, int size) {
+    private Page<TariffDto> suggestByCountryAndCodeContaining(String country, int code, int page, int size) {
         return tariffRepository
-                .findByCountry_CountryNameAndProduct_ProductCode(country, code, PageRequest.of(page, size))
+                .findByCountryAndProductCodeContaining(country, code, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 
@@ -45,9 +45,9 @@ public class TariffSuggestionService {
                 .map(TariffDto::fromEntity);
     }
 
-    private Page<TariffDto> suggestByDescriptionOrCode(String desc, Integer code, int page, int size) {
+    private Page<TariffDto> suggestByDescriptionOrCodeContaining(String desc, int code, int page, int size) {
         return tariffRepository
-                .findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(desc, code, PageRequest.of(page, size))
+                .findByProductDescriptionOrProductCodeContaining(desc.toLowerCase(), code, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 

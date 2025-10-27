@@ -54,8 +54,8 @@ public class User {
     @JoinColumn(name = "user_id")
     private UserProfile userProfile;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "user_id")
     private Set<UserRole> userRoles = new LinkedHashSet<>();
 
 }
