@@ -34,6 +34,8 @@ public class TradeAgreementMigrationService {
             return;
         }
 
+        System.out.println("Starting trade agreement migration from CSV...");
+
         try {
             ClassPathResource resource = new ClassPathResource("data/trade_agreement.csv");
 
@@ -68,8 +70,18 @@ public class TradeAgreementMigrationService {
                         String trimmedCountryName = countryName.trim();
 
                         // Fetch the country entity
-                        Country country = countryRepository.findByCountryName(trimmedCountryName)
-                                .orElseThrow(() -> new RuntimeException("Country not found: " + trimmedCountryName));
+                        Optional<Country> countryOpt = countryRepository.findByCountryName(trimmedCountryName);
+
+                        if (countryOpt.isEmpty()) {
+                            // Try to find by country code as a fallback
+                            countryOpt = countryRepository.findByCountryCode(trimmedCountryName);
+                        }
+
+                        if (countryOpt.isEmpty()) {
+                            System.err.println("Country not found by name or code: " + trimmedCountryName);
+                            continue;
+                        }
+                        Country country = countryOpt.get();
 
                         // check if this country relationship already exists
                         boolean relationshipExists = agreementCountryRepository
@@ -90,14 +102,14 @@ public class TradeAgreementMigrationService {
                 System.out.println("Trade agreement migration from CSV completed.");
             }
         }catch (IOException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error reading trade agreement CSV file: " + e.getMessage());
+            throw new RuntimeException("Failed to read trade_agreement.csv", e);
         } catch (NumberFormatException e) {
-            System.err.println("Error parsing number from CSV: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error parsing number from trade agreement CSV: " + e.getMessage());
+            throw new RuntimeException("Invalid number format in trade_agreement.csv", e);
         } catch (Exception e) {
-            System.err.println("Unexpected error during data migration: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Unexpected error during trade agreement migration: " + e.getMessage());
+            throw new RuntimeException("Trade agreement migration failed", e);
         }
 
         // Mark migration as complete

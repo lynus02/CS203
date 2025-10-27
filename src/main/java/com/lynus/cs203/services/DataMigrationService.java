@@ -94,14 +94,14 @@ public class DataMigrationService {
             System.out.println("Data migration from CSV completed.");
 
         } catch (IOException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error reading tariff CSV file: " + e.getMessage());
+            throw new RuntimeException("Failed to read tariff_data.csv", e);
         } catch (NumberFormatException e) {
-            System.err.println("Error parsing number from CSV: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error parsing number from tariff CSV: " + e.getMessage());
+            throw new RuntimeException("Invalid number format in tariff_data.csv", e);
         } catch (Exception e) {
-            System.err.println("Unexpected error during data migration: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Unexpected error during tariff data migration: " + e.getMessage());
+            throw new RuntimeException("Tariff data migration failed", e);
         }
 
         // Mark migration as complete
