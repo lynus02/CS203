@@ -135,8 +135,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                 </div>
 
                 {/* Centered Login Box */}
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 h-[500px] w-[400px]">
+                <div className="flex flex-1 items-center justify-center py-8">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
                         <Card className="h-full">
                             <CardHeader>
                                 <div className="flex items-center gap-3 mb-4">
@@ -150,7 +150,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                             <ArrowLeft className="h-6 w-6" />
                                         </Button>
                                     )}
-                                    <CardTitle className="text-[40px] font-bold">Login</CardTitle>
+                                    <CardTitle style={{ fontSize: '25px' }} className="font-bold">Login</CardTitle>
                                 </div>
                                 <p className="text-lg text-muted-foreground">
                                     Enter your credentials to access your account

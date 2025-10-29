@@ -97,6 +97,7 @@
     --default-mono-font-family: var(--font-mono);
     --default-mono-font-feature-settings: var(--font-mono--font-feature-settings);
     --default-mono-font-variation-settings: var(--font-mono--font-variation-settings);
+    --primary: var(--color-blue-600); /* Button primary color */
   }
 }
 
@@ -2291,7 +2292,7 @@
   --card-foreground: oklch(.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(.145 0 0);
-  --primary: #030213;
+  --primary: #1E3A8A;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(.95 .0058 264.53);
   --secondary-foreground: #030213;
@@ -2326,7 +2327,7 @@
 
 .dark {
   --background: oklch(.145 0 0);
-  --foreground: oklch(.985 0 0);
+  --foreground: oklch(0.26 0.051 21.172);
   --card: oklch(.145 0 0);
   --card-foreground: oklch(.985 0 0);
   --popover: oklch(.145 0 0);
@@ -2343,7 +2344,7 @@
   --destructive-foreground: oklch(.637 .237 25.331);
   --border: oklch(.269 0 0);
   --input: oklch(.269 0 0);
-  --ring: oklch(.439 0 0);
+  --ring: oklch(0.622 0.136 21.804);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --chart-1: oklch(.488 .243 264.376);
