@@ -57,8 +57,8 @@ public class TariffController {
     public ResponseEntity<TariffCalculationResponse> calculate(
             @Valid @RequestBody TariffCalculationRequest request
     ) {
-        log.info("Received tariff calculation request - Product: {}, Country: {}, Value: {}",
-                request.getProductCode(), request.getCountryCode(), request.getCustomsValue());
+        log.info("Received tariff calculation request - Product: {}, exportCountry{}, desCountry: {}, Value: {}",
+                request.getProductCode(), request.getExportCountryCode(), request.getDesCountryCode(), request.getCustomsValue());
 
         TariffCalculationResponse response = tariffCalculationService.calculateTariff(request);
 

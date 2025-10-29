@@ -51,7 +51,8 @@ class TariffCalculationServiceTest {
 
         TariffCalculationRequest req = TariffCalculationRequest.builder()
                 .productCode(123)
-                .countryCode("US")
+                .exportCountryCode("US")
+                .desCountryCode("CN")
                 .customsValue(200.0)
                 .build();
 
@@ -64,7 +65,8 @@ class TariffCalculationServiceTest {
 
         // Assert
         assertEquals(123, resp.getProductCode());
-        assertEquals("US", resp.getCountryCode());
+        assertEquals("US", resp.getExportCountryCode());
+        assertEquals("CN", resp.getDesCountryCode());
         assertEquals(200.0, resp.getCustomsValue());
         assertEquals(20.0, resp.getTariffAmount(), 1e-6);
 
@@ -81,7 +83,8 @@ class TariffCalculationServiceTest {
 
         TariffCalculationRequest req = TariffCalculationRequest.builder()
                 .productCode(999)
-                .countryCode("US")
+                .exportCountryCode("US")
+                .desCountryCode("CN")
                 .customsValue(100.0)
                 .build();
 
@@ -105,7 +108,8 @@ class TariffCalculationServiceTest {
 
         TariffCalculationRequest req = TariffCalculationRequest.builder()
                 .productCode(1)
-                .countryCode("XX")
+                .exportCountryCode("XX")
+                .desCountryCode("XX")
                 .customsValue(50.0)
                 .build();
 
@@ -135,7 +139,8 @@ class TariffCalculationServiceTest {
 
         TariffCalculationRequest req = TariffCalculationRequest.builder()
                 .productCode(2)
-                .countryCode("FR")
+                .exportCountryCode("CN")
+                .desCountryCode("FR")
                 .customsValue(1000.0)
                 .build();
 
@@ -145,6 +150,7 @@ class TariffCalculationServiceTest {
         // Assert
         assertTrue(ex.getMessage().contains("No tariff found"));
         verify(productRepository).findByProductCode(2);
+        verify(countryRepository).findByCountryCode("CN");
         verify(countryRepository).findByCountryCode("FR");
         verify(tariffRepository).findByProductAndCountry(p, c);
     }

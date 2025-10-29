@@ -38,13 +38,15 @@ class TariffControllerTest {
         // Arrange
         TariffCalculationRequest req = TariffCalculationRequest.builder()
                 .productCode(1)
-                .countryCode("US")
+                .exportCountryCode("US")
+                .desCountryCode("CN")
                 .customsValue(100.0)
                 .build();
 
         TariffCalculationResponse expected = TariffCalculationResponse.builder()
                 .productCode(1)
-                .countryCode("US")
+                .exportCountryCode("US")
+                .desCountryCode("CN")
                 .customsValue(100.0)
                 .tariffAmount(5.0)
                 .build();

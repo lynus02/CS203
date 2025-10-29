@@ -22,4 +22,14 @@ public interface AgreementCountryRepository extends JpaRepository<AgreementCount
     List<Long> findAgreementsByCountryName(@Param("countryName") String countryName);
 
     Optional<AgreementCountry> findByAgreementAndCountry(TradeAgreement agreement, Country country);
+
+    @Query("""
+    SELECT ac.agreement.agreementId
+    FROM AgreementCountry ac
+    WHERE ac.country.countryName IN (:countryA, :countryB)
+    GROUP BY ac.agreement.agreementId
+    HAVING COUNT(DISTINCT ac.country.countryName) = 2
+""")
+    List<Long> findAgreementsBetweenCountries(@Param("countryA") String countryA, @Param("countryB") String countryB);
+
 }

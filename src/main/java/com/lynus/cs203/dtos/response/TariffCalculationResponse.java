@@ -15,10 +15,15 @@ public class TariffCalculationResponse {
     private Integer productCode;
 
     @Schema(
-            description = "ISO country code (2-letter format)",
+            description = "Export country ISO code (2-letter format)",
+            example = "CN"
+    )
+    private String exportCountryCode;
+    @Schema(
+            description = "Import country code (2-letter format)",
             example = "US"
     )
-    private String countryCode;
+    private String desCountryCode;
 
     @Schema(
             description = "Customs value for tariff calculation",
@@ -31,4 +36,10 @@ public class TariffCalculationResponse {
             example = "150.075"
     )
     private double tariffAmount;
+
+    @Schema(
+            description = "Type of trade agreement applied",
+            example = "FTA"
+    )
+    private String agreementType;
 }

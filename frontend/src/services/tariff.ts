@@ -18,8 +18,8 @@ export const getTariffRatesBySize = async (size: number, country?: string) => {
 };
 
 // Calculate tariff for a product
-export const calculateTariff = async (productCode: string, countryCode: string, customsValue: number) => {
-    const payload = { productCode, countryCode, customsValue };
+export const calculateTariff = async (productCode: string, exportCountryCode: string, desCountryCode: string, customsValue: number) => {
+    const payload = { productCode, exportCountryCode, desCountryCode, customsValue };
     const response = await api.post('/tariffs/calculate', payload);
     return response.data;
 };
