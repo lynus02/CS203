@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { Badge } from "./components/ui/badge";
@@ -9,7 +9,10 @@ import { TotalLandedCostCalculator } from "./components/TotalLandedCostCalculato
 import { TariffRateDatabase } from "./components/TariffRateDatabase";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
+import { useSavedProducts } from "./components/context/SavedProductsContext";
 import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./components/ui/dialog";
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("customs");
@@ -23,7 +26,17 @@ export default function App() {
   const [showSignup, setShowSignup] = useState<boolean>(false);
   const [user, setUser] = useState(null);
 
-  // Login handlers
+  // Saved Products Context
+  const { savedProducts, fetchSavedProducts, removeSavedProduct, isLoading } = useSavedProducts();
+
+  // Fetch saved products when user logs in
+  useEffect(() => {
+    if (user?.id) {
+        fetchSavedProducts(user.id);
+    }
+  }, [user]);
+
+    // Login handlers
   const handleLogin = (userData) => {
     setUser(userData); //stores the logged-in user's data in state
     setShowLogin(false); //hides the login page after successful login
@@ -51,6 +64,9 @@ export default function App() {
         setUser(userData);
         setShowSignup(false);
     };
+
+
+
 
   const features = [
     {
@@ -93,35 +109,110 @@ export default function App() {
     return <LoginPage onLogin={handleLogin} onBack={handleBackFromLogin} onSignUp={handleSignUp} />;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Bar */}
-      <div className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo and Brand */}
-            <div className="flex items-center gap-2">
-              <Globe className="h-6 w-6 text-primary" />
-              <span className="text-xl font-medium">FoodTariff Pro</span>
-            </div>
-            
-            {/* Login/User Button */}
-            {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
-                <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <Button variant="outline" onClick={handleShowLogin} className="bg-primary text-white flex items-center gap-2">
-                <LogIn className="h-4 w-4" />
+    return (
+        <div className="min-h-screen bg-background flex flex-col w-full">
+            {/* Top Navigation Bar */}
+            <div className="border-b border-border ">
+                <div className="border-b border-gray-250 px-6 py-6 bg-primary">
+                    <div className="flex items-center justify-between gap-4">
+                        {/* Header with logo */}
+                        <div className="w-full px-8 py-8 flex items-center">
+                            <a href="/" className="flex items-center gap-2 hover:opacity-80">
+                                <Globe className="h-6 w-6 text-white" />
+                                <span className="text-xl font-medium text-white">FoodTariff Pro</span>
+                            </a>
+                        </div>
+
+                        {/* Saved Products Button */}
+                        {user ? (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button className="flex items-center gap-2">
+                                        My Saved Products
+                                    </Button>
+                                </DialogTrigger>
+                              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                 <DialogHeader>
+                                    <DialogTitle>My Saved Products</DialogTitle>
+                                      <DialogDescription>
+                                        View and manage your saved products
+                                      </DialogDescription>
+                                 </DialogHeader>
+                                 <div className="grid gap-4 py-4">
+                                    {isLoading ? (
+                                        <p className="text-center text-muted-foreground py-8">
+                                           Loading...
+                                        </p>
+                                    ) : savedProducts && savedProducts.length > 0 ? (
+                                        savedProducts.map((product) => (
+                                          <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                                              {product.image && (
+                                                 <img
+                                                     src={product.image}
+                                                     alt={product.name}
+                                                     className="w-20 h-20 object-cover rounded"
+                                                 />
+                                                )}
+                                                <div className="flex-1">
+                                                   <h3 className="font-semibold">{product.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">HS Code: {product.hsCode}</p>
+                                                    <p className="text-sm text-muted-foreground">Category: {product.category}</p>
+                                                </div>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => removeSavedProduct(product.id)}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-center text-muted-foreground py-8">
+                                                No saved products yet
+                                            </p>
+                                        )}
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        ) : (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button className="flex items-center gap-2">
+                                        My Saved Products
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md min-h-[300px] flex flex-col">
+                                    <DialogHeader>
+                                        <DialogTitle className="text-2xl">Login Required</DialogTitle>
+                                        <DialogDescription className="text-lg">
+            <span onClick={handleShowLogin} className="text-primary hover:underline font-medium cursor-pointer text-lg">
                 Login
-              </Button>
-            )}
+            </span>{" "}
+                to view your saved products
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+            </Dialog>
+           )}
+
+              {/* Login/User Button */}
+              {user ? (
+                  <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
+                      <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Logout
+                      </Button>
+                  </div>
+              ) : (
+                  <Button variant="outline" onClick={handleShowLogin} className="!bg-white !text-black flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Login
+                  </Button>
+              )}
+
           </div>
-        </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
@@ -251,5 +342,7 @@ export default function App() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
+
