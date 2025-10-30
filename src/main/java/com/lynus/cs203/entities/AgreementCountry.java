@@ -23,7 +23,7 @@ public class AgreementCountry {
     private TradeAgreement agreement;
 
     @ManyToOne
-    @JoinColumn(name = "country_name", referencedColumnName = "country_id")
+    @JoinColumn(name = "country_name", referencedColumnName = "country_name")
     private Country country;
 
 }

@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface TradeAgreementRepository extends JpaRepository<TradeAgreement, Long>{
     Optional<TradeAgreement> findByAgreementName(String agreementName);
-
+    Optional<TradeAgreement> findByAgreementId(Long agreementId);
 }
