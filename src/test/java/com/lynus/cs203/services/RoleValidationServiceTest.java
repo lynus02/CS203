@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("RoleValidationService Unit Test")
 public class RoleValidationServiceTest {
 
     @InjectMocks

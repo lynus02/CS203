@@ -5,6 +5,7 @@ import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.entities.Product;
 import com.lynus.cs203.entities.Tariff;
 import com.lynus.cs203.repositories.TariffRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -22,247 +24,246 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Tariff Suggestion Service Test")
 class TariffSuggestionServiceTest {
-
-    @InjectMocks
-    private TariffSuggestionService tariffSuggestionService;
 
     @Mock
     private TariffRepository tariffRepository;
 
+    @InjectMocks
+    private TariffSuggestionService tariffSuggestionService;
+
+    private Tariff testTariff1;
+    private Tariff testTariff2;
+    private Country testCountry;
+    private Product testProduct;
+
+    @BeforeEach
+    void setUp() {
+        testCountry = new Country();
+        testCountry.setCountryCode("US");
+        testCountry.setCountryName("United States");
+
+        testProduct = new Product();
+        testProduct.setProductCode(1001);
+        testProduct.setProductDescription("Test Product Description");
+
+        testTariff1 = new Tariff();
+        testTariff1.setCountry(testCountry);
+        testTariff1.setProduct(testProduct);
+        testTariff1.setTariffRate(5.0);
+
+        testTariff2 = new Tariff();
+        testTariff2.setCountry(testCountry);
+        testTariff2.setProduct(testProduct);
+        testTariff2.setTariffRate(10.0);
+    }
+
     @Test
-    @DisplayName("getTariffRatesBySize: should return DTO list and call repository")
-    void getTariffRatesBySize_ShouldReturnListOfDtos() {
+    @DisplayName("Should get tariff rates by size and country")
+    void getTariffRatesBySize_WithValidCountry_ShouldReturnTariff() {
         // Arrange
+        List<Tariff> tariffList = List.of(testTariff1, testTariff2);
+        Page<Tariff> tariffPage = new PageImpl<>(tariffList,
+                PageRequest.of(0, 10),
+                tariffList.size());
+
+        when(tariffRepository.findByCountry_CountryName(eq("United States"), any(Pageable.class)))
+                .thenReturn(tariffPage);
+
+        List<TariffDto> result = tariffSuggestionService.getTariffRatesBySize(10, "United States");
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0)).isNotNull();
+        assertThat(result.get(1)).isNotNull();
+
+        // Verify
+        verify(tariffRepository)
+                .findByCountry_CountryName(eq("United States"), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Should suggest products with numeric query and country")
+    void suggestProducts_WithNumericQueryAndCountry_ShouldReturnTariffDtos() {
+        // Arrange
+        String query = "honey";
         String country = "United States";
-        int size = 2;
+        int page = 0;
+        int size = 10;
 
-        Product p1 = new Product();
-        p1.setProductCode(1001);
-        Product p2 = new Product();
-        p2.setProductCode(2002);
+        Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
+        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
+                eq(country), eq(query), any(Pageable.class)))
+                .thenReturn(tariffPage);
 
-        Country c = new Country();
-        c.setCountryName(country);
+        // Act
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, country, page, size);
 
-        Tariff t1 = new Tariff();
-        t1.setProduct(p1);
-        t1.setCountry(c);
-        t1.setTariffRate(5.0);
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
 
-        Tariff t2 = new Tariff();
-        t2.setProduct(p2);
-        t2.setCountry(c);
-        t2.setTariffRate(10.0);
+        // Verify
+        verify(tariffRepository)
+                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
+                        eq(country), eq(query), any(Pageable.class));
+        verifyNoMoreInteractions(tariffRepository);
+    }
 
-        Page<Tariff> page = new PageImpl<>(List.of(t1, t2));
-        when(tariffRepository.findByCountry_CountryName(eq(country), any(Pageable.class))).thenReturn(page);
+    @Test
+    @DisplayName("Should suggest products with text query and country")
+    void suggestProducts_WithTextQueryAndCountry_ShouldReturnTariffDtos() {
+        // Arrange
+        String query = "honey";
+        int page = 0;
+        int size = 10;
+
+        Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
+        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
+                eq(query.toLowerCase()), eq(-1), any(Pageable.class)))
+                .thenReturn(tariffPage);
+
+        // Act
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, null, page, size);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+
+        // Verify
+        verify(tariffRepository)
+                .findByProductDescriptionOrProductCodeContaining(
+                        eq(query.toLowerCase()), eq(-1), any(Pageable.class));
+        verifyNoMoreInteractions(tariffRepository);
+    }
+
+    @Test
+    @DisplayName("Should suggest product with text query and no country")
+    void suggestProducts_WithTextQueryAndNoCountry_ShouldReturnTariffDtos() {
+        // Arrange
+        String query = "1001";
+        int page = 0;
+        int size = 10;
+
+        Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
+        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
+                eq(query.toLowerCase()), eq(1001), any(Pageable.class)))
+                .thenReturn(tariffPage);
+
+        // Act
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, null, page, size);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+
+        // Verify
+        verify(tariffRepository)
+                .findByProductDescriptionOrProductCodeContaining(
+                        eq(query.toLowerCase()), eq(1001), any(Pageable.class));
+        verifyNoMoreInteractions(tariffRepository);
+    }
+
+    @Test
+    @DisplayName("Should handle empty country as null country")
+    void suggestProducts_WithEmptyCountry_ShouldHandleAsNull() {
+        String query = "test";
+        String country = "";
+        int page = 0;
+        int size = 10;
+
+        Page<Tariff> tariffPage = new PageImpl<>(List.of());
+        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
+                eq(query.toLowerCase()), eq(-1), any(Pageable.class)))
+                .thenReturn(tariffPage);
+
+        // Act
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, country, page, size);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isEmpty();
+
+        // Verify
+        verify(tariffRepository)
+                .findByProductDescriptionOrProductCodeContaining(
+                        eq(query.toLowerCase()), eq(-1), any(Pageable.class));
+        verifyNoMoreInteractions(tariffRepository);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no tariffs found for country")
+    void getTariffRatesBySize_NoTariffsFound_ShouldReturnEmptyList() {
+        // Arrange
+        String country = "nonexistent country";
+        int size = 10;
+        Page<Tariff> tariffPage = new PageImpl<>(List.of());
+
+        when(tariffRepository.findByCountry_CountryName(eq(country), any(Pageable.class)))
+                .thenReturn(tariffPage);
 
         // Act
         List<TariffDto> result = tariffSuggestionService.getTariffRatesBySize(size, country);
 
         // Assert
-        assertThat(result).hasSize(2);
-        verify(tariffRepository).findByCountry_CountryName(eq(country), any(Pageable.class));
+        assertThat(result).isEmpty();
+
+        // Verify
+        verify(tariffRepository)
+                .findByCountry_CountryName(eq(country), any(Pageable.class));
     }
 
     @Test
-    @DisplayName("suggestProducts: numeric query with country should call findByCountryAndProductCodeContaining")
-    void suggestProducts_NumericQueryWithCountry_ShouldCallFindByCountryAndProductCodeContaining() {
+    @DisplayName("Should handle large numeric code")
+    void suggestProducts_WithLargeNumericCode_ShouldHandleCorrectly() {
         // Arrange
-        String q = "12345";
+        String query = "123456789";
         String country = "United States";
         int page = 0;
         int size = 10;
 
-        Product p = new Product();
-        p.setProductCode(12345);
-
-        Country c = new Country();
-        c.setCountryName(country);
-
-        Tariff t = new Tariff();
-        t.setProduct(p);
-        t.setCountry(c);
-        t.setTariffRate(2.5);
-
-        Page<Tariff> pageResp = new PageImpl<>(List.of(t));
-        when(tariffRepository.findByCountryAndProductCodeContaining(eq(country), eq(12345), any(Pageable.class)))
-                .thenReturn(pageResp);
+        Page<Tariff> tariffPage = new PageImpl<>(List.of());
+        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductCode(
+                eq(country), eq(123456789), any(Pageable.class)))
+                .thenReturn(tariffPage);
 
         // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(q, country, page, size);
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, country, page, size);
 
         // Assert
-        assertThat(result.getContent()).hasSize(1);
-        verify(tariffRepository).findByCountryAndProductCodeContaining(eq(country), eq(12345), any(Pageable.class));
+        assertThat(result).isNotNull();
+
+        // Verify
+        verify(tariffRepository)
+                .findByCountry_CountryNameAndProduct_ProductCode(
+                        eq(country), eq(123456789), any(Pageable.class));
+        verifyNoMoreInteractions(tariffRepository);
     }
 
     @Test
-    @DisplayName("suggestProducts: non-numeric query with country should call description search")
-    void suggestProducts_NonNumericQueryWithCountry_ShouldCallFindByCountryAndDescription() {
+    @DisplayName("Should handle pagination correctly")
+    void suggestProducts_WithPagination_ShouldReturnCorrectPage() {
         // Arrange
-        String q = "motor";
-        String country = "United States";
-        int page = 0;
-        int size = 5;
+        String query = "test";
+        String country = "Canada";
+        int page = 2;
+        int size = 15;
 
-        Product p = new Product();
-        p.setProductCode(5005);
-        p.setProductDescription("Electric Motor");
-
-        Country c = new Country();
-        c.setCountryName(country);
-
-        Tariff t = new Tariff();
-        t.setProduct(p);
-        t.setCountry(c);
-        t.setTariffRate(3.0);
-
-        Page<Tariff> pageResp = new PageImpl<>(List.of(t));
-        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq(country), eq(q), any(Pageable.class)))
-                .thenReturn(pageResp);
-
-        // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(q, country, page, size);
-
-        // Assert
-        assertThat(result.getContent()).hasSize(1);
-        verify(tariffRepository).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq(country), eq(q), any(Pageable.class));
-    }
-
-    @Test
-    @DisplayName("suggestProducts: no country should call description-or-code search")
-    void suggestProducts_NoCountry_ShouldCallFindByProductDescriptionOrProductCodeContaining() {
-        // Arrange
-        String q = "motor";
-        String country = null;
-        int page = 0;
-        int size = 10;
-
-        Product p = new Product();
-        p.setProductCode(7007);
-        p.setProductDescription("Motor Oil");
-
-        Country c = new Country();
-        c.setCountryName("AnyCountry");
-
-        Tariff t = new Tariff();
-        t.setProduct(p);
-        t.setCountry(c);
-        t.setTariffRate(7.5);
-
-        Page<Tariff> pageResp = new PageImpl<>(List.of(t));
-        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(eq(q.toLowerCase()), eq(-1), any(Pageable.class)))
-                .thenReturn(pageResp);
-
-        // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(q, country, page, size);
-
-        // Assert
-        assertThat(result.getContent()).hasSize(1);
-        verify(tariffRepository).findByProductDescriptionOrProductCodeContaining(eq(q.toLowerCase()), eq(-1), any(Pageable.class));
-    }
-
-    @Test
-    void suggestProducts_whenCountryProvided_callsCountryDescriptionQuery() {
-        // Arrange
-        String q = "motor";
-        String country = "United States";
-        int page = 0;
-        int size = 10;
-        Page emptyPage = new PageImpl<>(List.of());
-
+        Page<Tariff> tariffPage = new PageImpl<>(List.of());
         when(tariffRepository.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
-                eq(country), eq(q), any(Pageable.class)))
-                .thenReturn(emptyPage);
+                eq(country), eq(query), any(Pageable.class)))
+                .thenReturn(tariffPage);
 
         // Act
-        Page<?> result = tariffSuggestionService.suggestProducts(q, country, page, size);
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, country, page, size);
 
         // Assert
         assertThat(result).isNotNull();
-        verify(tariffRepository).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
-                eq(country), eq(q), any(Pageable.class));
-        verifyNoMoreInteractions(tariffRepository);
+
+        // Verify
+        verify(tariffRepository)
+                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
+                        eq(country), eq(query), any(Pageable.class));
     }
-
-    @Test
-    void suggestProducts_whenNoCountry_nonNumericQuery_callsDescriptionOrCodeContainingWithMinusOne() {
-        // Arrange
-        String q = "honey";
-        int page = 0;
-        int size = 20;
-        Page emptyPage = new PageImpl<>(List.of());
-
-        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq(q.toLowerCase()), eq(-1), any(Pageable.class)))
-                .thenReturn(emptyPage);
-
-        // Act
-        Page<?> result = tariffSuggestionService.suggestProducts(q, null, page, size);
-
-        // Assert
-        assertThat(result).isNotNull();
-        verify(tariffRepository).findByProductDescriptionOrProductCodeContaining(
-                eq(q.toLowerCase()), eq(-1), any(Pageable.class));
-        verifyNoMoreInteractions(tariffRepository);
-    }
-
-    @Test
-    @DisplayName("suggestProducts: no country and numeric query should call description-or-code with numeric code")
-    void suggestProducts_NoCountry_NumericQuery_ShouldCallFindByProductDescriptionOrProductCodeContainingWithNumeric() {
-        // Arrange
-        String q = "42";
-        int page = 0;
-        int size = 10;
-
-        Product p = new Product();
-        p.setProductCode(42);
-        p.setProductDescription("Answer");
-
-        Country c = new Country();
-        c.setCountryName("Any");
-
-        Tariff t = new Tariff();
-        t.setProduct(p);
-        t.setCountry(c);
-        t.setTariffRate(1.0);
-
-        Page<Tariff> pageResp = new PageImpl<>(List.of(t));
-        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(eq(q.toLowerCase()), eq(42), any(Pageable.class)))
-                .thenReturn(pageResp);
-
-        // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(q, null, page, size);
-
-        // Assert
-        assertThat(result.getContent()).hasSize(1);
-        verify(tariffRepository).findByProductDescriptionOrProductCodeContaining(eq(q.toLowerCase()), eq(42), any(Pageable.class));
-    }
-
-    @Test
-    @DisplayName("suggestProducts: empty country should behave like no country and call description-or-code search")
-    void suggestProducts_EmptyCountry_ShouldCallFindByProductDescriptionOrProductCodeContaining() {
-        // Arrange
-        String q = "honey";
-        String country = "";
-        int page = 0;
-        int size = 10;
-        Page<Tariff> emptyPage = new PageImpl<>(List.of());
-
-        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq(q.toLowerCase()), eq(-1), any(Pageable.class)))
-                .thenReturn(emptyPage);
-
-        // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(q, country, page, size);
-
-        // Assert
-        assertThat(result).isNotNull();
-        verify(tariffRepository).findByProductDescriptionOrProductCodeContaining(
-                eq(q.toLowerCase()), eq(-1), any(Pageable.class));
-        verifyNoMoreInteractions(tariffRepository);
-    }
-
 }

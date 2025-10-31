@@ -1,13 +1,95 @@
 spring:
   application:
     name: cs203
-  datasource:
-    url: jdbc:mysql://localhost:3306/tariff
-    username: root
-    password: CSisTOUGH2025!
+  profiles:
+    active: dev   # default profile
+  main:
+    banner-mode: "off"
   jwt:
     secret: ${JWT_SECRET}
     accessTokenExpiration: 300 # 5 minutes
     refreshTokenExpiration: 604800 # 7 days
-  profiles:
-    active: dev
+
+# COMMON CONFIGURATION
+#logging:
+#  level:
+#    com.lynus.cs203: INFO
+#    org.hibernate.SQL: DEBUG
+
+# DEVELOPMENT PROFILE
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/tariff
+    username: root
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+        ddl-auto: update
+    show-sql: true
+    properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL8Dialect
+          format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+# TEST PROFILE
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        # Optimizations for tests
+        jdbc.batch_size: 20
+        order_inserts: true
+        order_updates: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  # Disable migration tools for tests
+  flyway:
+    enabled: false
+  liquibase:
+    enabled: false
+
+# PRODUCTION PROFILE
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration

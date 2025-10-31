@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserController Test")
+@DisplayName("User Controller Test")
 public class UserControllerTest {
 
     @Mock

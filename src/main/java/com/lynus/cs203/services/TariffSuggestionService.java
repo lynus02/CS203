@@ -35,7 +35,7 @@ public class TariffSuggestionService {
 
     private Page<TariffDto> suggestByCountryAndCodeContaining(String country, int code, int page, int size) {
         return tariffRepository
-                .findByCountryAndProductCodeContaining(country, code, PageRequest.of(page, size))
+                .findByCountry_CountryNameAndProduct_ProductCode(country, code, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 

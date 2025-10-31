@@ -3,6 +3,7 @@ package com.lynus.cs203.services;
 import com.lynus.cs203.dtos.response.RoleOperationResponse;
 import com.lynus.cs203.dtos.response.UserRolesResponse;
 import com.lynus.cs203.entities.Role;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Admin Service Unit Tests")
 public class AdminServiceTest {
 
     @Mock
@@ -28,6 +30,7 @@ public class AdminServiceTest {
     private AdminService adminService;
 
     @Test
+    @DisplayName("Should assign role to user when valid input is provided")
     void assignRoleToUser_WhenValidInput_ShouldAssignRole() {
         // Arrange
         String userId = "userId";
@@ -53,6 +56,7 @@ public class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("Should remove role from user when valid input is provided")
     void removeRoleFromUser_WhenValidInput_ShouldRemoveRole() {
         String userId = "userId";
         String roleName = "ADMIN";
@@ -76,6 +80,7 @@ public class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("Should get user roles when valid input is provided")
     void getUserRoles_WhenValidInput_ShouldReturnRoles() {
         String userId = "userId";
         List<String> mockRoles = List.of("ADMIN", "USER");

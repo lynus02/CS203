@@ -64,7 +64,6 @@ public class TariffController {
 
         log.info("Tariff calculation successful - Amount: {}", response.getTariffAmount());
         return ResponseEntity.ok(response);
-
     }
 
     @GetMapping("/size={size}")
@@ -81,7 +80,4 @@ public class TariffController {
                                            @RequestParam(defaultValue = "20") int size) {
         return tariffSuggestionService.suggestProducts(query, country, page, size);
     }
-
-
-
 }

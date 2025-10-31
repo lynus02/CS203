@@ -5,6 +5,7 @@ import com.lynus.cs203.dtos.response.JwtResponse;
 import com.lynus.cs203.entities.User;
 import com.lynus.cs203.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("AuthService Unit Test")
 class AuthServiceTest {
 
     @Mock
@@ -41,6 +43,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Test
+    @DisplayName("Should authenticate user and return JWT response when valid credentials are provided")
     void authenticateUser_WhenValidCredentials_ShouldReturnJwtResponse() {
         // Arrange
         String email = "test@example.com";
@@ -77,6 +80,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw BadCredentialsException when invalid credentials are provided")
     void authenticateUser_WhenInvalidCredentials_ShouldThrowException() {
         // Arrange
         LoginRequest request = LoginRequest.builder()
@@ -104,6 +108,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw UserNotFoundException when user does not exist")
     void authenticateUser_WhenUserNotFound_ShouldThrowException() {
         // Arrange
         LoginRequest request = LoginRequest.builder()
@@ -125,6 +130,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should refresh access token when valid refresh token is provided")
     void refreshAccessToken_WhenValidRefreshToken_ShouldReturnNewAccessToken() {
         // Arrange
         String refreshToken = "valid.refresh.token";
@@ -154,6 +160,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw BadCredentialsException when refresh token is null")
     void refreshAccessToken_WhenNullRefreshToken_ShouldThrowException() {
         // Act & Assert
         assertThatThrownBy(() -> authService.refreshAccessToken(null))
@@ -164,6 +171,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw BadCredentialsException when refresh token is empty")
     void refreshAccessToken_WhenEmptyRefreshToken_ShouldThrowException() {
         // Act & Assert
         assertThatThrownBy(() -> authService.refreshAccessToken(""))
@@ -174,6 +182,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw BadCredentialsException when refresh token is invalid")
     void refreshAccessToken_WhenInvalidRefreshToken_ShouldThrowException() {
         // Arrange
         String invalidRefreshToken = "invalid.refresh.token";

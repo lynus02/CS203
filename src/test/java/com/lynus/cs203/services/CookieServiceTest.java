@@ -2,6 +2,7 @@ package com.lynus.cs203.services;
 
 import com.lynus.cs203.config.JwtConfig;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("CookieService Unit Tests")
 class CookieServiceTest {
 
     @Mock
@@ -28,6 +30,7 @@ class CookieServiceTest {
     private CookieService cookieService;
 
     @Test
+    @DisplayName("Should set refresh token cookie with correct attributes")
     void setRefreshTokenCookie_WhenValidRefreshToken_ShouldSetCookie() {
         // Arrange
         String refreshToken = "refresh.token.here";
@@ -53,6 +56,7 @@ class CookieServiceTest {
     }
 
     @Test
+    @DisplayName("Should set refresh token cookie with null value")
     void setRefreshTokenCookie_WhenNullRefreshToken_ShouldSetCookieWithNull() {
         // Arrange
         String refreshToken = null;
@@ -77,6 +81,7 @@ class CookieServiceTest {
     }
 
     @Test
+    @DisplayName("Should set refresh token cookie with empty value")
     void setRefreshTokenCookie_WhenEmptyRefreshToken_ShouldSetCookieWithEmpty() {
         // Arrange
         String refreshToken = "";
