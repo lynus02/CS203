@@ -18,7 +18,7 @@ public class UpdateUserRequest {
             maxLength = 255,
             requiredMode = Schema.RequiredMode.NOT_REQUIRED
     )
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(min = 3, max = 255, message = "First name must be between 3 to 255 characters")
     private String firstName;
 
     @Schema(
@@ -27,7 +27,7 @@ public class UpdateUserRequest {
             maxLength = 255,
             requiredMode = Schema.RequiredMode.NOT_REQUIRED
     )
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(min = 3, max = 255, message = "Last name must be between 3 to 255 characters")
     private String lastName;
 
     @Schema(

@@ -1,4 +1,4 @@
-package com.lynus.cs203.integration;
+package com.lynus.cs203.integration.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lynus.cs203.dtos.request.TariffCalculationRequest;
@@ -33,10 +33,10 @@ import static org.hamcrest.Matchers.*;
 class TariffControllerIntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     @Autowired
     private ProductRepository productRepository;
@@ -68,10 +68,10 @@ class TariffControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(get("/tariffs/suggest")
-                .param("q", "Test")
-                .param("country", "TestCountry1")
-                .param("page", "0")
-                .param("size", "10"))
+                        .param("q", "Test")
+                        .param("country", "TestCountry1")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(1))))
                 .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1)));
@@ -87,10 +87,10 @@ class TariffControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(get("/tariffs/suggest")
-                .param("q", "20002")
-                .param("country", "TestCountry2")
-                .param("page", "0")
-                .param("size", "10"))
+                        .param("q", "20002")
+                        .param("country", "TestCountry2")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(1))))
                 .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1)));
@@ -108,7 +108,7 @@ class TariffControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(get("/tariffs/size=10")
-                    .param("country", "TestCountry3"))
+                        .param("country", "TestCountry3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -118,7 +118,7 @@ class TariffControllerIntegrationTest {
     void getTariffRatesBySize_WithNonExistentCountry_ShouldReturnEmpty() throws Exception {
         // Act & Assert
         mockMvc.perform(get("/tariffs/size=10")
-                .param("country", "NonExistentCountry"))
+                        .param("country", "NonExistentCountry"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
@@ -135,8 +135,8 @@ class TariffControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(post("/tariffs/calculate")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -150,9 +150,9 @@ class TariffControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(get("/tariffs/suggest")
-                .param("q", "Sample")
-                .param("page", "0")
-                .param("size", "10"))
+                        .param("q", "Sample")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", isA(List.class)));
     }

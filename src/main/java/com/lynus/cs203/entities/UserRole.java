@@ -22,6 +22,7 @@ public class UserRole {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("userId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

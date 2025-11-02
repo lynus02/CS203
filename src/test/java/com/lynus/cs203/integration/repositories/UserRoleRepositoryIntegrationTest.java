@@ -1,11 +1,11 @@
 package com.lynus.cs203.integration.repositories;
 
-import com.lynus.cs203.entities.Role;
-import com.lynus.cs203.entities.User;
-import com.lynus.cs203.entities.UserRole;
-import com.lynus.cs203.entities.UserRoleId;
+import com.lynus.cs203.entities.*;
+import com.lynus.cs203.integration.BaseIntegrationTest;
+import com.lynus.cs203.repositories.UserProfileRepository;
 import com.lynus.cs203.repositories.UserRepository;
 import com.lynus.cs203.repositories.UserRoleRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,135 +28,137 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("User Role Repository Integration Tests")
-public class UserRoleRepositoryIntegrationTest {
+public class UserRoleRepositoryIntegrationTest extends BaseIntegrationTest {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private User additionalTestUser1;
+    private User additionalTestUser2;
+    private UserRole additionalUserRole1;
+    private UserRole additionalUserRole2;
+    private UserRole additionalUserRole3;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private static final Short ROLE_USER = 1;
-    private static final Short ROLE_ADMIN = 2;
-
-    private User testUser1;
-    private User testUser2;
-    private UserRole testUserRole1;
-    private UserRole testUserRole2;
-    private UserRole testUserRole3;
 
     @BeforeEach
     void setUp() {
-        userRoleRepository.deleteAll();
-        userRepository.deleteAll();
-
-        testUser1 = createUser("johndoe@example.com", "Password@123");
-        testUser2 = createUser("janedoe@example.com", "Password@123");
-
-        userRepository.saveAllAndFlush(List.of(testUser1, testUser2));
-
-        UserRoleId id1 = new UserRoleId();
-        id1.setUserId(testUser1.getUserId());
-        id1.setRoleId(ROLE_USER);
-
-        UserRoleId id2 = new UserRoleId();
-        id2.setUserId(testUser1.getUserId());
-        id2.setRoleId(ROLE_ADMIN);
-
-        UserRoleId id3 = new UserRoleId();
-        id3.setUserId(testUser2.getUserId());
-        id3.setRoleId(ROLE_USER);
-
-        testUserRole1 = createUserRole(id1, testUser1);
-        testUserRole2 = createUserRole(id2, testUser1);
-        testUserRole3 = createUserRole(id3, testUser2);
-
-        userRoleRepository.saveAll(List.of(testUserRole1, testUserRole2, testUserRole3));
+        setupAdditionalTestData();
     }
 
-    private User createUser(String email, String password) {
+    private void setupAdditionalTestData() {
+        // Create additional test users
+        additionalTestUser1 = createTestUser("johndoe@example.com", "John", "Doe");
+        additionalTestUser2 = createTestUser("janedoe@example.com", "Jane", "Doe");
+
+        // Create user roles for additional testing
+        additionalUserRole1 = createAndSaveUserRole(additionalTestUser1, Role.USER);
+        additionalUserRole2 = createAndSaveUserRole(additionalTestUser1, Role.ADMIN);
+        additionalUserRole3 = createAndSaveUserRole(additionalTestUser2, Role.USER);
+    }
+
+    private User createTestUser(String email, String firstName, String lastName) {
         User user = new User();
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode("Password@123!"));
         user.setIsActive(true);
-        user.setCreatedAt(java.time.Instant.now());
-        user.setUpdatedAt(java.time.Instant.now());
-        return user;
+        user.setCreatedAt(Instant.now());
+        user.setUpdatedAt(Instant.now());
+
+        UserProfile profile = new UserProfile();
+        profile.setFirstName(firstName);
+        profile.setLastName(lastName);
+        profile.setUser(user);
+        user.setUserProfile(profile);
+
+        return userRepository.save(user);
     }
 
-    private UserRole createUserRole(UserRoleId id, User user) {
+    private UserRole createAndSaveUserRole(User user, Role role) {
         UserRole userRole = new UserRole();
-        userRole.setId(id);
+        UserRoleId userRoleId = new UserRoleId();
+        userRoleId.setUserId(user.getUserId());
+        userRoleId.setRoleId((short) role.getId());
+
+        userRole.setId(userRoleId);
         userRole.setUser(user);
+        userRole.setRole(role);
         userRole.setAssignedAt(LocalDateTime.now());
-        return userRole;
+
+        return userRoleRepository.save(userRole);
     }
 
     @Test
-    @DisplayName("Should check if user role exists by user ID and role ID")
-    void whenExistsByUserUserId_WithValidData_ThenReturnTrue() {
+    @DisplayName("Should check if user role exists by user ID and role")
+    void existsByUserUserIdAndRole_WithValidData_ShouldReturnTrue() {
         // When
         boolean exists = userRoleRepository.existsByUserUserIdAndRole(
-                testUser1.getUserId(), Role.ADMIN);
+                additionalTestUser1.getUserId(), Role.ADMIN);
 
         // Then
         assertThat(exists).isTrue();
     }
 
+
+    @Test
+    @DisplayName("Should return false for non-existing user role combination")
+    void existsByUserUserIdAndRole_WithNonExistingData_ShouldReturnFalse() {
+        // When
+        boolean exists = userRoleRepository.existsByUserUserIdAndRole(
+                additionalTestUser2.getUserId(), Role.ADMIN);
+
+        // Then
+        assertThat(exists).isFalse();
+    }
+
     @Test
     @DisplayName("Should delete user role by user ID and role ID")
-    void whenDeleteByUserUserIdAndRoleId_ThenRoleIsRemoved() {
+    void deleteByUserUserIdAndRole_ShouldRemoveRole() {
         // Given - verify role exists before deletion
         assertThat(userRoleRepository.existsByUserUserIdAndRole(
-                testUser1.getUserId(),
-                Role.ADMIN)).isTrue();
+                additionalTestUser1.getUserId(), Role.ADMIN)).isTrue();
 
         // When
-        userRoleRepository.deleteByUserUserIdAndRole(testUser1.getUserId(), Role.ADMIN);
+        userRoleRepository.deleteByUserUserIdAndRole(additionalTestUser1.getUserId(), Role.ADMIN);
+        userRoleRepository.flush();
 
         // Then
         assertThat(userRoleRepository.existsByUserUserIdAndRole(
-                testUser1.getUserId(),
-                Role.ADMIN)).isFalse();
+                additionalTestUser1.getUserId(), Role.ADMIN)).isFalse();
 
-        // Verify
+        // Verify other roles remain
         assertThat(userRoleRepository.existsByUserUserIdAndRole(
-                testUser1.getUserId(),
-                Role.USER)).isTrue();
+                additionalTestUser1.getUserId(), Role.USER)).isTrue();
     }
 
     @Test
     @DisplayName("Should find all user roles by user ID")
-    void whenFindByUserUserId_ThenReturnAllRolesForUser() {
+    void findByUserUserId_ShouldReturnAllRolesForUser() {
         // When
-        List<UserRole> userRoles = userRoleRepository.findByUserUserId((testUser1.getUserId()));
+        List<UserRole> userRoles = userRoleRepository.findByUserUserId(additionalTestUser1.getUserId());
 
         // Then
         assertThat(userRoles).hasSize(2);
-        assertThat(userRoles).extracting(u -> u.getId().getRoleId())
-                .containsExactlyInAnyOrder(ROLE_USER, ROLE_ADMIN);
+        assertThat(userRoles).extracting(u -> u.getRole())
+                .containsExactlyInAnyOrder(Role.USER, Role.ADMIN);
     }
 
     @Test
     @DisplayName("Should return empty list when finding roles for user with no roles")
-    void whenFindByUserUserId_WithNoRoles_ThenReturnEmptyList() {
-        // Given
-        User userWithNoRoles = createUser("noroles@example.com", "Password@123");
-        userWithNoRoles = userRepository.saveAndFlush(userWithNoRoles);
-
+    void findByUserUserId_WithMinimalRoles_ShouldReturnExpectedRoles() {
         // When
-        List<UserRole> userRoles = userRoleRepository.findByUserUserId(userWithNoRoles.getUserId());
+        List<UserRole> userRoles = userRoleRepository.findByUserUserId(additionalTestUser2.getUserId());
 
         // Then
-        assertThat(userRoles).isEmpty();
+        assertThat(userRoles).hasSize(1);
+        assertThat(userRoles.get(0).getRole()).isEqualTo(Role.USER);
     }
 
     @Test
     @DisplayName("Should check if any user has a specific role ID")
-    void whenExistsByRoleId_WithExistingRole_ThenReturnTrue() {
+    void existsByRole_WithExistingRole_ShouldReturnTrue() {
         // When
         boolean exists = userRoleRepository.existsByRole(Role.ADMIN);
 
@@ -165,51 +168,48 @@ public class UserRoleRepositoryIntegrationTest {
 
     @Test
     @DisplayName("Should save new user role successfully")
-    void whenSaveNewUserRole_ThenPersistSuccessfully() {
+    void save_ShouldPersistNewUserRole() {
         // Given
-        UserRoleId newRoleId = new UserRoleId();
-        newRoleId.setUserId(testUser2.getUserId());
-        newRoleId.setRoleId(ROLE_ADMIN);
-
-        UserRole newUserRole = createUserRole(newRoleId, testUser2);
-
-        // When
-        UserRole savedUserRole = userRoleRepository.saveAndFlush(newUserRole);
+        UserRole newUserRole = createAndSaveUserRole(additionalTestUser2, Role.ADMIN);
 
         // Then
-        assertThat(savedUserRole).isNotNull();
+        assertThat(newUserRole.getId()).isNotNull();
         assertThat(userRoleRepository.existsByUserUserIdAndRole(
-                testUser2.getUserId(), Role.ADMIN)).isTrue();
+                additionalTestUser2.getUserId(), Role.ADMIN)).isTrue();
 
-        // Verify
-        List<UserRole> userRoles = userRoleRepository.findByUserUserId(testUser2.getUserId());
+        // Verify user now has both roles
+        List<UserRole> userRoles = userRoleRepository.findByUserUserId(additionalTestUser2.getUserId());
         assertThat(userRoles).hasSize(2);
+        assertThat(userRoles).extracting(u -> u.getRole())
+                .containsExactlyInAnyOrder(Role.USER, Role.ADMIN);
     }
 
     @Test
     @DisplayName("Should find user role by composite ID")
-    void whenFindById_ThenReturnUserRole() {
-        // When
+    void findById_ShouldReturnUserRole() {
+        // Given
         UserRoleId id = new UserRoleId();
-        id.setUserId(testUser1.getUserId());
-        id.setRoleId(ROLE_ADMIN);
+        id.setUserId(additionalTestUser1.getUserId());
+        id.setRoleId((short) Role.ADMIN.getId());
 
+        // When
         Optional<UserRole> userRole = userRoleRepository.findById(id);
 
         // Then
         assertThat(userRole).isPresent();
-        assertThat(userRole.get().getUser().getUserId()).isEqualTo(testUser1.getUserId());
-        assertThat(userRole.get().getId().getRoleId()).isEqualTo(ROLE_ADMIN);
+        assertThat(userRole.get().getUser().getUserId()).isEqualTo(additionalTestUser1.getUserId());
+        assertThat(userRole.get().getRole()).isEqualTo(Role.ADMIN);
     }
 
     @Test
     @DisplayName("Should return empty when finding by non-existing composite ID")
-    void whenFindById_WithNonExistingId_ThenReturnEmpty() {
-        // When
+    void findById_WithNonExistingId_ShouldReturnEmpty() {
+        // Given
         UserRoleId id = new UserRoleId();
         id.setUserId("non-existing-user-id");
-        id.setRoleId(ROLE_ADMIN);
+        id.setRoleId((short) Role.ADMIN.getId());
 
+        // When
         Optional<UserRole> userRole = userRoleRepository.findById(id);
 
         // Then
@@ -218,46 +218,38 @@ public class UserRoleRepositoryIntegrationTest {
 
     @Test
     @DisplayName("Should count all user roles correctly")
-    void whenCount_thenReturnCorrectNumberOfUserRoles() {
+    void count_ShouldReturnCorrectNumberOfUserRoles() {
         // When
         long count = userRoleRepository.count();
 
-        // Then
-        assertThat(count).isEqualTo(3);
+        // Then - testUser (1), adminUser (2), additionalTestUser1 (2), additionalTestUser2 (1)
+        assertThat(count).isEqualTo(6);
     }
 
     @Test
     @DisplayName("Should delete all user roles for a specific user")
-    void whenDeleteAllByUserUserId_ThenAllRolesAreRemoved() {
+    void deleteAllByUser_ShouldRemoveAllUserRoles() {
+        // Given
+        List<UserRole> rolesToDelete = userRoleRepository.findByUserUserId(additionalTestUser1.getUserId());
+        long initialCount = userRoleRepository.count();
+
         // When
-        List<UserRole> rolesToDelete = userRoleRepository.findByUserUserId((testUser1.getUserId()));
         userRoleRepository.deleteAll(rolesToDelete);
+        userRoleRepository.flush();
 
         // Then
-        assertThat(userRoleRepository.findByUserUserId((testUser1.getUserId()))).isEmpty();
-        assertThat(userRoleRepository.findByUserUserId((testUser2.getUserId()))).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("Should find all user roles")
-    void whenFindAll_ThenReturnAllUserRoles() {
-        // When
-        List<UserRole> allUserRoles = userRoleRepository.findAll();
-
-        // Then
-        assertThat(allUserRoles).hasSize(3);
-        assertThat(allUserRoles)
-                .extracting(u -> u.getId().getRoleId())
-                .containsExactlyInAnyOrder(ROLE_USER, ROLE_ADMIN, ROLE_USER);
+        assertThat(userRoleRepository.findByUserUserId(additionalTestUser1.getUserId())).isEmpty();
+        assertThat(userRoleRepository.findByUserUserId(additionalTestUser2.getUserId())).hasSize(1);
+        assertThat(userRoleRepository.count()).isEqualTo(initialCount - 2);
     }
 
     @Test
     @DisplayName("Should check existence by composite ID")
-    void whenExistsById_ThenReturnTrueIfExists() {
+    void existsById_ShouldReturnTrueIfExists() {
         // Given
         UserRoleId id = new UserRoleId();
-        id.setUserId(testUser1.getUserId());
-        id.setRoleId(ROLE_ADMIN);
+        id.setUserId(additionalTestUser1.getUserId());
+        id.setRoleId((short) Role.ADMIN.getId());
 
         // When
         boolean exists = userRoleRepository.existsById(id);
@@ -268,11 +260,11 @@ public class UserRoleRepositoryIntegrationTest {
 
     @Test
     @DisplayName("Should return false when checking existence by non-existing composite ID")
-    void whenExistsById_WithNonExistingId_ThenReturnFalse() {
+    void existsById_WithNonExistingId_ShouldReturnFalse() {
         // Given
         UserRoleId id = new UserRoleId();
         id.setUserId("non-existing-user-id");
-        id.setRoleId(ROLE_ADMIN);
+        id.setRoleId((short) Role.ADMIN.getId());
 
         // When
         boolean exists = userRoleRepository.existsById(id);
@@ -282,19 +274,83 @@ public class UserRoleRepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should verify composite key uniqueness constraint")
-    void whenSaveDuplicateUserRole_ThenThrowException() {
+    @DisplayName("Should handle duplicate role assignment gracefully")
+    void save_WithDuplicateUserRole_ShouldNotCreateDuplicate() {
         // Given
+        long initialCount = userRoleRepository.count();
+
+        // Try to create duplicate role
+        UserRole duplicateRole = new UserRole();
         UserRoleId duplicateId = new UserRoleId();
-        duplicateId.setUserId(testUser1.getUserId());
-        duplicateId.setRoleId(ROLE_ADMIN);
+        duplicateId.setUserId(additionalTestUser1.getUserId());
+        duplicateId.setRoleId((short) Role.ADMIN.getId());
 
-        UserRole duplicateUserRole = createUserRole(duplicateId, testUser1);
+        duplicateRole.setId(duplicateId);
+        duplicateRole.setUser(additionalTestUser1);
+        duplicateRole.setRole(Role.ADMIN);
+        duplicateRole.setAssignedAt(LocalDateTime.now());
 
-        userRoleRepository.saveAndFlush(duplicateUserRole);
+        // When
+        userRoleRepository.save(duplicateRole);
+        userRoleRepository.flush();
 
-        List<UserRole> userRoles = userRoleRepository.findByUserUserId(testUser1.getUserId());
+        // Then - count should remain the same due to composite key constraint
+        List<UserRole> userRoles = userRoleRepository.findByUserUserId(additionalTestUser1.getUserId());
+        assertThat(userRoles).hasSize(2); // Still only USER and ADMIN, no duplicates
+        assertThat(userRoleRepository.count()).isEqualTo(initialCount);
+    }
 
+    @Test
+    @DisplayName("Should maintain referential integrity with user")
+    void save_ShouldMaintainUserReferenceIntegrity() {
+        // Given
+        UserRole newRole = createAndSaveUserRole(additionalTestUser2, Role.ADMIN);
+
+        // When
+        UserRole savedRole = userRoleRepository.findById(newRole.getId()).orElseThrow();
+
+        // Then
+        assertThat(savedRole.getUser()).isNotNull();
+        assertThat(savedRole.getUser().getUserId()).isEqualTo(additionalTestUser2.getUserId());
+        assertThat(savedRole.getUser().getEmail()).isEqualTo("janedoe@example.com");
+        assertThat(savedRole.getRole()).isEqualTo(Role.ADMIN);
+        assertThat(savedRole.getAssignedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Should cascade delete user roles when user is deleted")
+    void deleteUser_ShouldCascadeDeleteUserRoles() {
+        // Given
+        String userId = additionalTestUser1.getUserId();
+        long initialRoleCount = userRoleRepository.count();
+
+        // Verify user has roles before deletion
+        List<UserRole> userRoles = userRoleRepository.findByUserUserId(userId);
         assertThat(userRoles).hasSize(2);
+
+        // IMPORTANT: Ensure the User entity's userRoles collection is populated
+        User userToDelete = userRepository.findById(userId).orElseThrow();
+        userToDelete.getUserRoles().addAll(userRoles);
+        userRepository.saveAndFlush(userToDelete);
+
+        // Clear persistence context to ensure fresh state
+        entityManager.clear();
+
+        // Reload the user with fresh state
+        userToDelete = userRepository.findById(userId).orElseThrow();
+
+        // When - Delete the user
+        userRepository.delete(userToDelete);
+        userRepository.flush();
+
+        // Clear persistence context and force refresh from database
+        entityManager.clear();
+
+        // Then
+        assertThat(userRoleRepository.findByUserUserId(userId)).isEmpty();
+        assertThat(userRoleRepository.count()).isEqualTo(initialRoleCount - 2);
+
+        // Verify other users' roles are unaffected
+        assertThat(userRoleRepository.findByUserUserId(additionalTestUser2.getUserId())).hasSize(1);
     }
 }

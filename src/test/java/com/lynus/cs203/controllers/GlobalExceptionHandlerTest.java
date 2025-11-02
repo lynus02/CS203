@@ -1,7 +1,7 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.exceptions.UnauthorizedException;
 import com.lynus.cs203.dtos.response.ErrorResponse;
-import com.lynus.cs203.entities.User;
 import com.lynus.cs203.exceptions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -274,6 +274,24 @@ public class GlobalExceptionHandlerTest {
         assertThat(response.getBody().getError()).isEqualTo("Data Integrity Issue");
         assertThat(response.getBody().getMessage())
                 .contains("Multiple records found");
+    }
+
+    @Test
+    @DisplayName("Should handle UnauthorizedException")
+    void handleUnauthorizedException() {
+        // Arrange
+        UnauthorizedException exception = new
+                UnauthorizedException("User is unauthorized");
+
+        // Act
+        ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleUnauthorizedException(exception);
+
+        // Assert
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(response.getBody().getError()).isEqualTo("User is unauthorized");
+        assertThat(response.getBody().getMessage())
+                .isEqualTo("User is unauthorized");
     }
 
     @Test

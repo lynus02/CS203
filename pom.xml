@@ -29,6 +29,9 @@
     <properties>
         <java.version>21</java.version>
         <spring-ai.version>1.0.1</spring-ai.version>
+        <DB_URL>jdbc:mysql://localhost:3306/cs203</DB_URL>
+        <DB_USERNAME>root</DB_USERNAME>
+        <DB_PASSWORD>password123</DB_PASSWORD>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -235,6 +238,7 @@
                 <version>1.13.4</version>
                 <configuration>
                     <workingDirectory>frontend</workingDirectory>
+                    <installDirectory>target</installDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -248,12 +252,12 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>npm ci</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>ci --cache /tmp/.npm</arguments>
                         </configuration>
                     </execution>
                     <execution>

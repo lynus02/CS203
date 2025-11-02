@@ -239,6 +239,10 @@ public class UserService {
 
     public void removeRole(String userId, Role role) {
         log.info("Removing role {} from user: {}", role.getName(), userId);
+
+        // Verify if user exists
+        getUserById(userId);    // will throw exception if user not found
+
         userRoleRepository.deleteByUserUserIdAndRole(userId, role);
         log.info("Successfully removed role {} from user: {}", role.getName(), userId);
     }

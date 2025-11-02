@@ -1,5 +1,6 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.exceptions.UnauthorizedException;
 import com.lynus.cs203.dtos.response.ErrorResponse;
 import com.lynus.cs203.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -213,10 +215,23 @@ public class GlobalExceptionHandler {
         var errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
                 .error("Data Integrity Issue")
-                .message("Multiple records found where only one was expected. Please contact support.")
+                .message("Multiple records found where only one was expected.")
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        log.error("Unauthorized: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("User is unauthorized")
+                .message("User is unauthorized")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)

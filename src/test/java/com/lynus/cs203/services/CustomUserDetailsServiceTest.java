@@ -1,8 +1,10 @@
 package com.lynus.cs203.services;
 
+import com.lynus.cs203.entities.Role;
 import com.lynus.cs203.entities.User;
+import com.lynus.cs203.entities.UserRole;
+import com.lynus.cs203.entities.UserRoleId;
 import com.lynus.cs203.repositories.UserRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,11 +47,30 @@ public class CustomUserDetailsServiceTest {
         user.setUserId(userId);
         user.setEmail(email);
         user.setPassword(password);
+        user.setIsActive(true);
 
-        List<String> roles = List.of("USER", "ADMIN");
+        // Create UserRoles
+        Set<UserRole> userRoles = new HashSet<>();
+
+        UserRole userRole = new UserRole();
+        UserRoleId userRoleId = new UserRoleId();
+        userRoleId.setUserId(userId);
+        userRoleId.setRoleId((short) Role.USER.getId());
+        userRole.setId(userRoleId);
+        userRole.setRole(Role.USER);
+        userRoles.add(userRole);
+
+        UserRole adminRole = new UserRole();
+        UserRoleId adminRoleId = new UserRoleId();
+        adminRoleId.setUserId(userId);
+        adminRoleId.setRoleId((short) Role.ADMIN.getId());
+        adminRole.setId(adminRoleId);
+        adminRole.setRole(Role.ADMIN);
+        userRoles.add(adminRole);
+
+        user.setUserRoles(userRoles);
 
         when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
-        when(userService.getUserRoles(userId)).thenReturn(roles);
 
         // Act
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -59,7 +81,11 @@ public class CustomUserDetailsServiceTest {
         assertThat(userDetails.getAuthorities())
                 .extracting("authority")
                 .containsExactlyInAnyOrder("ROLE_USER", "ROLE_ADMIN");
+        assertThat(userDetails.isEnabled()).isTrue();
 
+        // Verify
+        verify(userRepository).findByEmailWithProfile(email);
+        verify(userService, never()).getUserRoles(anyString());
     }
 
     @Test
@@ -73,7 +99,7 @@ public class CustomUserDetailsServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(email))
                 .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessageContaining("User not found");
+                .hasMessage("User not found");
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
@@ -82,7 +108,7 @@ public class CustomUserDetailsServiceTest {
 
     @Test
     @DisplayName("Should return empty authorities when user has no roles")
-    void getAuthorities_WhenUserHasNoRoles_ReturnsEmptyList() {
+    void loadUserByUsername_WhenUserHasNoRoles_ReturnsEmptyAuthorities() {
         // Arrange
         String userId = "userId";
         String email = "test@example.com";
@@ -90,9 +116,10 @@ public class CustomUserDetailsServiceTest {
         user.setUserId(userId);
         user.setEmail(email);
         user.setPassword("Password@123");
+        user.setIsActive(true);
+        user.setUserRoles(new HashSet<>()); // Empty roles
 
         when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
-        when(userService.getUserRoles(userId)).thenReturn(List.of());
 
         // Act
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -100,9 +127,41 @@ public class CustomUserDetailsServiceTest {
         // Assert
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getAuthorities()).isEmpty();
+        assertThat(userDetails.isEnabled()).isTrue();
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
-        verify(userService).getUserRoles(userId);
+        verify(userService, never()).getUserRoles(anyString());
+    }
+
+    @Test
+    @DisplayName("Should return disabled user when user is inactive")
+    void loadUserByUsername_WhenUserIsInactive_ReturnsDisabledUser() {
+        // Arrange
+        String email = "inactive@example.com";
+        String userId = "inactiveUserId";
+        String password = "Password@123";
+
+        User user = new User();
+        user.setUserId(userId);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setIsActive(false); // Inactive user
+        user.setUserRoles(new HashSet<>());
+
+        when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
+
+        // Act
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+
+        // Assert
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails.getUsername()).isEqualTo(userId);
+        assertThat(userDetails.isEnabled()).isFalse(); // Should be disabled
+        assertThat(userDetails.getAuthorities()).isEmpty();
+
+        // Verify
+        verify(userRepository).findByEmailWithProfile(email);
+        verify(userService, never()).getUserRoles(anyString());
     }
 }

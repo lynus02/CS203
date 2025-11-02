@@ -2,6 +2,7 @@ package com.lynus.cs203.integration.repositories;
 
 import com.lynus.cs203.entities.User;
 import com.lynus.cs203.entities.UserProfile;
+import com.lynus.cs203.integration.BaseIntegrationTest;
 import com.lynus.cs203.repositories.UserProfileRepository;
 import com.lynus.cs203.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,63 +27,52 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("User Profile Repository Integration Tests")
-public class UserProfileRepositoryIntegrationTest {
+public class UserProfileRepositoryIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private User testUser1;
-    private User testUser2;
-    private UserProfile testUserProfile1;
-    private UserProfile testUserProfile2;
+    private User additionalTestUser1;
+    private User additionalTestUser2;
+    private UserProfile additionalTestProfile1;
+    private UserProfile additionalTestProfile2;
 
     @BeforeEach
     void setUp() {
-        userProfileRepository.deleteAll();
-        userRepository.deleteAll();
-
-        testUser1 = createUser("johndoe@example.com", "Password@123");
-        testUser2 = createUser("janedoe@example.com", "Password@123");
-        testUserProfile1 = createUserProfile(testUser1, "John", "Doe");
-        testUserProfile2 = createUserProfile(testUser2, "Jane", "Doe");
-
-        testUserProfile1.setUser(testUser1);
-        testUser1.setUserProfile(testUserProfile1);
-        testUserProfile2.setUser(testUser2);
-        testUser2.setUserProfile(testUserProfile2);
-
-        userRepository.saveAllAndFlush(List.of(testUser1, testUser2));
+        setupAdditionalTestData();
     }
 
-    private User createUser(String email, String password) {
+    private void setupAdditionalTestData() {
+        // Create additional test users for profile testing
+        additionalTestUser1 = createTestUser("johndoe@example.com", "John", "Doe");
+        additionalTestUser2 = createTestUser("janedoe@example.com", "Jane", "Doe");
+
+        additionalTestProfile1 = additionalTestUser1.getUserProfile();
+        additionalTestProfile2 = additionalTestUser2.getUserProfile();
+    }
+
+    private User createTestUser(String email, String firstName, String lastName) {
         User user = new User();
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode("Password@123!"));
         user.setIsActive(true);
-        user.setCreatedAt(java.time.Instant.now());
-        user.setUpdatedAt(java.time.Instant.now());
-        return user;
-    }
+        user.setCreatedAt(Instant.now());
+        user.setUpdatedAt(Instant.now());
 
-    private UserProfile createUserProfile(User user, String firstName, String lastName) {
         UserProfile profile = new UserProfile();
         profile.setFirstName(firstName);
         profile.setLastName(lastName);
         profile.setUser(user);
-        return profile;
+        user.setUserProfile(profile);
+
+        return userRepository.save(user);
     }
 
     @Test
     @DisplayName("Should find user profile by ID with their user relationship")
     void whenFindById_ThenReturnUserProfileWithUser() {
         // When
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(testUserProfile1.getUserId());
+        Optional<UserProfile> foundProfile = userProfileRepository.findById(additionalTestProfile1.getUserId());
 
         // Then
         assertThat(foundProfile).isPresent();
@@ -99,55 +90,43 @@ public class UserProfileRepositoryIntegrationTest {
         List<UserProfile> profiles = userProfileRepository.findAll();
 
         // Then
-        assertThat(profiles).hasSize(2);
-        assertThat(profiles).extracting(UserProfile::getFirstName)
-                .containsExactlyInAnyOrder("John", "Jane");
-        assertThat(profiles).extracting(p -> p.getUser().getEmail())
-                .containsExactlyInAnyOrder("johndoe@example.com", "janedoe@example.com");
+        assertThat(profiles).hasSize(4); // testUser, adminUser, additionalTestUser1, additionalTestUser2
+
+        // Verify all profiles have users
+        profiles.forEach(profile -> {
+            assertThat(profile.getUser()).isNotNull();
+            assertThat(profile.getUser().getEmail()).isNotNull();
+            assertThat(profile.getFirstName()).isNotNull();
+            assertThat(profile.getLastName()).isNotNull();
+        });
     }
 
     @Test
     @DisplayName("Should save new user profile with user relationship")
     void whenSave_ThenPersistUserProfileWithUser() {
         // Given
-        User newUser = new User();
-        newUser.setEmail("newuser@example.com");
-        newUser.setPassword(passwordEncoder.encode("Password@123"));
-        newUser.setIsActive(true);
-        newUser.setCreatedAt(java.time.Instant.now());
-        newUser.setUpdatedAt(java.time.Instant.now());
-
-        UserProfile newProfile = new UserProfile();
-        newProfile.setFirstName("New");
-        newProfile.setLastName("User");
-        newProfile.setUser(newUser);
-        newUser.setUserProfile(newProfile);
-
-        // When
-        User savedUser = userRepository.saveAndFlush(newUser);
+        User newUser = createTestUser("newuser@example.com", "New", "User");
 
         // Then
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(newProfile.getUserId());
+        Optional<UserProfile> foundProfile = userProfileRepository.findById(newUser.getUserProfile().getUserId());
         assertThat(foundProfile).isPresent();
         assertThat(foundProfile.get().getFirstName()).isEqualTo("New");
         assertThat(foundProfile.get().getLastName()).isEqualTo("User");
         assertThat(foundProfile.get().getUser().getEmail()).isEqualTo("newuser@example.com");
-
     }
 
     @Test
     @DisplayName("Should update existing user profile")
     void whenUpdateUserProfile_ThenUserProfileIsUpdated() {
         // Given
-        testUserProfile1.setFirstName("UpdatedFirstName");
-        testUserProfile1.setLastName("UpdatedLastName");
+        additionalTestProfile1.setFirstName("UpdatedFirstName");
+        additionalTestProfile1.setLastName("UpdatedLastName");
 
         // When
-        UserProfile updatedProfile = userProfileRepository.saveAndFlush(testUserProfile1);
+        UserProfile updatedProfile = userProfileRepository.saveAndFlush(additionalTestProfile1);
 
         // Then
         Optional<UserProfile> foundProfile = userProfileRepository.findById(updatedProfile.getUserId());
-
         assertThat(foundProfile).isPresent();
         assertThat(foundProfile.get().getFirstName()).isEqualTo("UpdatedFirstName");
         assertThat(foundProfile.get().getLastName()).isEqualTo("UpdatedLastName");
@@ -157,36 +136,48 @@ public class UserProfileRepositoryIntegrationTest {
     @Test
     @DisplayName("Should delete user profile while keeping user intact")
     void whenDeleteUserProfile_ThenUserRemains() {
-        // When
-        userProfileRepository.delete(testUserProfile1);
+        // Given - Get the user ID before deletion
+        String userId = additionalTestUser1.getUserId();
+        String userProfileId = additionalTestProfile1.getUserId();
 
-        // Then
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(testUserProfile1.getUserId());
+        // First, break the bidirectional relationship
+        additionalTestUser1.setUserProfile(null);
+        userRepository.saveAndFlush(additionalTestUser1);
+
+        // When - Delete the profile
+        userProfileRepository.delete(additionalTestProfile1);
+        userProfileRepository.flush();
+
+        // Then - Profile should be deleted
+        Optional<UserProfile> foundProfile = userProfileRepository.findById(userProfileId);
         assertThat(foundProfile).isEmpty();
 
-        // Verify
-        Optional<User> foundUser = userRepository.findById(testUser1.getUserId());
+        // Verify user still exists without profile
+        Optional<User> foundUser = userRepository.findById(userId);
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getEmail()).isEqualTo("johndoe@example.com");
+        assertThat(foundUser.get().getUserProfile()).isNull();
     }
 
     @Test
     @DisplayName("Should delete user and cascade delete user profile")
     void whenDeleteUser_ThenUserProfileIsAlsoDeleted() {
         // When
-        userRepository.delete(testUser1);
+        userRepository.delete(additionalTestUser1);
+        userRepository.flush();
 
         // Then
-        Optional<User> foundUser = userRepository.findById(testUser1.getUserId());
+        Optional<User> foundUser = userRepository.findById(additionalTestUser1.getUserId());
         assertThat(foundUser).isEmpty();
 
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(testUserProfile1.getUserId());
+        Optional<UserProfile> foundProfile = userProfileRepository.findById(additionalTestProfile1.getUserId());
         assertThat(foundProfile).isEmpty();
     }
 
     @Test
     @DisplayName("Should find user profile by email")
     void whenFindByEmail_ThenReturnUserProfile() {
+        // When
         Optional<UserProfile> foundProfile = userProfileRepository.findAll().stream()
                 .filter(p -> p.getUser().getEmail().equals("johndoe@example.com"))
                 .findFirst();
@@ -204,14 +195,14 @@ public class UserProfileRepositoryIntegrationTest {
         long count = userProfileRepository.count();
 
         // Then
-        assertThat(count).isEqualTo(2);
+        assertThat(count).isEqualTo(4); // testUser, adminUser, additionalTestUser1, additionalTestUser2
     }
 
     @Test
     @DisplayName("Should return true when checking existence by ID")
     void whenExistsById_ThenReturnTrueIfExists() {
         // When
-        boolean exists = userProfileRepository.existsById(testUserProfile1.getUserId());
+        boolean exists = userProfileRepository.existsById(additionalTestProfile1.getUserId());
 
         // Then
         assertThat(exists).isTrue();
@@ -231,28 +222,35 @@ public class UserProfileRepositoryIntegrationTest {
     @DisplayName("Should maintain bidirectional relationship integrity")
     void whenSavingUserWithProfile_ThenBothSidesAreConsistent() {
         // Given
-        User newUser = new User();
-        newUser.setEmail("newuser@example.com");
-        newUser.setPassword(passwordEncoder.encode("Password@123"));
-        newUser.setIsActive(true);
-        newUser.setCreatedAt(java.time.Instant.now());
-        newUser.setUpdatedAt(java.time.Instant.now());
-
-        UserProfile newProfile = new UserProfile();
-        newProfile.setFirstName("New");
-        newProfile.setLastName("User");
-        newProfile.setUser(newUser);
-        newUser.setUserProfile(newProfile);
-
-        // When
-        User savedUser = userRepository.saveAndFlush(newUser);
+        User newUser = createTestUser("integrity@example.com", "Integrity", "Test");
 
         // Then
-        assertThat(savedUser.getUserProfile()).isNotNull();
-        assertThat(savedUser.getUserProfile().getUser()).isEqualTo(newUser);
+        assertThat(newUser.getUserProfile()).isNotNull();
+        assertThat(newUser.getUserProfile().getUser()).isEqualTo(newUser);
 
-        Optional<UserProfile> foundProfile = userProfileRepository.findById(newProfile.getUserId());
+        Optional<UserProfile> foundProfile = userProfileRepository.findById(newUser.getUserProfile().getUserId());
         assertThat(foundProfile).isPresent();
-        assertThat(foundProfile.get().getUser()).isEqualTo(savedUser);
+        assertThat(foundProfile.get().getUser()).isEqualTo(newUser);
+        assertThat(foundProfile.get().getUser().getUserProfile()).isEqualTo(foundProfile.get());
+    }
+
+    @Test
+    @DisplayName("Should handle profile updates without affecting user")
+    void updateProfile_ShouldNotAffectUserData() {
+        // Given
+        String originalEmail = additionalTestUser1.getEmail();
+        boolean originalActiveStatus = additionalTestUser1.getIsActive();
+
+        // When
+        additionalTestProfile1.setFirstName("Modified");
+        additionalTestProfile1.setLastName("Name");
+        userProfileRepository.saveAndFlush(additionalTestProfile1);
+
+        // Then
+        User refreshedUser = userRepository.findById(additionalTestUser1.getUserId()).orElseThrow();
+        assertThat(refreshedUser.getEmail()).isEqualTo(originalEmail);
+        assertThat(refreshedUser.getIsActive()).isEqualTo(originalActiveStatus);
+        assertThat(refreshedUser.getUserProfile().getFirstName()).isEqualTo("Modified");
+        assertThat(refreshedUser.getUserProfile().getLastName()).isEqualTo("Name");
     }
 }

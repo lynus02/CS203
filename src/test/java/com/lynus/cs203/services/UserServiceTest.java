@@ -805,12 +805,19 @@ class UserServiceTest {
         String userId = "userId";
         Role role = Role.ADMIN;
 
+        User user = new User();
+        user.setUserId(userId);
+        user.setEmail("test@example.com");
+
+        // Mock the user repository to return the user (needed for getUserById validation)
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         doNothing().when(userRoleRepository).deleteByUserUserIdAndRole(userId, role);
 
         // Act
         userService.removeRole(userId, role);
 
         // Assert & Verify
+        verify(userRepository).findById(userId);
         verify(userRoleRepository).deleteByUserUserIdAndRole(userId, role);
     }
 

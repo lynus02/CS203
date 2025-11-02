@@ -1,6 +1,6 @@
 package com.lynus.cs203.services;
 
-import com.lynus.cs203.config.JwtConfig;
+import com.lynus.cs203.exceptions.UnauthorizedException;
 import com.lynus.cs203.dtos.request.LoginRequest;
 import com.lynus.cs203.dtos.response.JwtResponse;
 import com.lynus.cs203.entities.User;
@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +62,9 @@ public class AuthService {
                             request.getPassword()
                     )
             );
+        } catch (DisabledException e) {
+            log.warn("Authentication failed: User account is inactive for email {}", request.getEmail());
+            throw new UnauthorizedException("User account is disabled");
         } catch (BadCredentialsException e) {
             User user = userService.getUserByEmail(request.getEmail());
             if (user == null) {

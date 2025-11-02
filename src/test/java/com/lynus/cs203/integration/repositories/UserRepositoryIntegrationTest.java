@@ -2,6 +2,7 @@ package com.lynus.cs203.integration.repositories;
 
 import com.lynus.cs203.entities.User;
 import com.lynus.cs203.entities.UserProfile;
+import com.lynus.cs203.integration.BaseIntegrationTest;
 import com.lynus.cs203.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,54 +26,49 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("User Repository Integration Tests")
-public class UserRepositoryIntegrationTest {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+public class UserRepositoryIntegrationTest extends BaseIntegrationTest {
 
     private User testUser1;
     private User testUser2;
-    private UserProfile testUserProfile1;
-    private UserProfile testUserProfile2;
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll();
+        // Additional test users for repository testing
+        setupAdditionalTestUsers();
+    }
 
-        // First test user
+    private void setupAdditionalTestUsers() {
+        // Create John Doe user
         testUser1 = new User();
         testUser1.setEmail("johndoe@example.com");
-        testUser1.setPassword(passwordEncoder.encode("Password@123"));
+        testUser1.setPassword(passwordEncoder.encode("Password@123!"));
         testUser1.setIsActive(true);
-        testUser1.setCreatedAt(java.time.Instant.now());
-        testUser1.setUpdatedAt(java.time.Instant.now());
+        testUser1.setCreatedAt(Instant.now());
+        testUser1.setUpdatedAt(Instant.now());
 
-        testUserProfile1 = new UserProfile();
-        testUserProfile1.setFirstName("John");
-        testUserProfile1.setLastName("Doe");
-        testUserProfile1.setUser(testUser1);
+        UserProfile testProfile1 = new UserProfile();
+        testProfile1.setFirstName("John");
+        testProfile1.setLastName("Doe");
+        testProfile1.setUser(testUser1);
+        testUser1.setUserProfile(testProfile1);
 
-        testUser1.setUserProfile(testUserProfile1);
+        testUser1 = userRepository.save(testUser1);
 
-        // Second test user
+        // Create Jane Doe user
         testUser2 = new User();
         testUser2.setEmail("janedoe@example.com");
-        testUser2.setPassword(passwordEncoder.encode("Password@123"));
+        testUser2.setPassword(passwordEncoder.encode("Password@123!"));
         testUser2.setIsActive(true);
-        testUser2.setCreatedAt(java.time.Instant.now());
-        testUser2.setUpdatedAt(java.time.Instant.now());
+        testUser2.setCreatedAt(Instant.now());
+        testUser2.setUpdatedAt(Instant.now());
 
-        testUserProfile2 = new UserProfile();
-        testUserProfile2.setFirstName("Jane");
-        testUserProfile2.setLastName("Doe");
-        testUserProfile2.setUser(testUser2);
+        UserProfile testProfile2 = new UserProfile();
+        testProfile2.setFirstName("Jane");
+        testProfile2.setLastName("Doe");
+        testProfile2.setUser(testUser2);
+        testUser2.setUserProfile(testProfile2);
 
-        testUser2.setUserProfile(testUserProfile2);
-
-        userRepository.saveAllAndFlush(List.of(testUser1, testUser2));
+        testUser2 = userRepository.save(testUser2);
     }
 
     @Test
@@ -226,7 +223,7 @@ public class UserRepositoryIntegrationTest {
         List<User> users = userRepository.findAll();
 
         // Then
-        assertThat(users).hasSize(2);
+        assertThat(users).hasSize(4);   // testUser, adminUser, testUser1, testUser2
 
         // Verify
         users.forEach(user -> {
@@ -294,6 +291,7 @@ public class UserRepositoryIntegrationTest {
         // Given
         User userToDelete = userRepository.findByEmail("johndoe@example.com").orElseThrow();
         String userId = userToDelete.getUserId();
+        long initialCount = userRepository.count();
 
         // When
         userRepository.delete(userToDelete);
@@ -302,8 +300,13 @@ public class UserRepositoryIntegrationTest {
         Optional<User> deletedUser = userRepository.findById(userId);
         assertThat(deletedUser).isEmpty();
 
-        // Verify
-        long userCount = userRepository.count();
-        assertThat(userCount).isEqualTo(1); // Only Jane Doe should remain
+        // Verify user count decreased by 1
+        long finalCount = userRepository.count();
+        assertThat(finalCount).isEqualTo(initialCount - 1);
+
+        // Verify other users still exist
+        assertThat(userRepository.findByEmail("janedoe@example.com")).isPresent();
+        assertThat(userRepository.findByEmail("user@example.com")).isPresent();
+        assertThat(userRepository.findByEmail("admin@example.com")).isPresent();
     }
 }
