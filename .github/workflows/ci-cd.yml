@@ -72,9 +72,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Deploys to Railway using their CLI action
+      # Install Railway CLI and deploy
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
       - name: Deploy to Railway
-        uses: railwayapp/cli@v3
-        with:
-          railway-token: ${{ secrets.RAILWAY_TOKEN }}   # Uses secret token from GitHub repository settings
-          command: 'deploy'   # Runs railway deploy command
+        run: |
+          railway login --token $RAILWAY_TOKEN
+          railway deploy --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
