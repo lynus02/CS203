@@ -62,23 +62,3 @@ jobs:
       # Builds the complete application (backend + frontend)
       - name: Build application
         run: mvn clean package -DskipTests
-
-  # DEPLOYMENT JOB - Deploys to Railway if tests pass
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      # Install Railway CLI and deploy
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy to Railway
-        run: |
-          railway login --token $RAILWAY_TOKEN
-          railway deploy --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
