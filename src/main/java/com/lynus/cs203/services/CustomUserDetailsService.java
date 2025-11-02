@@ -4,6 +4,7 @@ import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -28,16 +29,21 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("Loading user details for email: {}", email);
 
         var user = userRepository.findByEmailWithProfile(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         log.debug("Found user with ID: {} for email: {}", user.getUserId(), email);
 
-        UserDetails userDetails = new User(
-                user.getUserId(),
-//                user.getEmail(),
-                user.getPassword(),
-                getAuthorities(user)
-        );
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUserId())
+                .password(user.getPassword())
+                .authorities(user.getUserRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole().name()))
+                        .collect(Collectors.toList()))
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(!user.getIsActive()) // This is important
+                .build();
 
         log.info("Successfully loaded user details for: {}", email);
         return userDetails;

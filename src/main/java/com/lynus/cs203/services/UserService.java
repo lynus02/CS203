@@ -37,8 +37,8 @@ public class UserService {
 
     /* DTO Methods */
     public List<UserDto> getAllUsersAsDto(String sort) {
-        log.debug("Converting {} users to DTOs with sort: {}", getAllUsers(sort).size(), sort);
         List<User> users = getAllUsers(sort);
+        log.debug("Converting {} users to DTOs with sort: {}", users.size(), sort);
         return users.stream()
                 .map(userMapper::toDto)
                 .toList();
@@ -171,6 +171,14 @@ public class UserService {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
+        // Check email uniqueness if email is being updated
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                log.warn("Attempted to update user {} with existing email: {}", id, request.getEmail());
+                throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
+            }
+        }
+
         log.debug("Mapping update request to user entity");
         userMapper.update(request, user);
 
@@ -178,13 +186,6 @@ public class UserService {
         if (request.getFirstName() != null || request.getLastName() != null) {
             log.debug("Updating user profile for user: {}", id);
             UserProfile profile = user.getUserProfile();
-            if (profile == null) {
-                log.debug("Creating new profile for user: {}", id);
-                profile = new UserProfile();
-                profile.setUserId(user.getUserId());
-                profile.setUser(user);
-                user.setUserProfile(profile);
-            }
             if (request.getFirstName() != null) {
                 profile.setFirstName(request.getFirstName());
             }
@@ -238,6 +239,10 @@ public class UserService {
 
     public void removeRole(String userId, Role role) {
         log.info("Removing role {} from user: {}", role.getName(), userId);
+
+        // Verify if user exists
+        getUserById(userId);    // will throw exception if user not found
+
         userRoleRepository.deleteByUserUserIdAndRole(userId, role);
         log.info("Successfully removed role {} from user: {}", role.getName(), userId);
     }

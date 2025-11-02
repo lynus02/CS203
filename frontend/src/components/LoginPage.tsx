@@ -1,5 +1,6 @@
 // LoginPage.tsx
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import {Eye, EyeOff, Lock, Mail, ArrowLeft, Globe} from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -66,8 +67,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
 
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
+        } else if (formData.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
         }
 
         setErrors(newErrors);
@@ -127,16 +128,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         <div className="flex justify-start min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
-                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center">
+                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center bg-primary">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                        <Globe className="h-6 w-6 text-primary" />
-                        <span className="text-xl font-medium">FoodTariff Pro</span>
+                        <Globe className="h-6 w-6 text-white" />
+                        <span className="text-xl font-medium text-white">FoodTariff Pro</span>
                     </a>
                 </div>
 
                 {/* Centered Login Box */}
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 h-[500px] w-[400px]">
+                <div className="flex flex-1 items-center justify-center py-8">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
                         <Card className="h-full">
                             <CardHeader>
                                 <div className="flex items-center gap-3 mb-4">
@@ -150,7 +151,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                             <ArrowLeft className="h-6 w-6" />
                                         </Button>
                                     )}
-                                    <CardTitle className="text-[40px] font-bold">Login</CardTitle>
+                                    <CardTitle style={{ fontSize: '25px' }} className="font-bold">Login</CardTitle>
                                 </div>
                                 <p className="text-lg text-muted-foreground">
                                     Enter your credentials to access your account

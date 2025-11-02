@@ -6,6 +6,8 @@ import com.lynus.cs203.entities.Tariff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -21,5 +23,12 @@ public interface TariffRepository extends JpaRepository<Tariff, Long> {
     Page<Tariff> findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(String countryName, String productDescription, Pageable pageable);
 
     Page<Tariff> findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(String productDescription, Integer productCode, Pageable pageable);
+
+    // Requires casting because productCode is an Integer
+    @Query("SELECT t FROM Tariff t WHERE t.country.countryName = :countryName AND CAST(t.product.productCode AS string) LIKE %:productCode%")
+    Page<Tariff> findByCountryAndProductCodeContaining(@Param("countryName") String countryName, @Param("productCode") int productCode, Pageable pageable);
+
+    @Query("SELECT t FROM Tariff t WHERE LOWER(t.product.productDescription) LIKE %:productDescription% OR CAST(t.product.productCode AS string) LIKE %:productCode%")
+    Page<Tariff> findByProductDescriptionOrProductCodeContaining(@Param("productDescription") String productDescription, @Param("productCode") int productCode, Pageable pageable);
 
 }

@@ -2,11 +2,13 @@ package com.lynus.cs203.dtos.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 @AllArgsConstructor
 @Getter
 @Schema(description = "Response object for user details")
@@ -68,5 +70,4 @@ public class UserDto {
             example = "[\"USER\", \"ADMIN\"]"
     )
     private List<String> roles;
-
 }

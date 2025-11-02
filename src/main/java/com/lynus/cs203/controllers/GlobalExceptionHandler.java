@@ -1,13 +1,17 @@
 package com.lynus.cs203.controllers;
 
+import com.lynus.cs203.exceptions.UnauthorizedException;
 import com.lynus.cs203.dtos.response.ErrorResponse;
 import com.lynus.cs203.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.json.JsonParseException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,13 +71,13 @@ public class GlobalExceptionHandler {
         var errors = Map.of("email", "Email already exists");
 
         var errorResponse = ErrorResponse.builder()
-                .status (HttpStatus.BAD_REQUEST.value())
+                .status (HttpStatus.CONFLICT.value())
                 .error("Email Conflict")
                 .message(e.getMessage())
                 .errors(errors)
                 .build();
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
@@ -125,6 +129,21 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, JsonParseException.class})
+    public ResponseEntity<ErrorResponse> handleJsonParseException(
+            Exception e
+    ) {
+        log.warn("Invalid JSON format: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Malformed JSON")
+                .message("Invalid JSON format")
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -196,10 +215,23 @@ public class GlobalExceptionHandler {
         var errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
                 .error("Data Integrity Issue")
-                .message("Multiple records found where only one was expected. Please contact support.")
+                .message("Multiple records found where only one was expected.")
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        log.error("Unauthorized: {}", e.getMessage());
+
+        var errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("User is unauthorized")
+                .message("User is unauthorized")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)

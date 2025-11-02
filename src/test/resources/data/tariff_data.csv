@@ -1,0 +1,5 @@
+trade_id,country_code,country_name,product_code,hs_description,hs_uom,food_category,tariff_rate
+1,US,United States,1001,"Wheat Flour","KG","Grains",2.5
+2,CA,Canada,1002,"Corn Meal","KG","Grains",3.0
+3,US,United States,1003,"Rice","KG","Grains",1.8
+4,MX,Mexico,1001,"Wheat Flour","KG","Grains",4.2

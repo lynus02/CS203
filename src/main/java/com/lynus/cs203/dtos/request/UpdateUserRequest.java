@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 @Schema(description = "Request object for updating user details")
 public class UpdateUserRequest {
@@ -16,7 +18,7 @@ public class UpdateUserRequest {
             maxLength = 255,
             requiredMode = Schema.RequiredMode.NOT_REQUIRED
     )
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(min = 3, max = 255, message = "First name must be between 3 to 255 characters")
     private String firstName;
 
     @Schema(
@@ -25,7 +27,7 @@ public class UpdateUserRequest {
             maxLength = 255,
             requiredMode = Schema.RequiredMode.NOT_REQUIRED
     )
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(min = 3, max = 255, message = "Last name must be between 3 to 255 characters")
     private String lastName;
 
     @Schema(

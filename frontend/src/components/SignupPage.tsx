@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {Eye, EyeOff, User, Mail, ArrowLeft, Globe, Lock} from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Card, CardContent } from "./ui/card";
+import {Card, CardContent, CardTitle, CardHeader} from "./ui/card";
 import api from '../services/api';
 
 // TypeScript interfaces
@@ -167,7 +167,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
 
             onSignup(userData);
 
-        } catch (error) {
+        } catch (error : any) {
             const errorMessage = error.response?.data?.message ||
                 error.response?.data?.error ||
                 'Signup failed. Please try again.';
@@ -228,18 +228,19 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         <div className="flex justify-start min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
-                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center">
+                <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center bg-primary">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                        <Globe className="h-6 w-6 text-primary" />
-                        <span className="text-xl font-medium">FoodTariff Pro</span>
+                        <Globe className="h-6 w-6 text-white" />
+                        <span className="text-xl font-medium text-white">FoodTariff Pro</span>
                     </a>
                 </div>
 
                 {/* Centered Signup Box */}
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 h-[500px] w-[700px]">
+                <div className="flex flex-1 items-center justify-center py-8">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
                         <Card className="h-full">
-                            <div className="h-full flex flex-col">
+                            <CardHeader>
+                              <div className="flex flex-col">
                                 <div className="mb-6">
                                     <div className="flex items-center gap-3 mb-4">
                                         {onBack && (
@@ -252,14 +253,14 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                 <ArrowLeft className="h-6 w-6" />
                                             </Button>
                                         )}
-                                        <div>
-                                            <h1 className="text-[40px] font-bold">Sign Up</h1>
-                                            <p className="text-lg text-muted-foreground">
-                                                Create your account to get started
-                                            </p>
-                                        </div>
+                                        <CardTitle style={{ fontSize: '25px' }} className="font-bold">Register Now</CardTitle>
                                     </div>
+                                    <p className="text-lg text-muted-foreground">
+                                        Create your account to get started
+                                    </p>
                                 </div>
+                              </div>
+                            </CardHeader>
 
                                 <div className="flex-1 flex flex-col justify-center">
                                     <CardContent className="flex-1 flex flex-col justify-center">
@@ -386,35 +387,40 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                             </div>
                                             {/* Confirm Password Field */}
                                             <div className="space-y-3">
-                                                <label htmlFor="confirmPassword" className="text-base font-medium">
+                                                <label htmlFor="password" className="text-base font-medium">
                                                     Confirm Password
                                                 </label>
-                                                <div className="relative">
+                                                <div className="relative flex items-center">
+                                                    <Lock
+                                                        className="absolute text-muted-foreground h-5 w-5"
+                                                        style={{ left: '12px' }} />
+
                                                     <Input
-                                                        id="confirmPassword"
-                                                        name="confirmPassword"
-                                                        type={showConfirmPassword ? 'text' : 'password'}
-                                                        value={formData.confirmPassword}
+                                                        id="password"
+                                                        name="password"
+                                                        type={showPassword ? 'text' : 'password'}
+                                                        value={formData.password}
                                                         onChange={handleChange}
-                                                        className={`pl-4 pr-12 py-3 text-base h-12 ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                                                        placeholder="Confirm your password"
+                                                        style={{ paddingLeft: '3rem' }}
+                                                        className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
+                                                        placeholder="Re-enter your password"
                                                         disabled={isLoading}
                                                     />
                                                     <button
                                                         type="button"
-                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        onClick={() => setShowPassword(!showPassword)}
                                                         className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                                                         disabled={isLoading}
                                                     >
-                                                        {showConfirmPassword ? (
+                                                        {showPassword ? (
                                                             <EyeOff className="h-5 w-5" />
                                                         ) : (
                                                             <Eye className="h-5 w-5" />
                                                         )}
                                                     </button>
                                                 </div>
-                                                {errors.confirmPassword && (
-                                                    <p className="text-base text-red-600">{errors.confirmPassword}</p>
+                                                {errors.password && (
+                                                    <p className="text-base text-red-600">{errors.password}</p>
                                                 )}
                                             </div>
                                             {/* Password Requirements */}
@@ -425,6 +431,8 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                                     <li>One uppercase letter</li>
                                                     <li>One lowercase letter</li>
                                                     <li>One number</li>
+                                                    <li>One special character(@$!%*?&)</li>
+
                                                 </ul>
                                             </div>
                                             <Button
@@ -451,7 +459,6 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                                         )}
                                     </CardContent>
                                 </div>
-                            </div>
                         </Card>
                     </div>
                 </div>

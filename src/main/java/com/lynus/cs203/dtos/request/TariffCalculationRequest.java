@@ -4,8 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 @Schema(description = "Request object for tariff calculation")
 public class TariffCalculationRequest {
@@ -18,14 +20,24 @@ public class TariffCalculationRequest {
     private Integer productCode;
 
     @Schema(
-            description = "Country code (C + 3 numeric characters)",
+            description = "Export Country code (C + 3 numeric characters)",
             example = "C840",
             requiredMode = Schema.RequiredMode.REQUIRED,
-            minLength = 2,
-            maxLength = 2
+            minLength = 4,
+            maxLength = 4
+    )
+    @NotBlank(message = "Export country code is required")
+    private String exportCountryCode;
+
+    @Schema(
+            description = "Destination Country code (C + 3 numeric characters)",
+            example = "C840",
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            minLength = 4,
+            maxLength = 4
     )
     @NotBlank(message = "Country code is required")
-    private String countryCode;
+    private String desCountryCode;
 
     @Schema(
             description = "Customs value for tariff calculation",

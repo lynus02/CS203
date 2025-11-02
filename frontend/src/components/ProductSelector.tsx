@@ -9,7 +9,7 @@ import { Textarea } from "./ui/textarea";
 import { Search, Package, Info, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
-interface Product {
+export interface Product {
   id: string;
   name: string;
   hsCode: string;
@@ -130,7 +130,7 @@ export function ProductSelector({ onProductSelected }: { onProductSelected?: (re
     }
   ];
 
-  const categories = [...new Set(products.map(p => p.category))];
+  const categories = Array.from(new Set(products.map(p => p.category)));
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = searchTerm === "" || 
