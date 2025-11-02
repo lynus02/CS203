@@ -4,9 +4,9 @@ name: CI/CD Pipeline
 # Triggers that start this workflow
 on:
   push:
-    branches: [ main, testing ]   # Runs when pushed to main or testing branches
+    branches: [ master, testing ]   # Runs when pushed to main or testing branches
   pull_request:
-    branches: [ main ]    # Runs when a PR is opened against main branch
+    branches: [ master ]    # Runs when a PR is opened against main branch
 
 jobs:
   test:
@@ -67,7 +67,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v4
