@@ -16,10 +16,10 @@ jobs:
       - uses: actions/checkout@v4     # Downloads the repository
 
       # Install Java 21
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
 
       # Install Node.js 18
