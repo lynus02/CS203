@@ -13,8 +13,7 @@ import lombok.Data;
 public class TariffCalculationRequest {
     @Schema(
             description = "Product code for tariff calculation",
-            example = "80550",
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = "80550"
     )
     @NotNull(message = "Product code is required")
     private Integer productCode;
@@ -22,7 +21,6 @@ public class TariffCalculationRequest {
     @Schema(
             description = "Export Country code (C + 3 numeric characters)",
             example = "C840",
-            requiredMode = Schema.RequiredMode.REQUIRED,
             minLength = 4,
             maxLength = 4
     )
@@ -32,7 +30,6 @@ public class TariffCalculationRequest {
     @Schema(
             description = "Destination Country code (C + 3 numeric characters)",
             example = "C840",
-            requiredMode = Schema.RequiredMode.REQUIRED,
             minLength = 4,
             maxLength = 4
     )
@@ -41,8 +38,7 @@ public class TariffCalculationRequest {
 
     @Schema(
             description = "Customs value for tariff calculation",
-            example = "1000.50",
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = "1000.50"
     )
     @Positive(message = "Customs value must be positive")
     private double customsValue;

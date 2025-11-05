@@ -36,8 +36,11 @@ public class JwtService {
 
         List<String> roles = getUserRoles(user.getUserId());
 
-        log.debug("Token claims - Email: {}, FirstName: {}, LastName: {}, Roles: {}",
+        log.debug("Building token claims for user: {} - Roles: {}", user.getUserId(), roles.size());
+        log.trace("Token details - Email: {}, FirstName: {}, LastName: {}, Roles: {}",
                 user.getEmail(), firstName, lastName, roles);
+
+        Date expiration = new Date(System.currentTimeMillis() + (tokenExpiration * 1000));
 
         String token = Jwts.builder()
                 .subject(user.getUserId())
@@ -45,12 +48,12 @@ public class JwtService {
                 .claim("firstName", firstName)
                 .claim("lastName", lastName)
                 .claim("roles", roles)
-                .issuer(String.valueOf(new Date()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
+                .issuedAt(new Date())
+                .expiration(expiration)
                 .signWith(jwtConfig.getSecretKey())
                 .compact();
 
-        log.info("Successfully generated JWT token for user: {}", user.getUserId());
+        log.info("Successfully generated JWT token for user: {} - Expires: {}", user.getUserId(), expiration);
         return token;
     }
 

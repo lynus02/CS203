@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -47,22 +46,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("Creating SecurityFilterChain bean");
-        log.warn("Security is currently set to permit all requests - THIS IS FOR TESTING ONLY");
         // Stateless sessions (token-based authentication)
         // Disable CSRF (cross site request forgery)
         // Authorize requests
         http
                 .sessionManagement(c -> {
-                    log.debug("Setting session management to stateless");
+                    log.debug("Configuring stateless session management");
                     c.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(cors -> {
+                    log.debug("Configuring CORS");
+                    cors.configurationSource(corsConfigurationSource);
+                })
                 .csrf(csrf -> {
-                    log.debug("Disabling CSRF protection");
+                    log.debug("Disabling CSRF protection for stateless API");
                     csrf.disable();
                 })
                 .authorizeHttpRequests(c -> {
-                    log.debug("Configuring authorization rules for HTTP requests");
+                    log.info("Configuring authorization rules");
+
                     c.requestMatchers("/").permitAll()
                             // Authentication endpoints = allow anyone to register/login
                             .requestMatchers(HttpMethod.POST, "/users").permitAll()
@@ -88,6 +90,8 @@ public class SecurityConfig {
 
                             // All other endpoints require authentication
                             .anyRequest().authenticated();
+
+                    log.debug("Authorization rules configured successfully");
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c -> {
@@ -103,11 +107,15 @@ public class SecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            log.warn("Access denied for user attempting to access: {} {}",
-                    request.getMethod(), request.getRequestURI());
+            String user = request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "anonymous";
+            log.warn("Access denied for user '{}' attempting {} {}",
+                    user, request.getMethod(), request.getRequestURI());
+
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Access denied\",\"message\":\"You don't have permission to access this resource\"}");
+            response.getWriter().write(
+                    "{\"error\":\"Access denied\",\"message\":\"You don't have permission to access this resource\"}"
+            );
         };
     }
 }

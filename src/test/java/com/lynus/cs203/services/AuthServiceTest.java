@@ -118,11 +118,13 @@ class AuthServiceTest {
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
-        when(userService.getUserByEmail(request.getEmail())).thenReturn(null);
+        when(userService.getUserByEmail(request.getEmail()))
+                .thenThrow(new UserNotFoundException("User not found with email: " + request.getEmail()));
 
         // Act & Assert
         assertThatThrownBy(() -> authService.authenticateUser(request, response))
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
         verify(userService).getUserByEmail(request.getEmail());
         verify(jwtService, never()).generateAccessToken(any());
         verify(jwtService, never()).generateRefreshToken(any());

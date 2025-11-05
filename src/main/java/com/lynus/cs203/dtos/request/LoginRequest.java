@@ -14,9 +14,7 @@ import lombok.Data;
 public class LoginRequest {
     @Schema(
             description = "Email address (must be lowercase)",
-            example = "john.doe@example.com",
-            format = "email",
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = "john.doe@example.com"
     )
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
@@ -27,8 +25,7 @@ public class LoginRequest {
             description = "User password (6-25 characters)",
             example = "userPassword123",
             minLength = 6,
-            maxLength = 25,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            maxLength = 25
     )
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 25, message = "Password must be between 6 and 25 characters")

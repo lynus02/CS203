@@ -15,7 +15,7 @@ public class PasswordChangeResponse {
     private String message;
 
     @Schema(
-            description = "Unique identifier of the user whose password was changed",
+            description = "Unique identifier of the user",
             example = "123e4567-e89b-12d3-a456-426614174000"
     )
     private String userId;

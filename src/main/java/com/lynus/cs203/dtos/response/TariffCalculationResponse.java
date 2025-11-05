@@ -15,12 +15,13 @@ public class TariffCalculationResponse {
     private Integer productCode;
 
     @Schema(
-            description = "Export country ISO code (2-letter format)",
+            description = "Export country code",
             example = "CN"
     )
     private String exportCountryCode;
+
     @Schema(
-            description = "Import country code (2-letter format)",
+            description = "Import country code",
             example = "US"
     )
     private String desCountryCode;

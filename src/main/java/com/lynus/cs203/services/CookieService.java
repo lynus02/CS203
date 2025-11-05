@@ -15,14 +15,16 @@ public class CookieService {
     private final JwtConfig jwtConfig;
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        log.info("Setting refresh token cookie for user");
+        log.debug("Setting refresh token cookie");
 
         ResponseCookie cookie = createRefreshTokenCookie(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        log.debug("Refresh token cookie set successfully");
     }
 
     private ResponseCookie createRefreshTokenCookie(String refreshToken) {
-        log.info("Creating refresh token for user: {}", refreshToken);
+        log.debug("Creating secure refresh token cookie");
 
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
@@ -32,4 +34,18 @@ public class CookieService {
                 .build();
     }
 
+    public void clearRefreshTokenCookie(HttpServletResponse response) {
+        log.debug("Clearing refresh token cookie");
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/refresh")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        log.debug("Refresh token cookie cleared successfully");
+    }
 }

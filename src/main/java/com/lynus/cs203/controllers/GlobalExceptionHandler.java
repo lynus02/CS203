@@ -11,13 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,17 +26,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException e
     ) {
-        log.warn("Validation error occurred: {}", e.getMessage());
+        log.warn("Validation error: {}", e.getMessage());
 
         var errors = new HashMap<String, String>();
-
         e.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
-            log.debug("Validation error - Field: {}, Message: {}", error.getField(), error.getDefaultMessage());
         });
 
         var errorResponse = ErrorResponse.builder()
-                .status (HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error("Validation Failed")
                 .message("Validation errors in request")
                 .errors(errors)
@@ -84,10 +80,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidPassword(
             InvalidPasswordException e
     ) {
-        log.warn("Invalid password attempt: {}", e.getMessage());
+        log.warn("Invalid password attempt");
 
         var errorResponse = ErrorResponse.builder()
-                .status (HttpStatus.UNAUTHORIZED.value())
+                .status(HttpStatus.UNAUTHORIZED.value())
                 .error("Invalid Password")
                 .message("Provided password is incorrect")
                 .build();

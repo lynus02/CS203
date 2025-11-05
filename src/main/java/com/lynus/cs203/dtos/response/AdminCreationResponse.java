@@ -23,8 +23,7 @@ public class AdminCreationResponse {
 
     @Schema(
             description = "Email address of the created admin",
-            example = "admin@example.com",
-            format = "email"
+            example = "admin@example.com"
     )
     private String email;
 }

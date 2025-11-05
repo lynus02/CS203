@@ -1,10 +1,8 @@
 package com.lynus.cs203.services;
 
-import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -13,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,30 +26,44 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("Loading user details for email: {}", email);
 
         var user = userRepository.findByEmailWithProfile(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.warn("User not found for email: {}", email);
+                    return new UsernameNotFoundException("User not found with email: " + email);
+                });
 
-        log.debug("Found user with ID: {} for email: {}", user.getUserId(), email);
+        log.debug("Found user: {} (ID: {})", email, user.getUserId());
 
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+        if (!user.getIsActive()) {
+            log.warn("User account is disabled: {}", email);
+        }
+
+        List<GrantedAuthority> authorities = getAuthorities(user);
+        log.debug("User {} has {} authorities: {}", email, authorities.size(),
+                authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
+        UserDetails userDetails = User.builder()
                 .username(user.getUserId())
                 .password(user.getPassword())
-                .authorities(user.getUserRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole().name()))
-                        .collect(Collectors.toList()))
+                .authorities(authorities)
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
-                .disabled(!user.getIsActive()) // This is important
+                .disabled(!user.getIsActive())
                 .build();
 
-        log.info("Successfully loaded user details for: {}", email);
+        log.info("Successfully loaded user details for: {} with {} roles", email, authorities.size());
         return userDetails;
     }
 
     private List<GrantedAuthority> getAuthorities(com.lynus.cs203.entities.User user) {
-        log.debug("Getting authorities for user: {}", user.getUserId());
+        log.debug("Getting authorities for user ID: {}", user.getUserId());
 
         List<String> roles = userService.getUserRoles(user.getUserId());
+
+        if (roles.isEmpty()) {
+            log.warn("User {} has no roles assigned", user.getUserId());
+        }
+
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());

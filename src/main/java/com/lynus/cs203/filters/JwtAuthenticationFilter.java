@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.debug("No Authorization header or invalid format, skipping JWT authentication");
+            log.debug("No Bearer token found, skipping JWT authentication");
             filterChain.doFilter(request, response);
             return;
         }
@@ -71,12 +71,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.debug("Authentication set in SecurityContext for user: {}", userId);
+                log.debug("Authentication set in SecurityContext for user: {} with roles: {}", userId, roles);
+            } else if (userId == null) {
+                log.warn("Valid JWT token but no user ID extracted");
             }
 
         } catch (Exception e) {
-            log.warn("JWT token processing failed for request: {} {} - Error: {}",
+            log.warn("JWT token processing failed for request: {} {} - {}",
                     request.getMethod(), request.getRequestURI(), e.getMessage());
+            log.debug("JWT processing exception details", e);
         }
 
         filterChain.doFilter(request, response);

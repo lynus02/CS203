@@ -28,6 +28,7 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,41 +38,45 @@ public class UserService {
 
     /* DTO Methods */
     public List<UserDto> getAllUsersAsDto(String sort) {
+        log.debug("Retrieving all users as DTOs with sort: {}", sort);
         List<User> users = getAllUsers(sort);
-        log.debug("Converting {} users to DTOs with sort: {}", users.size(), sort);
+        log.debug("Converted {} users to DTOs", users.size());
         return users.stream()
                 .map(userMapper::toDto)
                 .toList();
     }
 
     public UserDto getUserByEmailAsDto(String email) {
-        log.debug("Converting user with email {} to DTO", email);
+        log.debug("Retrieving user as DTO by email: {}", email);
         User user = getUserByEmail(email);
         return userMapper.toDto(user);
     }
 
     public UserDto getUserByIdAsDto(String id) {
-        log.debug("Converting user with ID {} to DTO", id);
+        log.debug("Retrieving user as DTO by ID: {}", id);
         User user = getUserById(id);
         return userMapper.toDto(user);
     }
 
     public UserDto createUserAsDto(CreateUserRequest request) {
-        log.debug("Creating user and converting to DTO for email: {}", request.getEmail());
+        log.debug("Creating user as DTO for email: {}", request.getEmail());
         User user = createUser(request);
         return userMapper.toDto(user);
     }
 
     public UserDto updateUserAsDto(String id, UpdateUserRequest request) {
-        log.debug("Updating user {} and converting to DTO", id);
+        log.debug("Updating user as DTO for ID: {}", id);
         User user = updateUser(id, request);
         return userMapper.toDto(user);
     }
 
     public void deleteUser(String id) {
         log.info("Deleting user with ID: {}", id);
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("User not found for deletion: {}", id);
+                    return new UserNotFoundException("User not found with id: " + id);
+                });
 
         userRepository.delete(user);
         log.info("Successfully deleted user: {}", id);
@@ -79,8 +84,11 @@ public class UserService {
 
     public PasswordChangeResponse changePassword(String id, ChangePasswordRequest request) {
         log.info("Changing password for user: {}", id);
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("User not found for password change: {}", id);
+                    return new UserNotFoundException("User not found with id: " + id);
+                });
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             log.warn("Invalid old password provided for user: {}", id);
@@ -99,35 +107,40 @@ public class UserService {
 
     /* Entity Methods */
     public List<User> getAllUsers(String sort) {
-        log.info("Retrieving all users with sort parameter: {}", sort);
+        log.debug("Retrieving all users with sort parameter: {}", sort);
         String validSort = Set.of("email", "createdAt", "updatedAt").contains(sort) ? sort : "createdAt";
-        log.debug("Using sort parameter: {}", validSort);
+        log.trace("Using validated sort parameter: {}", validSort);
 
-        // Use EntityGraph to fetch profiles eagerly
         List<User> users = userRepository.findAll(Sort.by(validSort));
-        log.info("Retrieved {} users from database", users.size());
+        log.debug("Retrieved {} users from database", users.size());
         return users;
     }
 
     public User getUserByEmail(String email) {
-        log.info("Retrieving user by email: {}", email);
+        log.debug("Retrieving user by email: {}", email);
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found")
-                );
+                .orElseThrow(() -> {
+                    log.warn("User not found by email: {}", email);
+                    return new UserNotFoundException("User not found with email: " + email);
+                });
     }
 
     public User getUserById(String id) {
-        log.info("Retrieving user by ID: {}", id);
+        log.debug("Retrieving user by ID: {}", id);
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.warn("User not found by ID: {}", id);
+                    return new UserNotFoundException("User not found with id: " + id);
+                });
     }
 
+    @Transactional
     public User createUser(CreateUserRequest request) {
         log.info("Creating new user with email: {}", request.getEmail());
 
         // Check if email is unique
         if (userRepository.existsByEmail(request.getEmail())) {
-            log.warn("Attempted to create user with existing email: {}", request.getEmail());
+            log.warn("Email already exists: {}", request.getEmail());
             throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
         }
 
@@ -162,19 +175,23 @@ public class UserService {
         log.debug("Assigning default USER role to user: {}", savedUser.getUserId());
         assignRole(savedUser.getUserId(), Role.USER);
 
-        log.info("Successfully created user with ID: {}", savedUser.getUserId());
+        log.info("Successfully created user - ID: {}, Email: {}", savedUser.getUserId(), request.getEmail());
         return savedUser;
     }
 
+    @Transactional
     public User updateUser(String id, UpdateUserRequest request) {
         log.info("Updating user with ID: {}", id);
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("User not found for update: {}", id);
+                    return new UserNotFoundException("User not found with id: " + id);
+                });
 
         // Check email uniqueness if email is being updated
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
-                log.warn("Attempted to update user {} with existing email: {}", id, request.getEmail());
+                log.warn("Email already exists for update: {}", request.getEmail());
                 throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
             }
         }
@@ -234,6 +251,7 @@ public class UserService {
     }
 
     public boolean hasRole(String userId, Role role) {
+        log.trace("Checking if user {} has role: {}", userId, role.getName());
         return userRoleRepository.existsByUserUserIdAndRole(userId, role);
     }
 
@@ -248,7 +266,7 @@ public class UserService {
     }
 
     public List<String> getUserRoles(String userId) {
-        log.info("Retrieving roles for user: {}", userId);
+        log.debug("Retrieving roles for user: {}", userId);
 
         // Verify user exists
         getUserById(userId);
@@ -258,13 +276,15 @@ public class UserService {
                 .map(userRole -> userRole.getRole().getName())
                 .toList();
 
-        log.info("Found {} roles for user: {}", roles.size(), userId);
+        log.debug("Found {} roles for user: {}", roles.size(), userId);
         return roles;
     }
 
     public boolean adminExists() {
-        log.debug("Checking if admin exists");
-        return userRoleRepository.existsByRole(Role.ADMIN);
+        log.trace("Checking if admin user exists");
+        boolean exists = userRoleRepository.existsByRole(Role.ADMIN);
+        log.trace("Admin user exists: {}", exists);
+        return exists;
     }
 
 }

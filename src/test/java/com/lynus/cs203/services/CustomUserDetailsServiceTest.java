@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,6 +71,7 @@ public class CustomUserDetailsServiceTest {
 
         user.setUserRoles(userRoles);
 
+        when(userService.getUserRoles(userId)).thenReturn(List.of("USER", "ADMIN"));
         when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
 
         // Act
@@ -85,7 +87,7 @@ public class CustomUserDetailsServiceTest {
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
-        verify(userService, never()).getUserRoles(anyString());
+        verify(userService).getUserRoles(userId);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class CustomUserDetailsServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> customUserDetailsService.loadUserByUsername(email))
                 .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage("User not found");
+                .hasMessageContaining("User not found with email");
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
@@ -119,6 +121,7 @@ public class CustomUserDetailsServiceTest {
         user.setIsActive(true);
         user.setUserRoles(new HashSet<>()); // Empty roles
 
+        when(userService.getUserRoles(userId)).thenReturn(List.of());
         when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
 
         // Act
@@ -131,7 +134,7 @@ public class CustomUserDetailsServiceTest {
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
-        verify(userService, never()).getUserRoles(anyString());
+        verify(userService).getUserRoles(userId);
     }
 
     @Test
@@ -149,6 +152,7 @@ public class CustomUserDetailsServiceTest {
         user.setIsActive(false); // Inactive user
         user.setUserRoles(new HashSet<>());
 
+        when(userService.getUserRoles(userId)).thenReturn(List.of());
         when(userRepository.findByEmailWithProfile(email)).thenReturn(Optional.of(user));
 
         // Act
@@ -162,6 +166,6 @@ public class CustomUserDetailsServiceTest {
 
         // Verify
         verify(userRepository).findByEmailWithProfile(email);
-        verify(userService, never()).getUserRoles(anyString());
+        verify(userService).getUserRoles(userId);
     }
 }

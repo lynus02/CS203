@@ -27,34 +27,41 @@ public class AuthService {
             LoginRequest request,
             HttpServletResponse response
     ) {
-        log.info("Authenticating user");
+        log.info("Authenticating user with email: {}", request.getEmail());
+
         authenticateCredentials(request);
 
-        log.debug("Retrieving user details");
         User user = userService.getUserByEmail(request.getEmail());
+        log.debug("Retrieved user details for: {} (ID: {})", request.getEmail(), user.getUserId());
 
-        log.debug("Generating JWT token for user: {}", user.getUserId());
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
+        log.debug("Generated JWT tokens for user: {}", user.getUserId());
 
         cookieService.setRefreshTokenCookie(response, refreshToken);
+        log.info("User authenticated successfully: {} (ID: {})", request.getEmail(), user.getUserId());
 
         return new JwtResponse(accessToken);
     }
 
     public JwtResponse refreshAccessToken(String refreshToken) {
-        log.info("Refreshing access token for user");
+        log.info("Processing access token refresh request");
+
         validateRefreshToken(refreshToken);
 
         String userId = jwtService.extractUserId(refreshToken);
+        log.debug("Extracted user ID from refresh token: {}", userId);
+
         User user = userService.getUserById(userId);
         String accessToken = jwtService.generateAccessToken(user);
 
+        log.info("Access token refreshed successfully for user: {}", userId);
         return new JwtResponse(accessToken);
     }
 
     private void authenticateCredentials(LoginRequest request) {
-        log.debug("Authenticating user credentials for: {}", request.getEmail());
+        log.debug("Authenticating credentials for email: {}", request.getEmail());
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -62,28 +69,38 @@ public class AuthService {
                             request.getPassword()
                     )
             );
+            log.debug("Credentials validated successfully for email: {}", request.getEmail());
+
         } catch (DisabledException e) {
-            log.warn("Authentication failed: User account is inactive for email {}", request.getEmail());
+            log.warn("Authentication failed - Account disabled for email: {}", request.getEmail());
             throw new UnauthorizedException("User account is disabled");
+
         } catch (BadCredentialsException e) {
-            User user = userService.getUserByEmail(request.getEmail());
-            if (user == null) {
-                log.warn("Authentication failed: User not found for email {}", request.getEmail());
-                throw new UserNotFoundException("User not found");
+            log.warn("Authentication failed - Invalid credentials for email: {}", request.getEmail());
+
+            // Check if user exists to provide specific error message
+            try {
+                User user = userService.getUserByEmail(request.getEmail());
+                log.debug("User exists but password is incorrect for email: {}", request.getEmail());
+                // Re-throw the original exception since password is wrong
+                throw new BadCredentialsException("Invalid password");
+            } catch (UserNotFoundException ex) {
+                log.warn("Authentication failed - User not found for email: {}", request.getEmail());
+                throw ex;
             }
-            throw e;
         }
     }
 
     private void validateRefreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
-            log.warn("Refresh token cookie is missing");
+            log.warn("Refresh token validation failed - Token is missing or empty");
             throw new BadCredentialsException("Refresh token is required");
         }
 
         if (!jwtService.validateToken(refreshToken)) {
-            log.warn("Invalid refresh token");
+            log.warn("Refresh token validation failed - Token is invalid or expired");
             throw new BadCredentialsException("Invalid refresh token");
         }
+        log.debug("Refresh token validated successfully");
     }
 }

@@ -169,7 +169,7 @@ public class SetUpServiceIntegrationTest {
 
         assertThat(setupStatusResponse).isNotNull();
         assertThat(setupStatusResponse.isSetupComplete()).isTrue();
-        assertThat(setupStatusResponse.getMessage()).contains("Admin user exists");
+        assertThat(setupStatusResponse.getMessage()).contains("System setup completed");
     }
 
     @Test
@@ -181,7 +181,7 @@ public class SetUpServiceIntegrationTest {
 
         assertThat(setupStatusResponse).isNotNull();
         assertThat(setupStatusResponse.isSetupComplete()).isFalse();
-        assertThat(setupStatusResponse.getMessage()).contains("No admin user found");
+        assertThat(setupStatusResponse.getMessage()).contains("no admin user found");
     }
 
     @Test
@@ -214,7 +214,7 @@ public class SetUpServiceIntegrationTest {
 
         assertThat(setupStatusResponse).isNotNull();
         assertThat(setupStatusResponse.isSetupComplete()).isFalse();
-        assertThat(setupStatusResponse.getMessage()).contains("No admin user found");
+        assertThat(setupStatusResponse.getMessage()).contains("no admin user found");
     }
 
     @Test

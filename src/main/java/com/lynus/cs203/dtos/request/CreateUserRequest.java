@@ -16,28 +16,24 @@ public class CreateUserRequest {
     @Schema(
             description = "First name of the user",
             example = "John",
-            maxLength = 255,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            maxLength = 255
     )
     @NotBlank(message = "First name is required")
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(max = 255, message = "First Name must be at most 255 characters")
     private String firstName;
 
     @Schema(
             description = "Last name of the user",
             example = "Doe",
-            maxLength = 255,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            maxLength = 255
     )
     @NotBlank(message = "Last name is required")
-    @Size(max = 255, message = "Name must be at most 255 characters")
+    @Size(max = 255, message = "Last Name must be at most 255 characters")
     private String lastName;
 
     @Schema(
             description = "Email address (must be lowercase and valid)",
-            example = "john.doe@example.com",
-            format = "email",
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = "john.doe@example.com"
     )
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
@@ -46,14 +42,13 @@ public class CreateUserRequest {
 
     @Schema(
             description = "Password for the account (6-25 characters)",
-            example = "securePassword123",
+            example = "SecurePass123!",
             minLength = 6,
-            maxLength = 25,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            maxLength = 25
     )
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 25, message = "Password must be between 6 and 25 characters")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,25}$",
+            message = "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character")
     private String password;
 }

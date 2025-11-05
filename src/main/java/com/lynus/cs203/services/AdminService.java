@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,11 +17,12 @@ public class AdminService {
     private final RoleValidationService roleValidationService;
 
     public RoleOperationResponse assignRoleToUser(String userId, String roleName) {
-        log.info("Assigning role {} to user {}", roleName, userId);
+        log.info("Assigning role {} to user ID: {}", roleName, userId);
 
         Role role = roleValidationService.validateAndGetRole(roleName);
         userService.assignRole(userId, role);
 
+        log.info("Successfully assigned role '{}' to user ID: {}", roleName, userId);
         return RoleOperationResponse.builder()
                 .message("Role assigned successfully")
                 .userId(userId)
@@ -31,11 +31,12 @@ public class AdminService {
     }
 
     public RoleOperationResponse removeRoleFromUser(String userId, String roleName) {
-        log.info("Removing role {} from user {}", roleName, userId);
+        log.info("Removing role '{}' from user ID: {}", roleName, userId);
 
         Role role = roleValidationService.validateAndGetRole(roleName);
         userService.removeRole(userId, role);
 
+        log.info("Successfully removed role '{}' from user ID: {}", roleName, userId);
         return RoleOperationResponse.builder()
                 .message("Role removed successfully")
                 .userId(userId)
@@ -44,10 +45,11 @@ public class AdminService {
     }
 
     public UserRolesResponse getUserRoles(String userId) {
-        log.info("Getting roles for user {}", userId);
+        log.info("Retrieving roles for user ID: {}", userId);
 
         List<String> roles = userService.getUserRoles(userId);
 
+        log.info("Retrieved {} roles for user ID: {} - Roles: {}", roles.size(), userId, roles);
         return UserRolesResponse.builder()
                 .userId(userId)
                 .roles(roles)
