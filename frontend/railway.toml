@@ -6,6 +6,3 @@ dockerfilePath = "Dockerfile.frontend"
 waitForChecks = true
 healthcheckPath = "/"
 restartPolicyType = "ON_FAILURE"
-
-[env]
-PORT = "80"
