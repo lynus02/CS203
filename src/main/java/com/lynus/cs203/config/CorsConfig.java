@@ -4,27 +4,43 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 @Slf4j
 @Configuration
-public class CorsConfig implements WebMvcConfigurer {
+public class CorsConfig {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        log.info("Configuring CORS settings");
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        log.info("Registering CorsConfigurationSource bean for Spring Security");
 
-        registry.addMapping("/**")
-                .allowedOrigins("https://cs203-frontend-production.up.railway.app",
-                        "http://localhost:5173", "http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .exposedHeaders("Authorization", "Content-Type")
-                .allowCredentials(true)
-                .maxAge(3600);
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of(
+                "https://cs203-frontend-production.up.railway.app",
+                "http://localhost:5173",
+                "http://localhost:3000"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
-        log.info("CORS configured for origins: http://localhost:5173, http://localhost:3000");
-        log.debug("CORS details - Methods: [GET, POST, PUT, DELETE, OPTIONS], Credentials: enabled, Max-Age: 3600s");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        log.debug("CORS allowed origins: {}", config.getAllowedOrigins());
+        log.debug("CORS methods: {}", config.getAllowedMethods());
+        log.debug("CORS credentials allowed: {}", config.getAllowCredentials());
+
+        return source;
     }
 }
+
+
