@@ -2,8 +2,12 @@
 # --- Build Stage ---
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+
+# Copy the pom.xml and download dependencies first
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
+
+# Copy the rest of the source and build
 COPY src ./src
 RUN mvn clean package -DskipTests
 
@@ -11,13 +15,14 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
+# Copy the built jar
 COPY --from=build /app/target/*.jar app.jar
 
-# Environment variables
+# Set environment
 ENV SPRING_PROFILES_ACTIVE=prod
 
-# Use PORT environment variable provided by Railway
-EXPOSE ${PORT:-8080}
+# Expose the port (default to 8080)
+EXPOSE 8080
 
-# Simplified entry point - Railway automatically sets PORT
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Railway injects PORT dynamically — pass it to Spring Boot
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
