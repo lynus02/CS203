@@ -16,7 +16,8 @@ public class CorsConfig implements WebMvcConfigurer {
         log.info("Configuring CORS settings");
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173", "http://localhost:3000")
+                .allowedOrigins("https://cs203-frontend-production.up.railway.app",
+                        "http://localhost:5173", "http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization", "Content-Type")
