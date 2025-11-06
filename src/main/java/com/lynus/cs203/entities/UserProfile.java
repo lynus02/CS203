@@ -15,8 +15,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "user_profiles")
 public class UserProfile {
     @Id
-    @Size(max = 36)
-    @Column(name = "user_id", nullable = false, length = 36)
+    @Size(max = 255)
+    @Column(name = "user_id", nullable = false, length = 255)
     private String userId;
 
     @MapsId
@@ -34,7 +34,7 @@ public class UserProfile {
     private String lastName;
 
     @Lob
-    @Column(name = "avatar_url")
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;
 
 }

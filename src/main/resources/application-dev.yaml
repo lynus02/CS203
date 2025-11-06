@@ -8,26 +8,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false                          # Disable for better performance
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
+        jdbc.batch_size: 5000               # Match your Java batch size
+        order_inserts: true                  # Critical for batch performance
+        order_updates: true
 
 # Development Logging - Verbose for debugging
 logging:
   level:
-    com.lynus.cs203: DEBUG           # Your application classes
-    com.lynus.cs203.controllers: DEBUG
-    com.lynus.cs203.services: DEBUG
-    com.lynus.cs203.config: INFO
-    org.hibernate.SQL: DEBUG         # SQL queries
-    org.hibernate.type: TRACE        # Query parameters
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.lynus.cs203: DEBUG
+    com.lynus.cs203.services.DataMigrationService: DEBUG  # Focus on migration
+    com.lynus.cs203.services.TradeAgreementMigrationService: DEBUG
+    org.hibernate.SQL: WARN                  # Reduce SQL noise during migration
   pattern:
     console: "%clr(%d{HH:mm:ss}){faint} %clr(%-5level) %clr(%-30logger{30}){cyan} %msg%n"
   file:

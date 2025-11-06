@@ -8,6 +8,7 @@ CREATE TABLE trade_agreement (
 CREATE TABLE agreement_country (
     agreement_country_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     agreement_id BIGINT,
-    country_name CHAR(255),
-    CONSTRAINT fk_agreement_country_agreement FOREIGN KEY (agreement_id) REFERENCES trade_agreement(agreement_id)
-    );
+    country_id BIGINT,
+    CONSTRAINT fk_agreement_country_agreement FOREIGN KEY (agreement_id) REFERENCES trade_agreement(agreement_id),
+    CONSTRAINT fk_agreement_country_country FOREIGN KEY (country_id) REFERENCES country(country_id)
+);

@@ -1,7 +1,7 @@
 CREATE TABLE country (
                        country_id BIGINT PRIMARY KEY AUTO_INCREMENT,
                        country_code VARCHAR(255) UNIQUE,
-                       country_name CHAR(255)
+                       country_name VARCHAR(255)
 );
 
 CREATE TABLE product (

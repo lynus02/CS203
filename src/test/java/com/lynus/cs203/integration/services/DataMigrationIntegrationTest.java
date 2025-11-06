@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -72,12 +73,15 @@ public class DataMigrationIntegrationTest {
 
     private void createTestTariffCsv() {
         String csvContent = """
-            trade_id,country_code,country_name,product_code,hs_description,hs_uom,food_category,tariff_rate
-            1,US,United States,1001,"Wheat Flour","KG","Grains",2.5
-            2,CA,Canada,1002,"Corn Meal","KG","Grains",3.0
-            3,US,United States,1003,"Rice","KG","Grains",1.8
-            4,MX,Mexico,1001,"Wheat Flour","KG","Grains",4.2
-            """;
+        trade_id,country_code,country_name,product_code,hs_description,hs_uom,food_category,tariff_rate
+        1,US,United States,1001,"Wheat Flour","KG","Grains",2.5
+        2,CA,Canada,1002,"Corn Meal","KG","Grains",3.0
+        3,US,United States,1003,"Rice","KG","Grains",1.8
+        4,MX,Mexico,1001,"Wheat Flour","KG","Grains",4.2
+        5,SG,Singapore,1004,"Sugar","KG","Sweeteners",5.0
+        6,MY,Malaysia,1005,"Palm Oil","L","Oils",2.8
+        7,TH,Thailand,1006,"Coconut Oil","L","Oils",3.2
+        """;
 
         File testFile = new File("src/test/resources/data/tariff_data.csv");
         testFile.getParentFile().mkdirs();
@@ -90,10 +94,10 @@ public class DataMigrationIntegrationTest {
 
     private void createTestTradeAgreementCsv() {
         String csvContent = """
-            agreement_name,agreement_type,signatories
-            "USMCA","Free Trade Agreement","United States;Canada;Mexico"
-            "ASEAN FTA","Regional Agreement","Singapore;Malaysia;Thailand"
-            """;
+                    agreement_name,agreement_type,signatories
+                    "USMCA","Free Trade Agreement","United States;Canada;Mexico"
+                    "ASEAN FTA","Regional Agreement","Singapore;Malaysia;Thailand"
+                    """;
 
         File testFile = new File("src/test/resources/data/trade_agreement.csv");
         testFile.getParentFile().mkdirs();
@@ -232,12 +236,30 @@ public class DataMigrationIntegrationTest {
     @DisplayName("Should run full data import process without errors")
     void testDataImportRunner_ShouldRunFullImportProcess() throws Exception {
         // Run the data import runner
-        dataImportRunner.run();
+        dataImportRunner.runMigrations();
+
+        // Debug: Check what migration statuses exist
+        List<MigrationStatus> allStatuses = migrationStatusRepository.findAll();
+        System.out.println("Migration statuses found: " + allStatuses.size());
+        allStatuses.forEach(status ->
+                System.out.println("Status: " + status.getMigrationName() + " - Completed: " + status.isCompleted())
+        );
+
+        // Debug: Check countries and trade agreements
+        System.out.println("Countries in DB: " + countryRepository.count());
+        System.out.println("Trade agreements in DB: " + tradeAgreementRepository.count());
+
+        countryRepository.findAll().forEach(c ->
+                System.out.println("Country: " + c.getCountryName() + " (" + c.getCountryCode() + ")")
+        );
 
         // Verify countries migrated
         assertThat(countryRepository.findByCountryCode("US")).isPresent();
         assertThat(countryRepository.findByCountryCode("CA")).isPresent();
         assertThat(countryRepository.findByCountryCode("MX")).isPresent();
+        assertThat(countryRepository.findByCountryCode("SG")).isPresent();
+        assertThat(countryRepository.findByCountryCode("MY")).isPresent();
+        assertThat(countryRepository.findByCountryCode("TH")).isPresent();
 
         // Verify products migrated
         assertThat(productRepository.findByProductCode(1001)).isPresent();
@@ -245,23 +267,32 @@ public class DataMigrationIntegrationTest {
         assertThat(productRepository.findByProductCode(1003)).isPresent();
 
         // Verify tariffs migrated
-        assertThat(tariffRepository.count()).isGreaterThanOrEqualTo(4);
+        assertThat(tariffRepository.count()).isGreaterThanOrEqualTo(7);
+
 
         // Verify trade agreements migrated
-        assertThat(tradeAgreementRepository.findByAgreementName("USMCA")).isPresent();
-        assertThat(tradeAgreementRepository.findByAgreementName("ASEAN FTA")).isPresent();
+        Optional<TradeAgreement> usmcaOpt = tradeAgreementRepository.findByAgreementName("USMCA");
+        Optional<TradeAgreement> aseanOpt = tradeAgreementRepository.findByAgreementName("ASEAN FTA");
 
-        // Verify agreement-country relationships
-        assertThat(agreementCountryRepository.count()).isGreaterThanOrEqualTo(0);
+        assertThat(usmcaOpt).isPresent();
+        assertThat(aseanOpt).isPresent();
+
+        // Verify agreement-country relationships exist
+        long agreementCountryCount = agreementCountryRepository.count();
+        assertThat(agreementCountryCount).isGreaterThanOrEqualTo(6); // 3 for USMCA + 3 for ASEAN
 
         // Verify tariff migration status
         Optional<MigrationStatus> dataMigrationStatus = migrationStatusRepository.findById("csv_data_migration");
         assertThat(dataMigrationStatus).isPresent();
-        assertThat(dataMigrationStatus.get().isCompleted());
+        assertThat(dataMigrationStatus.get().isCompleted()).isTrue();
 
-        // Verify trade agreement migration status
+        // Verify trade agreement migration status - this is line 239 that's failing
         Optional<MigrationStatus> tradeAgreementStatusOpt = migrationStatusRepository.findById("csv_tradeAgreement_migration");
-        assertThat(tradeAgreementStatusOpt).isPresent();
-        assertThat(tradeAgreementStatusOpt.get().isCompleted());
+        assertThat(tradeAgreementStatusOpt)
+                .as("Trade agreement migration status should exist")
+                .isPresent();
+        assertThat(tradeAgreementStatusOpt.get().isCompleted())
+                .as("Trade agreement migration should be completed")
+                .isTrue();
     }
 }

@@ -14,22 +14,29 @@ import java.util.Optional;
 @Repository
 public interface AgreementCountryRepository extends JpaRepository<AgreementCountry, Long> {
     // Find all countries in an agreement
-    @Query("Select ac.country from AgreementCountry ac where ac.agreement = :agreementId")
-    List<String> findCountriesByAgreementId(@Param("agreementId") Long agreementId);
+    @Query("SELECT ac.country FROM AgreementCountry ac WHERE ac.agreement.agreementId = :agreementId")
+    List<Country> findCountriesByAgreementId(@Param("agreementId") Long agreementId);
 
     // Find all agreements that include a specific country
-    @Query("Select ac.agreement from AgreementCountry ac where ac.country = :countryName")
+    @Query("SELECT ac.agreement.agreementId FROM AgreementCountry ac WHERE ac.country.countryName = :countryName")
     List<Long> findAgreementsByCountryName(@Param("countryName") String countryName);
 
     Optional<AgreementCountry> findByAgreementAndCountry(TradeAgreement agreement, Country country);
 
+    // Find agreements between two countries
     @Query("""
     SELECT ac.agreement.agreementId
     FROM AgreementCountry ac
     WHERE ac.country.countryName IN (:countryA, :countryB)
     GROUP BY ac.agreement.agreementId
     HAVING COUNT(DISTINCT ac.country.countryName) = 2
-""")
+    """)
     List<Long> findAgreementsBetweenCountries(@Param("countryA") String countryA, @Param("countryB") String countryB);
 
+    // Additional useful queries
+    @Query("SELECT COUNT(ac) FROM AgreementCountry ac WHERE ac.agreement.agreementId = :agreementId")
+    int countCountriesInAgreement(@Param("agreementId") Long agreementId);
+
+    @Query("SELECT ac FROM AgreementCountry ac WHERE ac.country.countryId = :countryId")
+    List<AgreementCountry> findByCountryId(@Param("countryId") Long countryId);
 }

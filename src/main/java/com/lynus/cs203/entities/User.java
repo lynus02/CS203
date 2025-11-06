@@ -21,8 +21,8 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Size(max = 36)
-    @Column(name = "user_id", nullable = false, length = 36)
+    @Size(max = 255)
+    @Column(name = "user_id", nullable = false, length = 255)
     private String userId;
 
     @Size(max = 255)

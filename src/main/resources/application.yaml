@@ -4,10 +4,10 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}   # default profile
   main:
-    banner-mode: "off"
+    allow-circular-references: true
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 300 # 5 minutes
+    accessTokenExpiration: 3600 # 1 hour
     refreshTokenExpiration: 604800 # 7 days
 
 # Common Logging Configuration
@@ -16,8 +16,6 @@ logging:
     root: INFO
     com.lynus.cs203: INFO
     org.springframework.security: WARN
-    org.springframework.boot.autoconfigure: WARN
-    org.hibernate.SQL: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
@@ -25,15 +23,3 @@ server:
   port: ${PORT:8080}
   error:
     include-message: always
-    include-stacktrace: on_param
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,loggers
-  endpoint:
-    health:
-      show-details: when_authorized
-    loggers:
-      enabled: true

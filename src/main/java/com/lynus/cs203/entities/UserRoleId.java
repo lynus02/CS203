@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class UserRoleId implements Serializable {
-    @Column(name = "user_id", length = 36)
+    @Column(name = "user_id", length = 255)
     private String userId;
 
     @Column(name = "role_id", columnDefinition = "tinyint UNSIGNED")

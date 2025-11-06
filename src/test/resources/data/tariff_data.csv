@@ -3,3 +3,6 @@ trade_id,country_code,country_name,product_code,hs_description,hs_uom,food_categ
 2,CA,Canada,1002,"Corn Meal","KG","Grains",3.0
 3,US,United States,1003,"Rice","KG","Grains",1.8
 4,MX,Mexico,1001,"Wheat Flour","KG","Grains",4.2
+5,SG,Singapore,1004,"Sugar","KG","Sweeteners",5.0
+6,MY,Malaysia,1005,"Palm Oil","L","Oils",2.8
+7,TH,Thailand,1006,"Coconut Oil","L","Oils",3.2

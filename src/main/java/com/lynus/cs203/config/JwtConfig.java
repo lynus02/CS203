@@ -3,6 +3,7 @@ package com.lynus.cs203.config;
 import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,8 +15,10 @@ import javax.crypto.SecretKey;
 @Data
 public class JwtConfig {
     private String secret;
-    private int accessTokenExpiration; // in seconds
-    private int refreshTokenExpiration; // in seconds
+
+    private int accessTokenExpiration = 300; // in seconds
+
+    private int refreshTokenExpiration = 86400; // in seconds
 
     public SecretKey getSecretKey() {
         log.debug("Creating SecretKey from JWT configuration");
