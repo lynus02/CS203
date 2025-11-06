@@ -32,8 +32,10 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("Development server")
-                ))
+                                .description("Development server"),
+                        new Server()
+                                .url("https://cs203-backend-production.up.railway.app")
+                                .description("Production Server")))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
