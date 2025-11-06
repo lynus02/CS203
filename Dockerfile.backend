@@ -17,7 +17,7 @@ COPY --from=build /app/target/*.jar app.jar
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # Use PORT environment variable provided by Railway
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 # Simplified entry point - Railway automatically sets PORT
 ENTRYPOINT ["java", "-jar", "app.jar"]
