@@ -1,9 +1,10 @@
 [build]
-builder = "maven"
-buildCommand = "mvn clean package -DskipTests"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.backend"
 
 [deploy]
-startCommand = "java -jar target/cs203-*.jar --spring.profiles.active=prod"
 
-[deploy.variables]
+[env]
 SPRING_PROFILES_ACTIVE = "prod"
+JAVA_OPTS = "-Xmx512m -Xms256m"
+PORT = "8080"

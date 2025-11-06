@@ -3,7 +3,7 @@
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml .
-RUN mvn dependency:go-offline -B -Dfrontend.skip=true
+RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
@@ -14,11 +14,10 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Environment variables
-ENV SPRING_PROFILES_ACTIVE=prod \
-    JAVA_OPTS="-Xmx512m -Xms256m"
+ENV SPRING_PROFILES_ACTIVE=prod
 
-# Expose port
+# Use PORT environment variable provided by Railway
 EXPOSE 8080
 
-# Entry point
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --server.port=${PORT:-8080}"]
+# Simplified entry point - Railway automatically sets PORT
+ENTRYPOINT ["java", "-jar", "app.jar"]
