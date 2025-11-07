@@ -22,22 +22,12 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // Add Railway's internal networking patterns
         config.setAllowedOriginPatterns(List.of(
                 "https://cs203-frontend-production.up.railway.app",
                 "https://*.up.railway.app",
                 "https://*.railway.app",
                 "http://localhost:*",
-                "https://localhost:*",
-                // Add IPv6 pattern for Railway's internal networking
-                "https://[*]:*"
-        ));
-
-        // Keep your existing origins as backup
-        config.setAllowedOrigins(List.of(
-                "https://cs203-frontend-production.up.railway.app",
-                "http://localhost:5173",
-                "http://localhost:3000"
+                "https://localhost:*"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
