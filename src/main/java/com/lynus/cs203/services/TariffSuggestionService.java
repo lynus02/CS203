@@ -34,8 +34,9 @@ public class TariffSuggestionService {
     }
 
     private Page<TariffDto> suggestByCountryAndCodeContaining(String country, int code, int page, int size) {
+        String codeParam = "%" + code + "%";
         return tariffRepository
-                .findByCountry_CountryNameAndProduct_ProductCode(country, code, PageRequest.of(page, size))
+                .findByCountry_CountryNameAndProduct_ProductCodeContaining(country, codeParam, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 
@@ -46,8 +47,10 @@ public class TariffSuggestionService {
     }
 
     private Page<TariffDto> suggestByDescriptionOrCodeContaining(String desc, int code, int page, int size) {
+        String descParam = "%" + desc.toLowerCase() + "%";
+        String codeParam = "%" + code + "%";
         return tariffRepository
-                .findByProductDescriptionOrProductCodeContaining(desc.toLowerCase(), code, PageRequest.of(page, size))
+                .findByProductDescriptionOrProductCodeContaining(descParam, codeParam, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 
