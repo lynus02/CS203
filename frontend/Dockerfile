@@ -18,9 +18,8 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Copy your custom nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Add diagnostics instead of overwriting index.html
-RUN ls -la /usr/share/nginx/html && \
-    nginx -t
+# Inspect build output (for debugging)
+RUN ls -la /usr/share/nginx/html
 
 # Expose the port that Nginx serves on
 EXPOSE 80
