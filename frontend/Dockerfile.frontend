@@ -12,10 +12,10 @@ RUN npm run build
 # --- Runtime Stage ---
 FROM nginx:alpine
 
-# Copy build output
+# Fix: Copy from build directory (not dist)
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Optional: custom nginx config
+# Copy your custom nginx.conf
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Add diagnostics instead of overwriting index.html
