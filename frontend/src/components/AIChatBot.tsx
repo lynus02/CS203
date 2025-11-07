@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
@@ -32,6 +32,19 @@ export function AIChat() {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+        const el = e.currentTarget;
+        const atTop = el.scrollTop <= 0;
+        const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+
+        // only block scrolling if we truly can’t move further
+        if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+            e.stopPropagation(); // stops bubbling to page
+            e.preventDefault();  // blocks page scroll
+        }
+    };
+
 
     const handleSendMessage = async () => {
         if (!inputValue.trim()) return;
@@ -93,16 +106,21 @@ export function AIChat() {
     };
 
     return (
-        <div id="ai-chat-root" className="fixed bottom-6 right-6 z-[99999]">
+        <div
+            id="ai-chat-root"
+            className={`fixed bottom-6 right-6 z-[99999] flex flex-col items-end pointer-events-none ${
+                isOpen ? "ai-chat-root--expanded" : ""
+            }`}
+        >
             {/* Chat Window */}
             {isOpen && (
                 <Card
                     className="
-            flex flex-col shadow-2xl border border-border bg-card
-            w-[380px] h-[520px]
-            max-w-[90vw] max-h-[80vh]
-            overflow-hidden rounded-xl
-          "
+                    flex flex-col shadow-2xl border border-border bg-card
+                    w-full h-full
+                    max-w-[90vw] max-h-[80vh]
+                    overflow-hidden rounded-xl pointer-events-auto
+                  "
                 >
                     {/* Header */}
                     <div className="flex-shrink-0 flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
@@ -125,9 +143,30 @@ export function AIChat() {
                         </Button>
                     </div>
 
-                    {/* Messages Scroll Area */}
-                    <ScrollArea className="flex-1 p-4">
-                        <div className="space-y-4">
+                    {/* Scrollable messages area */}
+                    <div
+                        className="flex-1 min-h-0 p-4 overflow-y-auto overscroll-contain scrollbar-none"
+                        onMouseEnter={() => {
+                            document.body.style.overflow = "hidden";
+                        }}
+                        onMouseLeave={() => {
+                            document.body.style.overflow = "";
+                        }}
+                        onWheel={(e) => {
+                            const el = e.currentTarget;
+                            const atTop = el.scrollTop <= 0;
+                            const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+
+                            if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
+                        }}
+                        style={{
+                            WebkitOverflowScrolling: "touch",
+                        }}
+                    >
+                    <div className="space-y-4">
                             {messages.map((message) => (
                                 <div
                                     key={message.id}
@@ -155,9 +194,7 @@ export function AIChat() {
                                                 : "bg-muted"
                                         }`}
                                     >
-                                        <div className="text-sm whitespace-pre-line">
-                                            {message.text}
-                                        </div>
+                                        <div className="text-sm whitespace-pre-line">{message.text}</div>
                                         <div
                                             className={`text-xs mt-1 ${
                                                 message.sender === "user"
@@ -173,7 +210,6 @@ export function AIChat() {
                                     </div>
                                 </div>
                             ))}
-
                             {isTyping && (
                                 <div className="flex gap-2">
                                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
@@ -196,7 +232,8 @@ export function AIChat() {
                             )}
                             <div ref={messagesEndRef} />
                         </div>
-                    </ScrollArea>
+                    </div>
+
 
                     {/* Input Area */}
                     <div className="flex-shrink-0 p-3 border-t bg-background">
@@ -221,13 +258,21 @@ export function AIChat() {
             )}
 
             {/* Floating Toggle Button */}
-            <Button
-                onClick={() => setIsOpen(!isOpen)}
-                size="icon"
-                className="h-14 w-14 rounded-full shadow-lg hover:scale-110 transition-transform bg-primary text-primary-foreground"
-            >
-                {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
-            </Button>
+            {!isOpen && (
+                <Button
+                    onClick={() => setIsOpen(true)}
+                    size="icon"
+                    className="
+                      !h-74 !w-74
+                      rounded-full
+                      shadow-xl hover:scale-110 transition-transform
+                      bg-primary text-primary-foreground pointer-events-auto
+                      flex items-center justify-center
+                    "
+                >
+                    <MessageCircle className="h-24 w-24" />
+                </Button>
+            )}
         </div>
     );
 }

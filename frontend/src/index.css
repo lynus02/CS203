@@ -2594,24 +2594,20 @@ html {
     z-index: 99999 !important;
     pointer-events: auto;
 
-    /* Constrain size so it never expands fullscreen */
-    width: 380px !important;
-    height: 260px !important;
-    max-width: 90vw !important;
-    max-height: 80vh !important;
+    width: auto;
+    height: auto;
 
-    /* Appearance */
-    border-radius: 8px;
-    overflow: hidden; /* keep internal content contained */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    background: var(--card);
+    transition: all 0.25s ease-in-out;
 }
 
 #ai-chat-root.ai-chat-root--expanded {
-    width: 420px !important;
+    width: 380px !important;
     height: 520px !important;
     max-width: 95vw !important;
-    max-height: 95vh !important;
-    right: 1.5rem !important;
-    bottom: 1.5rem !important;
+    max-height: 85vh !important;
+
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
+
