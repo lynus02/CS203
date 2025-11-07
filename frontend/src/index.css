@@ -2586,3 +2586,32 @@ html {
     transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0));
   }
 }
+
+#ai-chat-root {
+    position: fixed !important;
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+    z-index: 99999 !important;
+    pointer-events: auto;
+
+    /* Constrain size so it never expands fullscreen */
+    width: 380px !important;
+    height: 260px !important;
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+
+    /* Appearance */
+    border-radius: 8px;
+    overflow: hidden; /* keep internal content contained */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    background: var(--card);
+}
+
+#ai-chat-root.ai-chat-root--expanded {
+    width: 420px !important;
+    height: 520px !important;
+    max-width: 95vw !important;
+    max-height: 95vh !important;
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+}

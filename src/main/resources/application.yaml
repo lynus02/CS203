@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: cs203
   profiles:
@@ -93,3 +95,10 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+# OPENAI CONFIG
+---
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+
