@@ -121,7 +121,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
         when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq(query.toLowerCase()), eq(-1), any(Pageable.class)))
+                eq(query.toLowerCase()), eq("-1"), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -134,7 +134,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByProductDescriptionOrProductCodeContaining(
-                        eq(query.toLowerCase()), eq(-1), any(Pageable.class));
+                        eq(query.toLowerCase()), eq("-1"), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -148,7 +148,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
         when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq(query.toLowerCase()), eq(1001), any(Pageable.class)))
+                eq(query.toLowerCase()), eq("1001"), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -161,7 +161,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByProductDescriptionOrProductCodeContaining(
-                        eq(query.toLowerCase()), eq(1001), any(Pageable.class));
+                        eq(query.toLowerCase()), eq("1001"), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -175,7 +175,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of());
         when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq(query.toLowerCase()), eq(-1), any(Pageable.class)))
+                eq(query.toLowerCase()), eq("-1"), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -188,7 +188,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByProductDescriptionOrProductCodeContaining(
-                        eq(query.toLowerCase()), eq(-1), any(Pageable.class));
+                        eq(query.toLowerCase()), eq("-1"), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -224,8 +224,8 @@ class TariffSuggestionServiceTest {
         int size = 10;
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of());
-        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductCode(
-                eq(country), eq(123456789), any(Pageable.class)))
+        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductCodeContaining(
+                eq(country), eq("123456789"), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -236,8 +236,8 @@ class TariffSuggestionServiceTest {
 
         // Verify
         verify(tariffRepository)
-                .findByCountry_CountryNameAndProduct_ProductCode(
-                        eq(country), eq(123456789), any(Pageable.class));
+                .findByCountry_CountryNameAndProduct_ProductCodeContaining(
+                        eq(country), eq("123456789"), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
