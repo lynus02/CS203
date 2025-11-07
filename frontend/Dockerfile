@@ -24,4 +24,5 @@ RUN ls -la /usr/share/nginx/html
 # Expose the port that Nginx serves on
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+RUN rm -f /var/run/nginx.pid
+CMD sh -c "envsubst '\$PORT' < /etc/nginx/nginx.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
