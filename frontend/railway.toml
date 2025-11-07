@@ -4,5 +4,5 @@ dockerfilePath = "frontend/Dockerfile"
 
 [deploy]
 waitForChecks = true
-healthcheckPath = "/"
+healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
