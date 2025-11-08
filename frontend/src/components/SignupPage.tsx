@@ -1,3 +1,4 @@
+// ========== IMPORTS ========== //
 import * as React from 'react';
 import { useState } from 'react';
 import {Eye, EyeOff, User, Mail, ArrowLeft, Globe, Lock} from 'lucide-react';
@@ -6,7 +7,7 @@ import { Input } from './ui/input';
 import {Card, CardContent, CardTitle, CardHeader} from "./ui/card";
 import api from '../services/api';
 
-// TypeScript interfaces
+// ========= TYPES ========== //
 interface SignupFormData {
     firstName: string;
     lastName: string;
@@ -41,7 +42,10 @@ interface SignupPageProps {
     onLogin: () => void;
 }
 
+// ========= MAIN COMPONENT ========== //
 const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) => {
+
+    // ========= STATE VARIABLES ========== //
     const [formData, setFormData] = useState<SignupFormData>({
         firstName: '',
         lastName: '',
@@ -49,12 +53,15 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         password: '',
         confirmPassword: ''
     });
+
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+
     const [errors, setErrors] = useState<SignupErrors>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
 
+    // ========= HANDLER (Update form input) ========== //
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -69,6 +76,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         }
     };
 
+    // ========= VALIDATION (Password) ========== //
     const validatePasswordStrength = (password: string): string[] => {
         const requirements = [];
 
@@ -89,6 +97,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         return requirements;
     };
 
+    // ========= VALIDATION (Run through all rules) ========== //
     const validateForm = (): SignupErrors => {
         const newErrors: SignupErrors = {};
 
@@ -139,6 +148,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         return newErrors;
     };
 
+    // ========= HANDLER (Form submission) ========== //
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
