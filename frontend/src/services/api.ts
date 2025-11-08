@@ -2,7 +2,6 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-console.log("All Vite env vars:", import.meta.env);
 console.log("API Base URL:", import.meta.env.VITE_API_URL);
 
 const api = axios.create({
@@ -17,10 +16,27 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+
+        // With Spring Security endpoints
+        const publicEndpoints = [
+            "/auth/login",
+            "/auth/refresh",
+            "/users",
+            "/tariffs",
+            "/products",
+            "/", // just in case
+        ];
+
+        const isPublic = publicEndpoints.some((p) =>
+            config.url === p || config.url?.startsWith(`${p}/`)
+        );
+
+        if (!isPublic && token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        } else {
+            delete config.headers["Authorization"]; // ensures public endpoints are truly public
         }
-        console.log('Making API request:', config.method?.toUpperCase(), config.url);
+
         return config;
     },
     (error) => {
@@ -30,11 +46,11 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
+    (response) => response,
     (error) => {
-        console.error('API Error:', error.response?.data || error.message);
+        if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+        }
         return Promise.reject(error);
     }
 );

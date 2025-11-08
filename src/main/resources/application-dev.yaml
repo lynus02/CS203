@@ -3,7 +3,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/tariff
     username: root
-    password: CSisTOUGH2025!
+  #  password: CSisTOUGH2025!
+    password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

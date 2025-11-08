@@ -21,9 +21,13 @@ public class TariffSuggestionService {
     @Autowired
     private CountryRepository countryRepository;
 
-    public List<TariffDto> getTariffRatesBySize(int size, String country) {
-        Page<Tariff> tariffs = tariffRepository.findByCountry_CountryName(country, PageRequest.of(0, size));
-        return tariffs.map(TariffDto::fromEntity).getContent();
+    public List<TariffDto> getTariffRatesBySize(int size, String countryName) {
+        Page<Tariff> tariffs = null;
+        if (countryName != null && !countryName.isEmpty()) {
+            tariffs = tariffRepository.findByCountry_CountryName(countryName, PageRequest.of(0, size));
+        } else {
+            tariffs = tariffRepository.findAll(PageRequest.of(0, size));
+        }        return tariffs.map(TariffDto::fromEntity).getContent();
     }
 
     public Page<TariffDto> suggestProducts(String q, String country, int page, int size) {
