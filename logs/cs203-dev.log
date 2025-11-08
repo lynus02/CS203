@@ -364,3 +364,382 @@ Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (usi
 2025-11-09T00:56:39.738+08:00 DEBUG 8638 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Albania and Destination Country: Singapore
 2025-11-09T00:56:39.738+08:00  INFO 8638 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
 2025-11-09T00:56:39.738+08:00  INFO 8638 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-09T01:29:15.170+08:00  INFO 8638 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-09T01:29:15.180+08:00  INFO 8638 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-09T01:29:15.188+08:00  INFO 8638 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-09T01:29:15.192+08:00  INFO 8638 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-09T01:29:15.196+08:00  INFO 8638 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-09T01:30:11.855+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 24.0.2 with PID 9643 (/Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203/target/classes started by lynusphua in /Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203)
+2025-11-09T01:30:11.856+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-09T01:30:11.856+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-09T01:30:12.143+08:00  INFO 9643 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-09T01:30:12.168+08:00  INFO 9643 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 9 JPA repository interfaces.
+2025-11-09T01:30:12.348+08:00  INFO 9643 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-09T01:30:12.354+08:00  INFO 9643 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-09T01:30:12.354+08:00  INFO 9643 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-09T01:30:12.373+08:00  INFO 9643 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-09T01:30:12.373+08:00  INFO 9643 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 503 ms
+2025-11-09T01:30:12.452+08:00  INFO 9643 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-09T01:30:12.607+08:00  INFO 9643 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@243c4346
+2025-11-09T01:30:12.608+08:00  INFO 9643 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-09T01:30:12.625+08:00  INFO 9643 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-09T01:30:12.630+08:00  WARN 9643 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-09T01:30:12.652+08:00  INFO 9643 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.018s)
+2025-11-09T01:30:12.659+08:00  INFO 9643 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-09T01:30:12.660+08:00  INFO 9643 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-09T01:30:12.693+08:00  INFO 9643 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-09T01:30:12.711+08:00  INFO 9643 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-09T01:30:12.721+08:00  INFO 9643 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-09T01:30:12.814+08:00  INFO 9643 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-09T01:30:12.836+08:00  WARN 9643 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-09T01:30:12.836+08:00  WARN 9643 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-09T01:30:12.840+08:00  INFO 9643 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-09T01:30:13.194+08:00  INFO 9643 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-09T01:30:13.246+08:00  INFO 9643 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-09T01:30:13.352+08:00 DEBUG 9643 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-09T01:30:13.361+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-09T01:30:13.364+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-09T01:30:13.364+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-09T01:30:13.364+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-09T01:30:13.376+08:00  INFO 9643 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-09T01:30:13.567+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-09T01:30:13.590+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-09T01:30:13.943+08:00  WARN 9643 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-09T01:30:13.952+08:00  INFO 9643 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-09T01:30:14.033+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-09T01:30:14.033+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-09T01:30:14.034+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-09T01:30:14.034+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-09T01:30:14.035+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-09T01:30:14.041+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-09T01:30:14.041+08:00 DEBUG 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-09T01:30:14.041+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-09T01:30:14.156+08:00  INFO 9643 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-09T01:30:14.161+08:00  INFO 9643 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.469 seconds (process running for 2.576)
+2025-11-09T01:30:14.163+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-09T01:30:14.164+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-09T01:30:14.164+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-09T01:30:14.164+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-09T01:30:14.164+08:00  INFO 9643 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-09T01:30:14.183+08:00  INFO 9643 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-07T03:31:41, skipping
+2025-11-09T01:30:14.184+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 20ms
+2025-11-09T01:30:14.184+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-09T01:30:14.184+08:00  INFO 9643 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-09T01:30:14.185+08:00  INFO 9643 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-07T03:31:41, skipping
+2025-11-09T01:30:14.185+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 1ms
+2025-11-09T01:30:14.185+08:00  INFO 9643 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 21ms ===
+2025-11-09T01:30:18.053+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-09T01:30:18.053+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-09T01:30:18.054+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-09T01:30:18.069+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-09T01:30:18.069+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:18.077+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-09T01:30:28.121+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:30:28.122+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:28.135+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:30:29.519+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:29.519+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:29.522+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'h', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:29.565+08:00  WARN 9643 --- [cs203] [http-nio-8080-exec-3] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-11-09T01:30:29.572+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:29.572+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:29.573+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ho', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:29.769+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:29.769+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:29.771+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hon', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:42.196+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-09T01:30:42.197+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:42.240+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 40900, Export: C008, Destination: C702, Value: 1000.0
+2025-11-09T01:30:42.240+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-09T01:30:42.240+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up product with code: 40900
+2025-11-09T01:30:42.244+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found product with code: 40900)
+2025-11-09T01:30:42.244+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C008
+2025-11-09T01:30:42.246+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found export country with code: C008)
+2025-11-09T01:30:42.246+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C702
+2025-11-09T01:30:42.247+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found destination country with code: C702)
+2025-11-09T01:30:42.247+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 40900 and Country: C702
+2025-11-09T01:30:42.250+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 40900 and Country: C702
+2025-11-09T01:30:42.251+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: MEDIUM for HS Code: 40900
+2025-11-09T01:30:42.259+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Albania and Destination Country: Singapore
+2025-11-09T01:30:42.259+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-09T01:30:42.260+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-09T01:30:45.617+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:30:45.618+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:45.620+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:30:51.572+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:51.572+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:51.574+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'h', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:51.631+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:51.632+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:51.633+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ho', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:52.385+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:52.385+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:52.386+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hor', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:53.054+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:53.054+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:53.055+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hors', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:53.133+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:53.133+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:53.134+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'horse', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:30:53.243+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:30:53.244+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:30:53.245+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'horses', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:00.010+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:00.010+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:00.012+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'horse', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:00.107+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:00.107+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:00.108+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hors', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:00.237+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:00.237+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:00.238+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hor', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:00.361+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:00.362+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:00.363+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ho', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:00.486+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:00.486+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:00.488+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'h', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:01.526+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:01.526+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:01.527+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'b', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:01.635+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:01.635+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:01.636+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ba', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:02.097+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:02.097+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:02.098+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'bae', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:02.569+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:02.570+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:02.571+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ba', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:02.881+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:02.881+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:02.883+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'bas', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:02.983+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:02.983+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:02.985+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'base', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:30.081+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:31:30.081+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:30.085+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:31:34.913+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:34.914+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:34.915+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'bas', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:35.010+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:35.010+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:35.011+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ba', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:35.097+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:35.097+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:35.098+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'b', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:42.058+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:42.059+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:42.060+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'c', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:42.141+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:42.141+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:42.142+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ch', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:42.223+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:42.224+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:42.225+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'chi', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:42.256+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:42.257+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:42.258+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'chic', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:42.403+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:42.403+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:42.404+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'chick', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:44.117+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:44.118+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:44.119+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'chic', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:44.219+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:44.220+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:44.221+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'chi', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:44.348+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:44.348+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:44.349+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ch', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:44.456+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:44.456+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:44.458+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'c', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:45.316+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:45.316+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:45.317+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'b', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:45.508+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:45.509+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:45.510+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'be', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:45.650+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:45.651+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:45.652+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'bee', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:46.293+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:46.293+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:46.294+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'beef', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:47.137+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:47.137+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:47.139+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'bee', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:47.251+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:47.251+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:47.252+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'be', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:47.356+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:47.356+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:47.357+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'b', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:50.487+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:50.487+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:50.488+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'h', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:50.680+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:50.680+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:50.681+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ho', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:50.791+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:50.791+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:50.792+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'hor', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:51.463+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:51.464+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:51.465+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'ho', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:31:51.546+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:31:51.547+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:31:51.548+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: 'h', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:33:48.198+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-09T01:33:48.200+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:33:48.203+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-09T01:34:03.429+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:03.429+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:03.431+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:08.920+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:08.920+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:08.922+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:11.004+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:11.004+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:11.005+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:11.268+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:11.268+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:11.269+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:13.373+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:13.373+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:13.374+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '102', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:29.061+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:29.062+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:29.063+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:30.151+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:30.151+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:30.152+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:30.345+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:30.346+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:30.347+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:30.758+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:30.758+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:30.760+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '102', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:32.492+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:32.492+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:32.493+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:33.060+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:33.060+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:33.061+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '100', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:33.583+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:33.584+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:33.585+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1002', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:33.816+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:33.816+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:33.818+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10021', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:41.863+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:41.864+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:41.866+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:44.869+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:44.869+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:44.870+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:45.411+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:45.411+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:45.412+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:45.592+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:45.592+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:45.593+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '100', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:46.558+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:46.558+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:46.559+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1002', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:50.021+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:50.022+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:50.023+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:51.977+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:51.978+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:51.978+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:52.354+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:52.354+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:52.355+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:52.476+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:52.477+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:52.478+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '100', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:52.730+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:52.730+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:52.731+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1002', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:57.121+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:34:57.121+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:57.122+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:34:58.189+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:58.190+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:58.190+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:58.568+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:58.568+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:58.569+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:58.710+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:58.711+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:58.712+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '100', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:34:58.818+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:34:58.818+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:34:58.819+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1002', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:00.264+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:00.264+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:00.265+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '100', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:00.386+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:00.387+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:00.388+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:00.461+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:00.461+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:00.462+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '102', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:07.729+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-09T01:35:07.730+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:07.730+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-09T01:35:08.771+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:08.771+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:08.772+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:09.031+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:09.031+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:09.032+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '12', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:09.065+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:09.065+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:09.066+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '120', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:10.052+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:10.052+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:10.053+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '12', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:10.149+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:10.149+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:10.150+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:10.735+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:10.735+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:10.736+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '10', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:10.830+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-09T01:35:10.830+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:10.831+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '102', Country: Singapore, Page: 0, Size: 20
+2025-11-09T01:35:21.478+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-09T01:35:21.479+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-09T01:35:21.483+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 100210, Export: C072, Destination: C702, Value: 100.0
+2025-11-09T01:35:21.483+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-09T01:35:21.483+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up product with code: 100210
+2025-11-09T01:35:21.490+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found product with code: 100210)
+2025-11-09T01:35:21.491+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C072
+2025-11-09T01:35:21.495+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found export country with code: C072)
+2025-11-09T01:35:21.495+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C702
+2025-11-09T01:35:21.499+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found destination country with code: C702)
+2025-11-09T01:35:21.500+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 100210 and Country: C702
+2025-11-09T01:35:21.505+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 100210 and Country: C702
+2025-11-09T01:35:21.505+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 100210
+2025-11-09T01:35:21.506+08:00 DEBUG 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Botswana and Destination Country: Singapore
+2025-11-09T01:35:21.506+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-09T01:35:21.506+08:00  INFO 9643 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-09T01:35:40.136+08:00  INFO 9643 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-09T01:35:40.146+08:00  INFO 9643 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-09T01:35:40.153+08:00  INFO 9643 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-09T01:35:40.155+08:00  INFO 9643 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-09T01:35:40.158+08:00  INFO 9643 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

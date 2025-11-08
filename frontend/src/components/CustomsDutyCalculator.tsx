@@ -67,7 +67,12 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     // Fetch countries from backend
     useEffect(() => {
         getCountries()
-            .then((data: CountryDto[]) => setCountries(data))
+            .then((data: CountryDto[]) => {
+                const sorted = [...data].sort((a, b) =>
+                    a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+                );
+                setCountries(sorted);
+            })
             .catch((err) => console.error("Failed to fetch countries:", err));
     }, []);
 

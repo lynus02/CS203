@@ -74,7 +74,7 @@ class TariffControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tariffAmount", is(100.0 * 8.5)));
+                .andExpect(jsonPath("$.tariffAmount", is(8.5)));
     }
 
     @Test

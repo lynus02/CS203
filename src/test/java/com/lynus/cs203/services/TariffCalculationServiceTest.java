@@ -140,7 +140,7 @@ class TariffCalculationServiceTest {
         TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
 
         // Assert
-        assertThat(response.getTariffAmount()).isEqualTo(7.0);  // 0.70 * 1000.0
+        assertThat(response.getTariffAmount()).isEqualTo(35.0);  // 3.5% of 1000.0
         assertThat(response.getAgreementType()).isEqualTo("FTA");
     }
 
@@ -173,7 +173,7 @@ class TariffCalculationServiceTest {
         TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
 
         // Assert
-        assertThat(response.getTariffAmount()).isEqualTo(2.5);  // 0.25 * 1000.0
+        assertThat(response.getTariffAmount()).isEqualTo(12.5);  // (5 * 0.25) /100 * 1000 = 12.5
         assertThat(response.getAgreementType()).isEqualTo("CU");
 
     }
