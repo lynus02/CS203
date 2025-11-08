@@ -102,3 +102,6 @@ openai:
   api:
     key: ${OPENAI_API_KEY}
 
+# CHATBOT CONFIG
+chat:
+  model: gpt-4o-min
