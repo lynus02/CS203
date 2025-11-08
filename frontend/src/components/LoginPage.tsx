@@ -1,13 +1,13 @@
-// LoginPage.tsx
+// ========== IMPORTS ========== //
 import * as React from "react";
-import { useState } from "react";
+import {useState} from "react";
 import {Eye, EyeOff, Lock, Mail, ArrowLeft, Globe} from 'lucide-react';
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {Button} from "./ui/button";
+import {Input} from "./ui/input";
+import {Card, CardContent, CardHeader, CardTitle} from "./ui/card";
 import api from "../services/api";
 
-// TypeScript interfaces
+// ========= TYPES ========== //
 interface LoginFormData {
     email: string;
     password: string;
@@ -33,17 +33,27 @@ interface LoginPageProps {
     onSignUp?: () => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
+// ========= MAIN COMPONENT ========== //
+const LoginPage: React.FC<LoginPageProps> = ({onLogin, onBack, onSignUp}) => {
+
+    // Form Input States
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: ''
     });
+
+    // Toggle Password Visibility
     const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    // Handle validation and backend errors
     const [errors, setErrors] = useState<LoginErrors>({});
+
+    // Shows loading indicator while waiting for backend response
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    // ========= HANDLER (Update form input) ========== //
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -56,15 +66,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         }
     };
 
+    // ========= FORM VALIDATION ========== //
     const validateForm = (): boolean => {
         const newErrors: LoginErrors = {};
 
+        // Email validation
         if (!formData.email) {
             newErrors.email = 'Email is required';
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Please enter a valid email address';
         }
 
+        // Password validation
         if (!formData.password) {
             newErrors.password = 'Password is required';
         } else if (formData.password.length < 8) {
@@ -75,9 +88,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // ========= FORM SUBMISSION ========== //
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Pass validation before calling backend
         if (!validateForm()) {
             return;
         }
@@ -86,7 +101,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         setErrors({});
 
         try {
-            // Call backend login endpoint
+            // Send login request to backend
             const response = await api.post('/auth/login', {
                 email: formData.email,
                 password: formData.password
@@ -94,6 +109,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
 
             const { token } = response.data;
             console.log('Received token:', token);
+            // Store token in localStorage
             localStorage.setItem('token', token);
 
             // Fetch user profile after login
@@ -108,7 +124,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                 role: Array.isArray(user.roles) ? user.roles[0] : user.role
             };
 
+            // Notify parent component of successful login
             onLogin(userData);
+
         } catch (error: any) {
             console.error('Login error details:', {
                 message: error.message,
@@ -124,13 +142,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
         }
     };
 
+    // ========= MAIN UI LAYOUT ========== //
     return (
         <div className="flex justify-start min-h-screen bg-white">
             <div className="min-h-screen bg-white flex flex-col w-full">
                 {/* Header with logo */}
                 <div className="w-full border-b border-gray-300 px-10 py-8 flex items-center bg-primary">
                     <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                        <Globe className="h-6 w-6 text-white" />
+                        <Globe className="h-6 w-6 text-white"/>
                         <span className="text-xl font-medium text-white">FoodTariff Pro</span>
                     </a>
                 </div>
@@ -148,10 +167,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                             onClick={onBack}
                                             className="p-2"
                                         >
-                                            <ArrowLeft className="h-6 w-6" />
+                                            <ArrowLeft className="h-6 w-6"/>
                                         </Button>
                                     )}
-                                    <CardTitle style={{ fontSize: '25px' }} className="font-bold">Login</CardTitle>
+                                    <CardTitle style={{fontSize: '25px'}} className="font-bold">Login</CardTitle>
                                 </div>
                                 <p className="text-lg text-muted-foreground">
                                     Enter your credentials to access your account
@@ -161,7 +180,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                             <CardContent className="flex-1 flex flex-col justify-center">
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {errors.submit && (
-                                        <div className="p-4 text-base text-red-600 bg-red-50 border border-red-200 rounded-md">
+                                        <div
+                                            className="p-4 text-base text-red-600 bg-red-50 border border-red-200 rounded-md">
                                             {errors.submit}
                                         </div>
                                     )}
@@ -173,7 +193,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                         <div className="relative flex items-center">
                                             <Mail
                                                 className="absolute text-muted-foreground h-5 w-5"
-                                                style={{ left: '12px' }}
+                                                style={{left: '12px'}}
                                             />
                                             <Input
                                                 id="email"
@@ -181,7 +201,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                                 type="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                style={{ paddingLeft: '3rem' }}
+                                                style={{paddingLeft: '3rem'}}
                                                 className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
                                                 placeholder="Enter your email"
                                                 disabled={isLoading}
@@ -199,7 +219,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                         <div className="relative flex items-center">
                                             <Lock
                                                 className="absolute text-muted-foreground h-5 w-5"
-                                                style={{ left: '12px' }} />
+                                                style={{left: '12px'}}/>
 
                                             <Input
                                                 id="password"
@@ -207,7 +227,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                                 type={showPassword ? 'text' : 'password'}
                                                 value={formData.password}
                                                 onChange={handleChange}
-                                                style={{ paddingLeft: '3rem' }}
+                                                style={{paddingLeft: '3rem'}}
                                                 className={`pr-4 py-3 text-base h-12 ${errors.email ? 'border-red-500' : ''}`}
                                                 placeholder="Enter your password"
                                                 disabled={isLoading}
@@ -219,9 +239,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp }) => {
                                                 disabled={isLoading}
                                             >
                                                 {showPassword ? (
-                                                    <EyeOff className="h-5 w-5" />
+                                                    <EyeOff className="h-5 w-5"/>
                                                 ) : (
-                                                    <Eye className="h-5 w-5" />
+                                                    <Eye className="h-5 w-5"/>
                                                 )}
                                             </button>
                                         </div>
