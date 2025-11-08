@@ -10,6 +10,13 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
 import { suggestProducts, getTariffRatesBySize } from "../services/tariff";
+import api from "../services/api";
+import { getCountries } from "../services/tariff";
+
+interface CountryDto{
+    code: string;
+    name: string;
+}
 
 interface Product {
     id: string;
@@ -51,47 +58,49 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     const [productOpen, setProductOpen] = useState(false);
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+    const [countries, setCountries] = useState<CountryDto[]>([]);
 
-    const countries = [
-        'Albania',
-        'Argentina',
-        'Belize',
-        'Botswana',
-        'Brazil',
-        'Cambodia',
-        'Canada',
-        'Chile',
-        'China',
-        'Chinese Taipei',
-        'Colombia',
-        'Dominican Republic',
-        'Ecuador',
-        'El Salvador',
-        'Eswatini',
-        'Honduras',
-        'Hong Kong, China',
-        'Jordan',
-        'Korea, Republic of',
-        'Kuwait, the State of',
-        'Lesotho',
-        'Macao, China',
-        'Malaysia',
-        'Mauritius',
-        'Mexico',
-        'Montenegro',
-        'Myanmar',
-        'Namibia',
-        'New Zealand',
-        'North Macedonia',
-        'Saudi Arabia, Kingdom of',
-        'Seychelles',
-        'Singapore',
-        'South Africa',
-        'Switzerland',
-        'Ukraine',
-        'United Kingdom',
-        'United States of America'
-    ];
+    // const staticCountries = [
+    //     { name: 'Albania', code: 'C008' },
+    //     { name: 'Argentina', code: 'C032' },
+    //     { name: 'Belize', code: 'C084' },
+    //     { name: 'Botswana', code: 'C072' },
+    //     { name: 'Brazil', code: 'C076' },
+    //     { name: 'Cambodia', code: 'C116' },
+    //     { name: 'Canada', code: 'C124' },
+    //     { name: 'Chile', code: 'C152' },
+    //     { name: 'China', code: 'C156' },
+    //     { name: 'Chinese Taipei', code: 'C158' },
+    //     { name: 'Colombia', code: 'C170' },
+    //     { name: 'Dominican Republic', code: 'C214' },
+    //     { name: 'Ecuador', code: 'C218' },
+    //     { name: 'El Salvador', code: 'C222' },
+    //     { name: 'Eswatini', code: 'C748' },
+    //     { name: 'Honduras', code: 'C340' },
+    //     { name: 'Hong Kong, China', code: 'C344' },
+    //     { name: 'Jordan', code: 'C400' },
+    //     { name: 'Korea, Republic of', code: 'C410' },
+    //     { name: 'Kuwait, the State of', code: 'C414' },
+    //     { name: 'Lesotho', code: 'C426' },
+    //     { name: 'Macao, China', code: 'C446' },
+    //     { name: 'Malaysia', code: 'C458' },
+    //     { name: 'Mauritius', code: 'C480' },
+    //     { name: 'Mexico', code: 'C484' },
+    //     { name: 'Montenegro', code: 'C893' },
+    //     { name: 'Myanmar', code: 'C104' },
+    //     { name: 'Namibia', code: 'C516' },
+    //     { name: 'New Zealand', code: 'C554' },
+    //     { name: 'North Macedonia', code: 'C807' },
+    //     { name: 'Saudi Arabia, Kingdom of', code: 'C682' },
+    //     { name: 'Seychelles', code: 'C690' },
+    //     { name: 'Singapore', code: 'C702' },
+    //     { name: 'South Africa', code: 'C710' },
+    //     { name: 'Switzerland', code: 'C756' },
+    //     { name: 'Ukraine', code: 'C804' },
+    //     { name: 'United Kingdom', code: 'C826' },
+    //     { name: 'United States of America', code: 'C840' }
+    // ];
+
 
 
     // Trade agreements with tariff reductions
@@ -129,6 +138,15 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     ];
 
     const MAX_SUGGESTION_SIZE = 20;
+
+    // Fetch countries from backend
+    useEffect(() => {
+        getCountries()
+            .then((data: CountryDto[]) => setCountries(data))
+            .catch(err => {
+                console.error("Failed to fetch countries", err);
+            });
+    }, []);
 
     useEffect(() => {
         if (productOpen) {
@@ -174,7 +192,7 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         );
     };
 
-    const calculateTariff = () => {
+    const calculateTariff = async () => {
         // console.log("selectedProduct:", selectedProduct);
         // console.log("productValue:", productValue);
         // console.log("originCountry:", originCountry);
@@ -183,38 +201,57 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
             return;
         }
 
-        const value = parseFloat(productValue);
-        let baseTariffRate = selectedProduct.baseTariffRate;
-        let finalTariffRate = baseTariffRate;
-        let tradeAgreementReduction = 0;
+        try {
+            // call backend to calculate tariff
+            const response = await api.post('/tariffs/calculate',{
+                productCode: selectedProduct.hsCode,
+                exportCountryCode: originCountry,
+                desCountryCode: destinationCountry,
+                customsValue: parseFloat(productValue)
+            });
 
-        // Check for applicable trade agreements
-        const tradeAgreement = findApplicableTradeAgreement(originCountry, destinationCountry);
+            const data = response.data;
 
-        if (tradeAgreement) {
-            tradeAgreementReduction = (baseTariffRate * tradeAgreement.reduction) / 100;
-            finalTariffRate = baseTariffRate - tradeAgreementReduction;
+            const value = parseFloat(productValue);
+            const baseTariffRate = selectedProduct.baseTariffRate;
+            const finalTariffRate = (data.tariffAmount / value) * 100;
+            const tradeAgreementReduction = baseTariffRate - finalTariffRate;
+
+            // needed for frountend UI
+            const tariffResult: TariffResult = {
+                product: selectedProduct,
+                productValue:value,
+                originCountry,
+                destinationCountry,
+                importDate,
+                baseTariffRate,
+                tradeAgreementReduction,
+                finalTariffRate,
+                dutyAmount: data.tariffAmount,
+                totalCost: value + data.tariffAmount,
+                tradeAgreement: data.agreementType
+                    ? {
+                        name: data.agreementType,
+                        countries: [originCountry, destinationCountry],
+                        reduction: tradeAgreementReduction
+                    }
+                    : undefined
+            };
+
+            setResult(tariffResult); // set result for ui display
+            onResultsChange?.(tariffResult);
+        } catch (err) {
+            console.error("Tariff calculation failed:", err);
+            if (err.response) {
+                console.error("Response data:", err.response.data);
+                console.error("Status:", err.response.status);
+            } else if (err.request) {
+                console.error("No response received:", err.request);
+            } else {
+                console.error("Error message:", err.message);
+            }
+            alert("Failed to calculate tariff. Check console for details.");
         }
-
-        const dutyAmount = (value * finalTariffRate) / 100;
-        const totalCost = value + dutyAmount;
-        const result = {
-            product: selectedProduct,
-            productValue: value,
-            originCountry,
-            destinationCountry,
-            importDate,
-            baseTariffRate,
-            tradeAgreementReduction,
-            finalTariffRate,
-            dutyAmount,
-            totalCost,
-            tradeAgreement
-        }
-
-        //console.log("Sending customs result to parent:", result);
-        setResult(result);
-        onResultsChange?.(result);
     };
 
     const clearCalculation = () => {
@@ -240,23 +277,29 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     {/* Country of Origin */}
                     <div className="space-y-2">
                         <Label htmlFor="origin-country">Country of Origin</Label>
-                        <Select value={originCountry} onValueChange={setOriginCountry}>
+                        <Select
+                            value={originCountry}
+                            onValueChange={setOriginCountry}
+                            name="origin-country"
+                        >
                             <SelectTrigger>
                                 <SelectValue placeholder="Select origin country">
-                                    {originCountry && (
+                                    {originCountry ? (
                                         <div className="flex items-center gap-2">
                                             <CountryFlag country={originCountry} />
-                                            {originCountry}
+                                            {countries.find((c) => c.code === originCountry)?.name || originCountry}
                                         </div>
+                                    ) : (
+                                        "Select origin country"
                                     )}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
+                                    <SelectItem key={country.code} value={country.code}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
+                                            <CountryFlag country={country.code} />
+                                            {country.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -267,23 +310,29 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     {/* Destination Country */}
                     <div className="space-y-2">
                         <Label htmlFor="destination-country">Destination Country</Label>
-                        <Select value={destinationCountry} onValueChange={setDestinationCountry}>
+                        <Select
+                            value={destinationCountry}
+                            onValueChange={setDestinationCountry}
+                            name="destination-country"
+                        >
                             <SelectTrigger>
-                                <SelectValue placeholder="Select destination">
-                                    {destinationCountry && (
+                                <SelectValue placeholder="Select destination country">
+                                    {destinationCountry ? (
                                         <div className="flex items-center gap-2">
                                             <CountryFlag country={destinationCountry} />
-                                            {destinationCountry}
+                                            {countries.find((c) => c.code === destinationCountry)?.name || destinationCountry}
                                         </div>
+                                    ) : (
+                                        "Select destination country"
                                     )}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
+                                    <SelectItem key={country.code} value={country.code}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
+                                            <CountryFlag country={country.code} />
+                                            {country.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -291,6 +340,8 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                         </Select>
                     </div>
                 </div>
+
+
 
                 {/* Product Selection */}
                 <div className="space-y-2">

@@ -17,6 +17,15 @@ export const getTariffRatesBySize = async (size: number, country?: string) => {
     return response.data;
 };
 
+export async function getCountries() {
+    try {
+        const response = await api.get('/tariffs/countries');
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to fetch countries');
+    }
+}
+
 // Calculate tariff for a product
 export const calculateTariff = async (productCode: string, exportCountryCode: string, desCountryCode: string, customsValue: number) => {
     const payload = { productCode, exportCountryCode, desCountryCode, customsValue };

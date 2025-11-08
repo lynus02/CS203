@@ -110,7 +110,7 @@ public class TariffCalculationService {
             }
         }
         // Calculate tariff amount
-        double tariffAmount = finalTariffRate * request.getCustomsValue() / 100.0;
+        double tariffAmount = finalTariffRate * request.getCustomsValue();
 
         log.info("Tariff calculation completed. Tariff Amount: {}", tariffAmount);
         return TariffCalculationResponse.builder()

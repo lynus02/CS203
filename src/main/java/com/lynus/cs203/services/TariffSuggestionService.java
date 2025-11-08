@@ -1,7 +1,10 @@
 package com.lynus.cs203.services;
 
+import com.lynus.cs203.controllers.CountryController;
+import com.lynus.cs203.dtos.response.CountryDto;
 import com.lynus.cs203.dtos.response.TariffDto;
 import com.lynus.cs203.entities.Tariff;
+import com.lynus.cs203.repositories.CountryRepository;
 import com.lynus.cs203.repositories.TariffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,9 @@ import java.util.List;
 public class TariffSuggestionService {
     @Autowired
     private TariffRepository tariffRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
 
     public List<TariffDto> getTariffRatesBySize(int size, String country) {
         Page<Tariff> tariffs = tariffRepository.findByCountry_CountryName(country, PageRequest.of(0, size));
@@ -52,6 +58,13 @@ public class TariffSuggestionService {
         return tariffRepository
                 .findByProductDescriptionOrProductCodeContaining(descParam, codeParam, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
+    }
+
+    public List<CountryDto> getAllCountries() {
+        // Implementation to fetch all countries
+        return countryRepository.findAll().stream().
+                map(c -> new CountryDto(c.getCountryCode(), c.getCountryName()))
+                .toList();
     }
 
 }

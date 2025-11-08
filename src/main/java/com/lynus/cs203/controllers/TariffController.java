@@ -1,8 +1,10 @@
 package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.dtos.request.TariffCalculationRequest;
+import com.lynus.cs203.dtos.response.CountryDto;
 import com.lynus.cs203.dtos.response.TariffCalculationResponse;
 import com.lynus.cs203.dtos.response.TariffDto;
+import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.services.TariffCalculationService;
 import com.lynus.cs203.services.TariffSuggestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,4 +83,17 @@ public class TariffController {
 
         return tariffSuggestionService.suggestProducts(query, country, page, size);
     }
+
+    @Operation(
+            summary = "Get all available countries",
+            description = "Retrieve a list of all available countries for tariff calculations"
+    )
+    @ApiResponse(responseCode = "200", description = "Countries retrieved successfully")
+    @GetMapping("/countries")
+    public List<CountryDto> getAllCountries() {
+        log.info("Retrieving all available countries for tariff calculations");
+
+        return tariffSuggestionService.getAllCountries();
+    }
+
 }
