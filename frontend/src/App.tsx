@@ -184,7 +184,7 @@ export default function App() {
                             <ThemeToggle />
                         </div>
 
-                        {/* Right side: Login/Logout */}
+                        {/* Right side */}
                         <div className="flex items-center gap-4">
                             {/* My Saved Products button (left of login) */}
                             <Button
@@ -209,11 +209,12 @@ export default function App() {
                                  <div className="flex items-center gap-2">
                                     <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
                                     <Button
-                                        variant="ghost"
+                                        variant="outline"
+                                        size="sm"
                                         onClick={handleShowProfile}
-                                        className="bg-background text-foreground flex items-center justify-center rounded-full h-10 w-10"
+                                        className="bg-background text-foreground flex items-center gap-2"
                                     >
-                                        <User className="h-5 w-5" />
+                                        <User className="h-9 w-9" />
                                     </Button>
                                 </div>
                             ) : (
