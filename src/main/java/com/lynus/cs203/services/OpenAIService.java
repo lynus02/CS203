@@ -28,35 +28,6 @@ public class OpenAIService {
         this.tariffRepo = tariffRepo;
     }
 
-//    private String detectIntent(OpenAiService service, String prompt) {
-//        String classifyPrompt = """
-//        Classify the user's request into one of these categories:
-//        ["HS_CODE", "TRADE_AGREEMENT", "TARIFF_RATE", "OTHER"].
-//        Respond strictly in JSON: {"intent": "<category>"}.
-//        Example:
-//        - "What is the HS code for pork?" → {"intent": "HS_CODE"}
-//        - "Is there a free trade agreement between Japan and Singapore?" → {"intent": "TRADE_AGREEMENT"}
-//    """;
-//
-//        ChatCompletionRequest classifyReq = ChatCompletionRequest.builder()
-//                .model("gpt-4o-mini")
-//                .messages(List.of(
-//                        new ChatMessage("system", classifyPrompt),
-//                        new ChatMessage("user", prompt)
-//                ))
-//                .temperature(0.0)
-//                .build();
-//
-//        try {
-//            String content = service.createChatCompletion(classifyReq)
-//                    .getChoices().get(0).getMessage().getContent();
-//            JsonNode node = new ObjectMapper().readTree(content);
-//            return node.path("intent").asText("OTHER");
-//        } catch (Exception e) {
-//            return "OTHER";
-//        }
-//    }
-
     public Map<String, String> processChat(String userPrompt) throws Exception {
         OpenAiService service = new OpenAiService(apiKey);
         ObjectMapper mapper = new ObjectMapper();
