@@ -6,9 +6,7 @@
       --tw-translate-y: 0;
       --tw-translate-z: 0;
       --tw-rotate-x: rotateX(0);
-      --tw-rotate-y: rotateY(0);
-      --tw-rotate-z: rotateZ(0);
-      --tw-skew-x: skewX(0);
+      --tw-rotate-y: rotateY(0);--tw-rotate-z: rotateZ(0);--tw-skew-x: skewX(0);
       --tw-skew-y: skewY(0);
       --tw-space-y-reverse: 0;
       --tw-space-x-reverse: 0;
@@ -4379,7 +4377,7 @@
   --muted-foreground: #717182;
   --accent: #e9ebef;
   --accent-foreground: #030213;
-  --destructive: #d4183d;
+  --destructive: #ffffff;
   --destructive-foreground: #fff;
   --border: #0000001a;
   --input: transparent;
@@ -4419,8 +4417,8 @@
   --muted-foreground: oklch(.708 0 0);
   --accent: oklch(.269 0 0);
   --accent-foreground: oklch(.985 0 0);
-  --destructive: oklch(.396 .141 25.723);
-  --destructive-foreground: oklch(.637 .237 25.331);
+  --destructive: oklch(1 0 89.876);
+  --destructive-foreground: oklch(1 0 89.876);
   --border: oklch(.269 0 0);
   --input: oklch(.269 0 0);
   --ring: oklch(.439 0 0);

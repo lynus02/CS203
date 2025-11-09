@@ -4,12 +4,14 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
-import { suggestProducts, getTariffRatesBySize, runAudit as runAuditApi } from "../services/tariff";
+import { SaveProductDialog, SavedProductConfig } from "./SavedProducts";
+// import { format } from "date-fns";
 
 interface Product {
     id: string;
@@ -17,7 +19,6 @@ interface Product {
     hsCode: string;
     category: string;
     baseTariffRate: number;
-    reporterName?: string;
 }
 
 interface TradeAgreement {
@@ -40,91 +41,50 @@ interface TariffResult {
     tradeAgreement?: TradeAgreement;
 }
 
-export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (data: any) => void }) {
+interface CustomsDutyCalculatorProps {
+    onResultsChange?: (results: TariffResult | null) => void;
+    savedConfig?: SavedProductConfig;
+}
+
+export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsDutyCalculatorProps) {
     const [productValue, setProductValue] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
     const [originCountry, setOriginCountry] = useState("");
-    const [destinationCountry, setDestinationCountry] = useState("Singapore");
+    const [destinationCountry, setDestinationCountry] = useState("");
     const [importDate, setImportDate] = useState<Date>(new Date());
     const [result, setResult] = useState<TariffResult | null>(null);
     const [productOpen, setProductOpen] = useState(false);
-    const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
-    const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-    const [auditRunning, setAuditRunning] = useState(false);
-    const [auditResult, setAuditResult] = useState<{ status: "ok" | "modified" | "error"; message: string; localHash?: string; onChainHash?: string } | null>(null);
 
-
-    const countries = [
-        'Albania',
-        'Argentina',
-        'Belize',
-        'Botswana',
-        'Brazil',
-        'Cambodia',
-        'Canada',
-        'Chile',
-        'China',
-        'Chinese Taipei',
-        'Colombia',
-        'Dominican Republic',
-        'Ecuador',
-        'El Salvador',
-        'Eswatini',
-        'Honduras',
-        'Hong Kong, China',
-        'Jordan',
-        'Korea, Republic of',
-        'Kuwait, the State of',
-        'Lesotho',
-        'Macao, China',
-        'Malaysia',
-        'Mauritius',
-        'Mexico',
-        'Montenegro',
-        'Myanmar',
-        'Namibia',
-        'New Zealand',
-        'North Macedonia',
-        'Saudi Arabia, Kingdom of',
-        'Seychelles',
-        'Singapore',
-        'South Africa',
-        'Switzerland',
-        'Ukraine',
-        'United Kingdom',
-        'United States of America'
+    // Food product database with HS codes
+    const products: Product[] = [
+        { id: "1", name: "Fresh Beef Ribeye Steaks", hsCode: "0201.10.50", category: "Meat & Poultry", baseTariffRate: 26.4 },
+        { id: "2", name: "Fresh Pork Tenderloin", hsCode: "0203.12.90", category: "Meat & Poultry", baseTariffRate: 1.4 },
+        { id: "3", name: "Fresh Chicken Breast", hsCode: "0207.14.10", category: "Meat & Poultry", baseTariffRate: 17.6 },
+        { id: "4", name: "Whole Milk Powder", hsCode: "0402.10.05", category: "Dairy Products", baseTariffRate: 13.8 },
+        { id: "5", name: "Aged Cheddar Cheese", hsCode: "0406.90.54", category: "Dairy Products", baseTariffRate: 17.5 },
+        { id: "6", name: "Fresh Atlantic Salmon", hsCode: "0302.12.00", category: "Seafood", baseTariffRate: 0 },
+        { id: "7", name: "Frozen Shrimp", hsCode: "0306.17.00", category: "Seafood", baseTariffRate: 0 },
+        { id: "8", name: "Fresh Bananas", hsCode: "0803.90.30", category: "Fruits & Vegetables", baseTariffRate: 0 },
+        { id: "9", name: "Fresh Avocados", hsCode: "0804.40.00", category: "Fruits & Vegetables", baseTariffRate: 11.2 },
+        { id: "10", name: "Arabica Coffee Beans", hsCode: "0901.21.00", category: "Coffee & Tea", baseTariffRate: 0 },
+        { id: "11", name: "Black Tea Leaves", hsCode: "0902.30.00", category: "Coffee & Tea", baseTariffRate: 6.4 },
+        { id: "12", name: "Extra Virgin Olive Oil", hsCode: "1509.10.20", category: "Oils & Fats", baseTariffRate: 5 },
+        { id: "13", name: "Basmati Rice", hsCode: "1006.30.90", category: "Grains & Legumes", baseTariffRate: 2.1 },
+        { id: "14", name: "Organic Quinoa", hsCode: "1008.50.90", category: "Grains & Legumes", baseTariffRate: 0.6 },
+        { id: "15", name: "Dark Chocolate (70% Cocoa)", hsCode: "1806.32.70", category: "Confectionery", baseTariffRate: 5.1 },
+        { id: "16", name: "Raw Cane Sugar", hsCode: "1701.14.20", category: "Sugar & Sweeteners", baseTariffRate: 1.4 },
+        { id: "17", name: "Orange Juice Concentrate", hsCode: "2009.11.00", category: "Beverages", baseTariffRate: 7.9 },
+        { id: "18", name: "Premium Red Wine", hsCode: "2204.21.30", category: "Beverages", baseTariffRate: 6.3 },
+        { id: "19", name: "Canned Tuna in Oil", hsCode: "1604.14.30", category: "Preserved Foods", baseTariffRate: 12.5 },
+        { id: "20", name: "Dried Dates", hsCode: "0804.10.80", category: "Dried Fruits & Nuts", baseTariffRate: 2.9 }
     ];
 
-    const runAudit = async () => {
-        setAuditRunning(true);
-        setAuditResult(null);
-        try {
-            const data = await runAuditApi(); // backend DTO: { integrityOk, localHash, onChainHash, error, message }
-            if (data.integrityOk) {
-                setAuditResult({
-                    status: "ok",
-                    message: data.message || "Database integrity verified",
-                    localHash: data.localHash ?? undefined,
-                    onChainHash: data.onChainHash ?? undefined
-                });
-            } else if (data.error) {
-                setAuditResult({
-                    status: "error",
-                    message: data.message || "Audit failed"
-                });
-            } else {
-                setAuditResult({
-                    status: "modified",
-                    message: data.message || "Database hash mismatch",
-                });
-            }
-        } catch (e: any) {
-            setAuditResult({ status: "error", message: e?.payload?.message || e?.message || "Audit failed" });
-        } finally {
-            setAuditRunning(false);
-        }
-    };
+    const countries = [
+        "United States", "Canada", "Mexico", "China", "Japan", "South Korea",
+        "Germany", "France", "United Kingdom", "Italy", "Spain", "Australia",
+        "Singapore", "Thailand", "Vietnam", "India", "Brazil", "Chile"
+    ];
 
     // Trade agreements with tariff reductions
     const tradeAgreements: TradeAgreement[] = [
@@ -160,44 +120,10 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         }
     ];
 
-    const MAX_SUGGESTION_SIZE = 20;
-
-    useEffect(() => {
-        if (productOpen) {
-            setLoadingSuggestions(true);
-            getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
-                .then(data => {
-                    setSuggestedProducts(data.map((rate: any) => ({
-                        id: rate.trade_id?.toString(),
-                        name: rate.hsDescription,
-                        hsCode: rate.productCode6,
-                        category: rate.food_category,
-                        baseTariffRate: rate.value,
-                        reporterName: rate.reporterName
-                    })));
-                })
-                .finally(() => setLoadingSuggestions(false));
-        }
-    }, [productOpen, destinationCountry]);
-
-    useEffect(() => {
-        if (productSearch.length > 0) {
-            setLoadingSuggestions(true);
-            suggestProducts(productSearch, destinationCountry, 0, 20)
-                .then(data => {
-                    const rates = data.content || data; // handle both array and paged response
-                    setSuggestedProducts(rates.map((rate: any) => ({
-                        id: rate.trade_id?.toString(),
-                        name: rate.hsDescription,
-                        hsCode: rate.productCode6,
-                        category: rate.food_category,
-                        baseTariffRate: rate.value,
-                        reporterName: rate.reporterName
-                    })));
-                })
-                .finally(() => setLoadingSuggestions(false));
-        }
-    }, [productSearch, destinationCountry]);
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+        product.hsCode.includes(productSearch)
+    );
 
     const findApplicableTradeAgreement = (origin: string, destination: string): TradeAgreement | undefined => {
         return tradeAgreements.find(agreement =>
@@ -207,10 +133,6 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     };
 
     const calculateTariff = () => {
-        // console.log("selectedProduct:", selectedProduct);
-        // console.log("productValue:", productValue);
-        // console.log("originCountry:", originCountry);
-        // console.log("destinationCountry:", destinationCountry);
         if (!selectedProduct || !productValue || !originCountry || !destinationCountry) {
             return;
         }
@@ -230,9 +152,9 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
 
         const dutyAmount = (value * finalTariffRate) / 100;
         const totalCost = value + dutyAmount;
-        const result = {
+
+        const calculationResult = {
             product: selectedProduct,
-            productValue: value,
             originCountry,
             destinationCountry,
             importDate,
@@ -241,12 +163,12 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
             finalTariffRate,
             dutyAmount,
             totalCost,
-            tradeAgreement
-        }
+            tradeAgreement,
+            productValue: value
+        };
 
-        //console.log("Sending customs result to parent:", result);
-        setResult(result);
-        onResultsChange?.(result);
+        setResult(calculationResult);
+        onResultsChange?.(calculationResult);
     };
 
     const clearCalculation = () => {
@@ -257,65 +179,75 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         setDestinationCountry("");
         setImportDate(new Date());
         setResult(null);
+        onResultsChange?.(null);
     };
+
+    // Load saved configuration when provided
+    useEffect(() => {
+        if (savedConfig) {
+            setSelectedProduct(savedConfig.product);
+            setProductValue(savedConfig.productValue.toString());
+            setOriginCountry(savedConfig.originCountry);
+            setDestinationCountry(savedConfig.destinationCountry);
+            setImportDate(new Date(savedConfig.importDate));
+
+            // Trigger calculation after a brief delay to ensure state is updated
+            setTimeout(() => {
+                const value = savedConfig.productValue;
+                const product = savedConfig.product;
+                let baseTariffRate = product.baseTariffRate;
+                let finalTariffRate = baseTariffRate;
+                let tradeAgreementReduction = 0;
+
+                const tradeAgreement = findApplicableTradeAgreement(savedConfig.originCountry, savedConfig.destinationCountry);
+
+                if (tradeAgreement) {
+                    tradeAgreementReduction = (baseTariffRate * tradeAgreement.reduction) / 100;
+                    finalTariffRate = baseTariffRate - tradeAgreementReduction;
+                }
+
+                const dutyAmount = (value * finalTariffRate) / 100;
+                const totalCost = value + dutyAmount;
+
+                const calculationResult = {
+                    product,
+                    originCountry: savedConfig.originCountry,
+                    destinationCountry: savedConfig.destinationCountry,
+                    importDate: new Date(savedConfig.importDate),
+                    baseTariffRate,
+                    tradeAgreementReduction,
+                    finalTariffRate,
+                    dutyAmount,
+                    totalCost,
+                    tradeAgreement,
+                    productValue: value
+                };
+
+                setResult(calculationResult);
+                onResultsChange?.(calculationResult);
+            }, 100);
+        }
+    }, [savedConfig]);
+
+    const canSaveProduct = selectedProduct && productValue && originCountry && destinationCountry;
 
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-start justify-between w-full">
-                    <div>
-                        <CardTitle>Food Tariff Calculator</CardTitle>
-                        <CardDescription>
-                            Calculate food import duties with trade agreement adjustments and comprehensive food product selection
-                        </CardDescription>
-                    </div>
-                    <div className="ml-4">
-                        <Button onClick={runAudit} disabled={auditRunning} variant="outline">
-                            {auditRunning ? "Running audit…" : "Run DB Audit"}
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Audit feedback banner */}
-                {auditResult && (
-                    <div className="mt-3">
-                        {auditResult.status === "ok" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-green-50 border border-green-200 text-green-700">
-                                <CheckCircle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Verified</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
-                            </div>
-                        )}
-                        {auditResult.status === "modified" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-yellow-50 border border-yellow-200 text-yellow-800">
-                                <AlertTriangle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Potential modification detected</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
-                            </div>
-                        )}
-                        {auditResult.status === "error" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-red-50 border border-red-200 text-red-700">
-                                <AlertTriangle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Audit error</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
+                <CardTitle>Food Tariff Calculator</CardTitle>
+                <CardDescription>
+                    Calculate food import duties with trade agreement adjustments and comprehensive food product selection
+                </CardDescription>
             </CardHeader>
+
             <CardContent className="space-y-6">
+                {/* Country of Origin and Destination Country */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Country of Origin */}
                     <div className="space-y-2">
                         <Label htmlFor="origin-country">Country of Origin</Label>
                         <Select value={originCountry} onValueChange={setOriginCountry}>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select origin country">
                                     {originCountry && (
                                         <div className="flex items-center gap-2">
@@ -342,7 +274,7 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     <div className="space-y-2">
                         <Label htmlFor="destination-country">Destination Country</Label>
                         <Select value={destinationCountry} onValueChange={setDestinationCountry}>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select destination">
                                     {destinationCountry && (
                                         <div className="flex items-center gap-2">
@@ -375,14 +307,11 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={productOpen}
-                                className="w-full flex justify-between items-center"
-                                style={{ minWidth: 0 }}
+                                className="w-full justify-between"
                             >
-                <span className="truncate block" style={{ maxWidth: "70%" }}>
-                  {selectedProduct
-                      ? `${selectedProduct.name} (${selectedProduct.hsCode})`
-                      : "Search products by name or HS code..."}
-                </span>
+                                {selectedProduct
+                                    ? `${selectedProduct.name} (${selectedProduct.hsCode})`
+                                    : "Search products by name or HS code..."}
                                 <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
@@ -394,25 +323,14 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                                     onValueChange={setProductSearch}
                                 />
                                 <CommandList>
-                                    <CommandEmpty>
-                                        {loadingSuggestions ? (
-                                            <div className="py-4 text-center text-muted-foreground">
-                                                Loading products...
-                                            </div>
-                                        ) : (
-                                            "No products found."
-                                        )}
-                                    </CommandEmpty>
+                                    <CommandEmpty>No products found.</CommandEmpty>
                                     <CommandGroup>
-                                        {suggestedProducts.map((product) => (
+                                        {filteredProducts.map((product) => (
                                             <CommandItem
                                                 key={product.id}
                                                 value={`${product.name} ${product.hsCode}`}
                                                 onSelect={() => {
                                                     setSelectedProduct(product);
-                                                    if (product.reporterName) {
-                                                        setDestinationCountry(product.reporterName);
-                                                    }
                                                     setProductOpen(false);
                                                     setProductSearch("");
                                                 }}
@@ -432,7 +350,8 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     </Popover>
                 </div>
 
-                {/* Product Value */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Product Value */}
                     <div className="space-y-2">
                         <Label htmlFor="product-value">Product Value (USD)</Label>
                         <Input
@@ -467,7 +386,7 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                             </PopoverContent>
                         </Popover>
                     </div>
-
+                </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
@@ -482,9 +401,20 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                 {/* Results Display */}
                 {result && (
                     <div className="space-y-4 p-6 bg-muted rounded-lg">
-                        <div className="flex items-center gap-2 mb-4">
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                            <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-600" />
+                                <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
+                            </div>
+                            {canSaveProduct && selectedProduct && (
+                                <SaveProductDialog
+                                    product={selectedProduct}
+                                    productValue={parseFloat(productValue)}
+                                    originCountry={originCountry}
+                                    destinationCountry={destinationCountry}
+                                    importDate={importDate}
+                                />
+                            )}
                         </div>
 
                         {/* Product Information */}

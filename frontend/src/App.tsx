@@ -12,11 +12,9 @@ import SignupPage from "./components/authen/SignupPage";
 import ForgotPasswordPage from "./components/authen/ForgotPasswordPage";
 import ProfilePageUser from "./components/authen/auth/ProfilePageUser";
 import ResetPasswordPage from "./components/authen/ResetPasswordPage";
-import { useSavedProducts } from "./components/context/SavedProductsContext";
+import { SavedProducts, SavedProductConfig } from "./components/SavedProducts";
 import ThemeToggle from "./components/togglethemebutton/ThemeToggle";
 import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./components/ui/dialog";
-
 
 export default function App() {
     const [activeTab, setActiveTab] = useState("customs");
@@ -24,6 +22,14 @@ export default function App() {
     // Shared state for calculated values
     const [customsResults, setCustomsResults] = useState(null);
     const [shippingResults, setShippingResults] = useState(null);
+    const [savedConfigToLoad, setSavedConfigToLoad] = useState<SavedProductConfig | undefined>(undefined);
+
+    const handleLoadProduct = (config: SavedProductConfig) => {
+        setSavedConfigToLoad(config);
+        setActiveTab("customs");
+        // Clear after a brief delay to allow re-loading the same config multiple times
+        setTimeout(() => setSavedConfigToLoad(undefined), 500);
+    };
 
     // Login state management
     const [showLogin, setShowLogin] = useState(false);
@@ -37,16 +43,6 @@ export default function App() {
 
     //forgot password
     const [showForgotPassword, setShowForgotPassword] = useState(false);
-
-    // Saved Products Context
-    const { savedProducts, fetchSavedProducts, removeSavedProduct, isLoading } = useSavedProducts();
-
-    // Fetch saved products when user logs in
-    useEffect(() => {
-        if (user?.id) {
-            fetchSavedProducts(user.id);
-        }
-    }, [user]);
 
     // Listen for a global event so child components can trigger opening the reset password page
     useEffect(() => {
@@ -185,81 +181,8 @@ export default function App() {
                             <ThemeToggle />
                         </div>
 
-                        {/* Right side: Saved Products + Login/Logout */}
+                        {/* Right side: Login/Logout */}
                         <div className="flex items-center gap-4">
-                            {/* Saved Products Button */}
-                            {user ? (
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" className="bg-background text-foreground flex items-center gap-2">
-                                            My Saved Products
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                        <DialogHeader>
-                                            <DialogTitle>My Saved Products</DialogTitle>
-                                            <DialogDescription>
-                                                View and manage your saved products
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="grid gap-4 py-4">
-                                            {isLoading ? (
-                                                <p className="text-center text-muted-foreground py-8">
-                                                    Loading...
-                                                </p>
-                                            ) : savedProducts && savedProducts.length > 0 ? (
-                                                savedProducts.map((product) => (
-                                                    <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                                                        {product.image && (
-                                                            <img
-                                                                src={product.image}
-                                                                alt={product.name}
-                                                                className="w-20 h-20 object-cover rounded"
-                                                            />
-                                                        )}
-                                                        <div className="flex-1">
-                                                            <h3 className="font-semibold">{product.name}</h3>
-                                                            <p className="text-sm text-muted-foreground">HS Code: {product.hsCode}</p>
-                                                            <p className="text-sm text-muted-foreground">Category: {product.category}</p>
-                                                        </div>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => removeSavedProduct(product.id)}
-                                                        >
-                                                            Remove
-                                                        </Button>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p className="text-center text-muted-foreground py-8">
-                                                    No saved products yet
-                                                </p>
-                                            )}
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
-                            ) : (
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" className="bg-background text-foreground flex items-center gap-2">
-                                            My Saved Products
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="max-w-md min-h-[300px] flex flex-col">
-                                        <DialogHeader>
-                                            <DialogTitle className="text-2xl">Login Required</DialogTitle>
-                                            <DialogDescription className="text-lg">
-            <span onClick={handleShowLogin} className="text-primary hover:underline font-medium cursor-pointer text-lg">
-                Login
-            </span>{" "}
-                                                to view your saved products
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                    </DialogContent>
-                                </Dialog>
-                            )}
-
                             {/* Login/User Button */}
                             {user ? (
                                 <div className="flex items-center gap-2">
@@ -326,8 +249,11 @@ export default function App() {
 
                         <TabsContent value="customs" className="mt-6">
                             <div className="space-y-6">
+                                {/* Saved Products */}
+                                <SavedProducts onLoadProduct={handleLoadProduct} />
+
                                 {/* Food Duty Calculator */}
-                                <CustomsDutyCalculator onResultsChange={setCustomsResults} />
+                                <CustomsDutyCalculator onResultsChange={setCustomsResults} savedConfig={savedConfigToLoad} />
 
                                 {/* Shipping Section */}
                                 <Card>

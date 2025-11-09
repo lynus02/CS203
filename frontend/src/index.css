@@ -2092,7 +2092,7 @@
         color: var(--muted-foreground);
     }
 
-    .\[\&_\[cmdk-group\]\]\:px-2 [cmdk-group] {
+    .\[\&_\[cmdk-group\]\]:px-2 [cmdk-group] {
         padding-inline: calc(var(--spacing) * 2);
     }
 
@@ -2108,15 +2108,15 @@
         width: calc(var(--spacing) * 5);
     }
 
-    .\[\&_\[cmdk-input\]\]\:h-12 [cmdk-input] {
+    .\[\&_\[cmdk-input\]\]:h-12 [cmdk-input] {
         height: calc(var(--spacing) * 12);
     }
 
-    .\[\&_\[cmdk-item\]\]\:px-2 [cmdk-item] {
+    .\[\&_\[cmdk-item\]\]:px-2 [cmdk-item] {
         padding-inline: calc(var(--spacing) * 2);
     }
 
-    .\[\&_\[cmdk-item\]\]\:py-3 [cmdk-item] {
+    .\[\&_\[cmdk-item\]\]:py-3 [cmdk-item] {
         padding-block: calc(var(--spacing) * 3);
     }
 
@@ -2145,7 +2145,7 @@
         color: var(--muted-foreground);
     }
 
-    .\[\&_tr\]\:border-b tr {
+    .\[\&_tr\]:border-b tr {
         border-bottom-style: var(--tw-border-style);
         border-bottom-width: 1px;
     }
@@ -2284,6 +2284,21 @@
     }
 }
 
+/* dark-mode: ensure focused form controls show a white ring/border instead of red */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus,
+.dark input:focus-visible,
+.dark textarea:focus-visible,
+.dark select:focus-visible {
+    /* override Tailwind's ring/destructive focus color */
+    --tw-ring-color: #fff !important;
+    border-color: #fff !important;
+    outline-color: #fff !important;
+    /* provide a subtle white glow for accessibility */
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.12) !important;
+}
+
 :root {
     --font-size: 16px;
     --background: #fff;
@@ -2300,7 +2315,7 @@
     --muted-foreground: #717182;
     --accent: #e9ebef;
     --accent-foreground: #030213;
-    --destructive: #d4183d;
+    --destructive: #ffffff;
     --destructive-foreground: #fff;
     --border: rgba(83, 80, 80, 0.1);
     --input: transparent;
@@ -2340,8 +2355,8 @@
     --muted-foreground: oklch(.708 0 0);
     --accent: oklch(.269 0 0);
     --accent-foreground: oklch(.985 0 0);
-    --destructive: oklch(.396 .141 25.723);
-    --destructive-foreground: oklch(.637 .237 25.331);
+    --destructive: oklch(0.972 0.006 17.268);
+    --destructive-foreground: oklch(1 0 89.876);
     --border: oklch(.269 0 0);
     --input: oklch(.269 0 0);
     --ring: oklch(0.622 0.136 21.804);
