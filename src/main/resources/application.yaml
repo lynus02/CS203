@@ -104,4 +104,4 @@ openai:
 
 # CHATBOT CONFIG
 chat:
-  model: gpt-4o-min
+  model: gpt-4o-mini
