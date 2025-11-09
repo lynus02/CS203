@@ -1,9 +1,11 @@
 package com.lynus.cs203.services;
 
+import com.lynus.cs203.dtos.response.CountryDto;
 import com.lynus.cs203.dtos.response.TariffDto;
 import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.entities.Product;
 import com.lynus.cs203.entities.Tariff;
+import com.lynus.cs203.repositories.CountryRepository;
 import com.lynus.cs203.repositories.TariffRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,31 +32,39 @@ class TariffSuggestionServiceTest {
     @Mock
     private TariffRepository tariffRepository;
 
+    @Mock
+    private CountryRepository countryRepository;
+
     @InjectMocks
     private TariffSuggestionService tariffSuggestionService;
 
     private Tariff testTariff1;
     private Tariff testTariff2;
-    private Country testCountry;
+    private Country testCountry1;
+    private Country testCountry2;
     private Product testProduct;
 
     @BeforeEach
     void setUp() {
-        testCountry = new Country();
-        testCountry.setCountryCode("US");
-        testCountry.setCountryName("United States");
+        testCountry1 = new Country();
+        testCountry1.setCountryCode("US");
+        testCountry1.setCountryName("United States");
+
+        testCountry2 = new Country();
+        testCountry2.setCountryCode("CA");
+        testCountry2.setCountryName("Canada");
 
         testProduct = new Product();
         testProduct.setProductCode(1001);
         testProduct.setProductDescription("Test Product Description");
 
         testTariff1 = new Tariff();
-        testTariff1.setCountry(testCountry);
+        testTariff1.setCountry(testCountry1);
         testTariff1.setProduct(testProduct);
         testTariff1.setTariffRate(5.0);
 
         testTariff2 = new Tariff();
-        testTariff2.setCountry(testCountry);
+        testTariff2.setCountry(testCountry1);
         testTariff2.setProduct(testProduct);
         testTariff2.setTariffRate(10.0);
     }
@@ -265,5 +275,23 @@ class TariffSuggestionServiceTest {
         verify(tariffRepository)
                 .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
                         eq(country), eq(query), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Should return all countries as ContryDto list")
+    void getAllCountries_ShouldReturnCountriesAsDtoList(){
+        // Arrange
+        List<Country> mockCountries = List.of(
+                testCountry1, testCountry2
+        );
+
+        when(countryRepository.findAll()).thenReturn(mockCountries);
+
+        // Act
+        List<CountryDto> result = tariffSuggestionService.getAllCountries();
+
+        // Assert
+        assertThat(result).hasSize(2);
+        verify(countryRepository).findAll();
     }
 }

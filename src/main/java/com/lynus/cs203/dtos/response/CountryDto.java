@@ -2,7 +2,9 @@ package com.lynus.cs203.dtos.response;
 
 // dto/CountryDto.java
 import lombok.Data;
+import lombok.Getter;
 
+@Getter
 @Data
 public class CountryDto {
     private String code;
