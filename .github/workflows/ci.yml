@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4     # Downloads the repository
 
-      # Install Java 17
-      - name: Set up JDK 17
+      # Install Java 21. web3 compatible
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       # Install Node.js 18
