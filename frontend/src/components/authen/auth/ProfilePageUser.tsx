@@ -1,14 +1,14 @@
 // ProfilePageUser.tsx
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Globe, Edit2, Trash2, LogOut, RefreshCcw, HardDrive } from 'lucide-react';
+import {ArrowLeft, Globe, Edit2, Trash2, LogOut, RefreshCcw} from 'lucide-react';
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardContent, CardHeader } from "../../ui/card";
 import ThemeToggle from "../../togglethemebutton/ThemeToggle";
 import api from "../../../services/api";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog";
-import { useSavedProducts } from "../../context/SavedProductsContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import MySavedProductsButton from "../../MySavedProductsButton";
 
 interface ProfilePageProps {
     onBack?: () => void;
@@ -36,9 +36,9 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
     const [editEmail, setEditEmail] = useState('');
     const [editLoading, setEditLoading] = useState(false);
 
-    // Saved products (reuse context)
-    const { savedProducts, fetchSavedProducts, removeSavedProduct, isLoading } = useSavedProducts();
-    const [isSavedDialogOpen, setIsSavedDialogOpen] = useState(false);
+    // Delete account confirmation dialog state
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     useEffect(() => {
         loadProfile();
@@ -53,17 +53,6 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
             setEditFirstName(res.data.firstName || '');
             setEditLastName(res.data.lastName || '');
             setEditEmail(res.data.email || '');
-            // fetch saved products for this user (if provider uses userId)
-            if (res.data.userId) {
-                // saved products context expects numeric id in some places; it's implementation-specific — we'll still call it safely
-                // try to call fetchSavedProducts with string id if API expects string ID in backend, context handles number; protect with try/catch
-                try {
-                    // @ts-ignore
-                    await fetchSavedProducts(res.data.userId);
-                } catch (e) {
-                    // ignore fetch saved products error here
-                }
-            }
         } catch (err: any) {
             console.error('Failed to load profile', err);
             setError(err.response?.data?.message || 'Failed to load profile');
@@ -91,20 +80,47 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
         }
     };
 
-    const handleDeleteAccount = async () => {
-        if (!confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) return;
+    // open confirmation dialog (will call performDeleteAccount when user confirms)
+    const handleDeleteAccount = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const performDeleteAccount = async () => {
+        setDeleteLoading(true);
         try {
             await api.delete('/users/profile');
             // after deletion, call onLogout to clear client state and redirect
+            setShowDeleteConfirm(false);
             onLogout();
         } catch (err: any) {
             console.error('Failed to delete account', err);
             alert(err.response?.data?.message || 'Failed to delete account');
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
     const handleLogoutClick = () => {
-        onLogout();
+        try {
+            // call parent logout to clear app state
+            onLogout();
+        } catch (e) {
+            console.warn('onLogout threw', e);
+        }
+
+        // ensure token is removed locally
+        try {
+            localStorage.removeItem('token');
+        } catch (e) {
+            console.warn('Failed to remove token from localStorage', e);
+        }
+
+        // navigate to homepage
+        try {
+            window.location.href = '/';
+        } catch (e) {
+            console.error('Navigation to homepage failed', e);
+        }
     };
 
     // Handle reset password click: prefer parent navigation (onReset), else fallback to location change
@@ -162,132 +178,155 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
                 </div>
             </div>
 
-            <div className="flex flex-1 flex-col items-stretch justify-start px-8 py-32 gap-16">
-                {/* Header row: Back + Title and Edit button */}
-                <div className="flex items-center justify-between sm:mt-40">
-                    <div className="flex items-center gap-4">
-                        {onBack && (
-                            <Button variant="ghost" onClick={onBack} className="p-2">
-                                <ArrowLeft className="h-6 w-6" />
-                            </Button>
-                        )}
-                        <h2 className="text-2xl font-semibold">Your Profile</h2>
-                    </div>
-
-                    <div>
-                        <Button variant="ghost" onClick={() => setIsEditOpen(true)} title="Edit Profile" className="flex items-center gap-2">
-                            <Edit2 className="h-4 w-4" />
-                            <span className="hidden sm:inline">Edit Profile</span>
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Main info section: spans full width, no inner bordered box */}
-                <section className="w-full">
-                    {loading ? (
-                        <p>Loading profile...</p>
-                    ) : error ? (
-                        <p className="text-red-600">{error}</p>
-                    ) : (
-                        // add responsive top margin to separate from header and increase spacing between items
-                        <div className="w-full text-base mt-12 sm:mt-20 md:mt-40 lg:mt-56 xl:mt-64 2xl:mt-80 space-y-12">
-                            <div>
-                                <p className="text-xl"><strong>Name:</strong> {profile ? `${profile.firstName} ${profile.lastName || ''}` : '—'}</p>
-                            </div>
-                            <div>
-                                <p className="text-xl"><strong>Email:</strong> {profile?.email || '—'}</p>
-                            </div>
-                            <div>
-                                <p className="text-xl"><strong>Date Joined:</strong> {formattedDate(profile?.createdAt)}</p>
-                            </div>
-                        </div>
-                    )}
-                </section>
-
-                {/* Actions row: wider spacing between action buttons */}
-                <section className="w-full">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-6">
-                        <Dialog open={isSavedDialogOpen} onOpenChange={setIsSavedDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="flex items-center gap-3 px-6 py-3">
-                                    <HardDrive className="h-5 w-5" />
-                                    <span>Saved Products</span>
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-3xl max-h-[70vh] overflow-y-auto">
-                                <DialogHeader>
-                                    <DialogTitle>My Saved Products</DialogTitle>
-                                </DialogHeader>
-                                <div className="grid gap-6 py-6">
-                                    {isLoading ? (
-                                        <p className="text-center text-muted-foreground py-8">Loading...</p>
-                                    ) : savedProducts && savedProducts.length > 0 ? (
-                                        savedProducts.map(p => (
-                                            <div key={p.id} className="flex items-center gap-6 p-4 rounded-lg">
-                                                {p.image && <img src={p.image} alt={p.name} className="w-28 h-28 object-cover rounded" />}
-                                                <div className="flex-1">
-                                                    <h3 className="font-semibold text-lg">{p.name}</h3>
-                                                    <p className="text-sm text-muted-foreground">HS Code: {p.hsCode}</p>
-                                                    <p className="text-sm text-muted-foreground">Category: {p.category}</p>
-                                                </div>
-                                                <Button variant="outline" size="sm" onClick={() => removeSavedProduct(p.id)}>Remove</Button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-muted-foreground py-8">No saved products yet</p>
+            <div className="flex flex-1 items-start justify-center px-4 py-12">
+                <div className="w-full max-w-4xl">
+                    {/* Profile card */}
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    {onBack && (
+                                        <Button variant="ghost" onClick={onBack} className="p-2">
+                                            <ArrowLeft className="h-6 w-6" />
+                                        </Button>
                                     )}
+                                    <div className="flex items-center gap-4">
+                                        {/* Avatar with initials */}
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white text-xl font-semibold">
+                                            {profile ? ((profile.firstName || profile.email || 'U')[0] + (profile.lastName ? profile.lastName[0] : '')).toUpperCase() : 'U'}
+                                        </div>
+                                        <div>
+                                            <h2 className="text-2xl font-semibold">{profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() : '—'}</h2>
+                                            <div className="text-sm text-muted-foreground">{profile?.email || '—'}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </DialogContent>
-                        </Dialog>
 
-                        <Button variant="outline" onClick={handleResetClick} className="flex items-center gap-3 px-6 py-3">
-                            <RefreshCcw className="h-5 w-5" />
+                                <div className="flex items-center gap-2">
+                                    <Button variant="ghost" onClick={() => setIsEditOpen(true)} title="Edit Profile" className="flex items-center gap-2">
+                                        <Edit2 className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Edit Profile</span>
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardHeader>
+
+                        <CardContent>
+                            {loading ? (
+                                <p>Loading profile...</p>
+                            ) : error ? (
+                                <p className="text-red-600">{error}</p>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <div className="text-sm text-muted-foreground">First Name</div>
+                                        <div className="font-medium text-lg">{profile.firstName}</div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="text-sm text-muted-foreground">Last Name</div>
+                                        <div className="font-medium text-lg">{profile.lastName}</div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="text-sm text-muted-foreground">Email</div>
+                                        <div className="font-medium text-lg">{profile?.email || '—'}</div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="text-sm text-muted-foreground">Date joined</div>
+                                        <div className="font-medium">{formattedDate(profile?.createdAt)}</div>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Actions */}
+                    <div className="mt-6 flex items-center gap-3 whitespace-nowrap overflow-auto">
+                        {/* My Saved Products button (shared component) */}
+                        <MySavedProductsButton />
+
+                        <Button
+                            id="reset-password-btn"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleResetClick}
+                            className="bg-background text-foreground flex items-center gap-2"
+                        >
+                            <RefreshCcw className="h-4 w-4" />
                             <span>Reset Password</span>
                         </Button>
 
-                        <Button variant="ghost" onClick={handleLogoutClick} className="flex items-center gap-3 px-6 py-3">
-                            <LogOut className="h-5 w-5" />
+                        <Button
+                            id="logout-btn"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleLogoutClick}
+                            className="bg-background text-foreground flex items-center gap-2"
+                        >
+                            <LogOut className="h-4 w-4" />
                             <span>Logout</span>
                         </Button>
 
-                        <Button variant="destructive" onClick={handleDeleteAccount} className="flex items-center gap-3 px-6 py-3">
+                        <Button
+                            id="delete-account-btn"
+                            aria-label="Delete account"
+                            variant="destructive"
+                            onClick={handleDeleteAccount}
+                            className="flex items-center gap-3 px-4 py-2"
+                            style={{ display: 'inline-flex', backgroundColor: '#dc2626', color: '#ffffff', border: '1px solid #991b1b' }}
+                        >
                             <Trash2 className="h-5 w-5" />
                             <span>Delete Account</span>
                         </Button>
-                    </div>
-                </section>
-            </div>
+                     </div>
+                 </div>
+             </div>
 
-            {/* Edit Profile Modal */}
-            {isEditOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="bg-white dark:bg-slate-900 rounded-lg p-6 w-full max-w-md">
-                        <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
-                        <div className="space-y-3">
-                            <label className="block">First Name</label>
-                            <Input value={editFirstName} onChange={e => setEditFirstName(e.target.value)} />
-                            <label className="block">Last Name</label>
-                            <Input value={editLastName} onChange={e => setEditLastName(e.target.value)} />
-                            <label className="block">Email</label>
-                            <Input value={editEmail} onChange={e => setEditEmail(e.target.value)} />
-                        </div>
-                        <div className="mt-4 flex justify-end gap-2">
-                            <Button variant="ghost" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSaveEdit} disabled={editLoading}>{editLoading ? 'Saving...' : 'Save'}</Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+             {/* Edit Profile Modal (Dialog) */}
+             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                 <DialogContent className="max-w-md">
+                     <DialogHeader>
+                         <DialogTitle>Edit Profile</DialogTitle>
+                     </DialogHeader>
+                     <div className="space-y-3 py-2">
+                         <label className="block text-sm text-muted-foreground">First Name</label>
+                         <Input value={editFirstName} onChange={e => setEditFirstName(e.target.value)} />
+                         <label className="block text-sm text-muted-foreground">Last Name</label>
+                         <Input value={editLastName} onChange={e => setEditLastName(e.target.value)} />
+                         <label className="block text-sm text-muted-foreground">Email</label>
+                         <Input value={editEmail} onChange={e => setEditEmail(e.target.value)} />
+                     </div>
+                     <div className="mt-4 flex justify-end gap-2">
+                         <Button variant="ghost" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+                         <Button onClick={handleSaveEdit} disabled={editLoading}>{editLoading ? 'Saving...' : 'Save'}</Button>
+                     </div>
+                 </DialogContent>
+             </Dialog>
 
-            {/* subtle footer separator */}
-            <footer className="w-full border-t border-gray-200 mt-12 pt-6 px-8">
-                <div className="max-w-7xl mx-auto text-sm text-muted-foreground">
-                    <div className="flex items-center justify-between">
-                        <span>© {new Date().getFullYear()} FoodTariff Pro</span>
-                        <span className="text-xs">Small estimates only — consult official customs authorities for definitive rates.</span>
-                    </div>
-                </div>
-            </footer>
+             {/* Delete account confirmation dialog */}
+             <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                 <DialogContent className="max-w-md">
+                     <DialogHeader>
+                         <DialogTitle>Confirm Account Deletion</DialogTitle>
+                     </DialogHeader>
+                     <div className="py-2">
+                         <p className="text-sm text-muted-foreground">Are you sure want to delete your account?</p>
+                         <div className="mt-4 flex justify-end gap-2">
+                             <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleteLoading}>Cancel</Button>
+                             <Button variant="destructive" onClick={performDeleteAccount} disabled={deleteLoading}>{deleteLoading ? 'Deleting...' : 'Confirm'}</Button>
+                         </div>
+                     </div>
+                 </DialogContent>
+             </Dialog>
+
+             {/* subtle footer separator */}
+             <footer className="w-full border-t border-gray-200 mt-12 pt-6 px-8">
+                 <div className="max-w-7xl mx-auto text-sm text-muted-foreground">
+                     <div className="flex items-center justify-between">
+                         <span>© {new Date().getFullYear()} FoodTariff Pro</span>
+                         <span className="text-xs">Small estimates only — consult official customs authorities for definitive rates.</span>
+                     </div>
+                 </div>
+             </footer>
         </div>
     );
 };

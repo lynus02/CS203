@@ -12,7 +12,8 @@ import SignupPage from "./components/authen/SignupPage";
 import ForgotPasswordPage from "./components/authen/ForgotPasswordPage";
 import ProfilePageUser from "./components/authen/auth/ProfilePageUser";
 import ResetPasswordPage from "./components/authen/ResetPasswordPage";
-import { SavedProducts, SavedProductConfig } from "./components/SavedProducts";
+import { SavedProductConfig } from "./components/SavedProducts";
+import MySavedProductsButton from "./components/MySavedProductsButton";
 import ThemeToggle from "./components/togglethemebutton/ThemeToggle";
 import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User, Bookmark } from "lucide-react";
 import { Dialog, DialogContent } from "./components/ui/dialog";
@@ -56,6 +57,26 @@ export default function App() {
         };
         document.addEventListener('openResetPassword', handler as EventListener);
         return () => document.removeEventListener('openResetPassword', handler as EventListener);
+    }, []);
+
+    // Listen for API unauthorized event to show login prompt
+    useEffect(() => {
+        const authHandler = () => {
+            console.log('Received auth:unauthorized event - showing login');
+            setShowLogin(true);
+        };
+        window.addEventListener('auth:unauthorized', authHandler as EventListener);
+        return () => window.removeEventListener('auth:unauthorized', authHandler as EventListener);
+    }, []);
+
+    // Listen for openLogin event (triggered by components that want to open the login modal)
+    useEffect(() => {
+        const loginHandler = () => {
+            console.log('Received openLogin event - showing login modal');
+            setShowLogin(true);
+        };
+        window.addEventListener('openLogin', loginHandler as EventListener);
+        return () => window.removeEventListener('openLogin', loginHandler as EventListener);
     }, []);
 
     // Login handlers
@@ -187,26 +208,11 @@ export default function App() {
                         {/* Right side */}
                         <div className="flex items-center gap-4">
                             {/* My Saved Products button (left of login) */}
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    if (user) {
-                                        setShowSavedProductsPanel(true);
-                                    } else {
-                                        setShowLoginPrompt(true);
-                                    }
-                                }}
-                                 className="bg-background text-foreground flex items-center gap-2"
-                                 id="my-saved-products-btn"
-                             >
-                                 <Bookmark className="h-4 w-4" />
-                                 My Saved Products
-                             </Button>
+                            <MySavedProductsButton onLoadProduct={handleLoadProduct} />
 
-                             {/* Login/User Button */}
-                             {user ? (
-                                 <div className="flex items-center gap-2">
+                            {/* Login/User Button */}
+                            {user ? (
+                                <div className="flex items-center gap-2">
                                     <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
                                     <Button
                                         variant="outline"
@@ -354,13 +360,6 @@ export default function App() {
                     </div>
                 </div>
             </div>
-
-            {/* Dialog to show Saved Products when header button clicked */}
-            <Dialog open={showSavedProductsPanel} onOpenChange={setShowSavedProductsPanel}>
-                <DialogContent>
-                    <SavedProducts onLoadProduct={handleLoadProduct} />
-                </DialogContent>
-            </Dialog>
 
             {/* Prompt dialog shown when user is not logged in and clicks My Saved Products */}
             <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
