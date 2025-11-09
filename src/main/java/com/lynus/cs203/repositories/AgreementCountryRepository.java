@@ -23,15 +23,20 @@ public interface AgreementCountryRepository extends JpaRepository<AgreementCount
 
     Optional<AgreementCountry> findByAgreementAndCountry(TradeAgreement agreement, Country country);
 
-    // Find agreements between two countries
+    // Find agreements between two countries (where both are signatories)
     @Query("""
     SELECT ac.agreement.agreementId
     FROM AgreementCountry ac
-    WHERE ac.country.countryName IN (:countryA, :countryB)
+    WHERE LOWER(ac.country.countryName) IN (LOWER(:countryA), LOWER(:countryB))
     GROUP BY ac.agreement.agreementId
-    HAVING COUNT(DISTINCT ac.country.countryName) = 2
+    HAVING COUNT(DISTINCT LOWER(ac.country.countryName)) = 2
     """)
-    List<Long> findAgreementsBetweenCountries(@Param("countryA") String countryA, @Param("countryB") String countryB);
+    List<Long> findAgreementsBetweenCountries(
+            @Param("countryA") String countryA,
+            @Param("countryB") String countryB
+    );
+
+
 
     // Additional useful queries
     @Query("SELECT COUNT(ac) FROM AgreementCountry ac WHERE ac.agreement.agreementId = :agreementId")

@@ -1,8 +1,10 @@
 package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.dtos.request.TariffCalculationRequest;
+import com.lynus.cs203.dtos.response.CountryDto;
 import com.lynus.cs203.dtos.response.TariffCalculationResponse;
 import com.lynus.cs203.dtos.response.TariffDto;
+import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.services.TariffCalculationService;
 import com.lynus.cs203.services.TariffSuggestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,14 +57,16 @@ public class TariffController {
             description = "Retrieve tariff rates filtered by product size and optional country"
     )
     @ApiResponse(responseCode = "200", description = "Tariff rates retrieved successfully")
-    @GetMapping("/size={size}")
-    public List<TariffDto> getTariffRatesBySize(
+    @GetMapping("/rates/{size}")
+    public ResponseEntity<List<TariffDto>> getTariffRatesBySize(
             @PathVariable int size,
             @RequestParam(required = false) String country
     ) {
         log.info("Retrieving tariff rates for size: {}, country: {}", size, country);
 
-        return tariffSuggestionService.getTariffRatesBySize(size, country);
+        List<TariffDto> tariffs = tariffSuggestionService.getTariffRatesBySize(size, country);
+
+        return ResponseEntity.ok(tariffs);
     }
 
     @Operation(
@@ -71,7 +75,7 @@ public class TariffController {
     )
     @ApiResponse(responseCode = "200", description = "Product suggestions retrieved successfully")
     @GetMapping("/suggest")
-    public Page<TariffDto> suggestProducts(
+    public ResponseEntity<Page<TariffDto>> suggestProducts(
             @RequestParam("q") String query,
             @RequestParam(required = false) String country,
             @RequestParam(defaultValue = "0") int page,
@@ -79,6 +83,22 @@ public class TariffController {
     ) {
         log.info("Suggesting products - Query: '{}', Country: {}, Page: {}, Size: {}", query, country, page, size);
 
-        return tariffSuggestionService.suggestProducts(query, country, page, size);
+        Page<TariffDto> results = tariffSuggestionService.suggestProducts(query, country, page, size);
+
+        return ResponseEntity.ok(results);
+    }
+
+    @Operation(
+            summary = "Get all available countries",
+            description = "Retrieve a list of all available countries for tariff calculations"
+    )
+    @ApiResponse(responseCode = "200", description = "Countries retrieved successfully")
+    @GetMapping("/countries")
+    public ResponseEntity<List<CountryDto>> getAllCountries() {
+        log.info("Retrieving all available countries for tariff calculations");
+
+        List<CountryDto> countries = tariffSuggestionService.getAllCountries();
+
+        return ResponseEntity.ok(countries);
     }
 }

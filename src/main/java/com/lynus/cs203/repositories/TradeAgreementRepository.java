@@ -14,4 +14,7 @@ import java.util.Optional;
 public interface TradeAgreementRepository extends JpaRepository<TradeAgreement, Long>{
     Optional<TradeAgreement> findByAgreementName(String agreementName);
     Optional<TradeAgreement> findByAgreementId(Long agreementId);
+
+    @Query("SELECT t FROM TradeAgreement t WHERE t.agreementId IN :ids")
+    List<TradeAgreement> findAllByIds(@Param("ids") List<Long> ids);
 }

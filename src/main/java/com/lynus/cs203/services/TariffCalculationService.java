@@ -86,8 +86,8 @@ public class TariffCalculationService {
                 tradeAgreementIds.size(), exportCountry.getCountryName(), desCountry.getCountryName());
 
         // If a few agreements exist, find lowest discount multiplier (best discount
-        double finalTariffRate = tariff.getTariffRate();
-        double bestDiscountMultiplier = 1.0;
+        double baseRate = tariff.getTariffRate();
+        double bestFinalRate = baseRate;
         String bestAgreementType = "MFN"; // set default to Most Favored Nation
 
         if (!tradeAgreementIds.isEmpty()) {
@@ -100,9 +100,12 @@ public class TariffCalculationService {
                     String[] types = agreement.getAgreementType().split("&");
                     for (String agreementType : types) {
                         double discountMultiplier = getDiscountMultiplier(sensitivityTier, agreementType.trim());
-                        if (discountMultiplier < bestDiscountMultiplier) {
-                            finalTariffRate = discountMultiplier;
-                            bestDiscountMultiplier = discountMultiplier;
+
+                        double discountedRate = baseRate * discountMultiplier;
+
+                        // Pick the lowest tariff rate
+                        if (discountedRate < bestFinalRate) {
+                            bestFinalRate = discountedRate;
                             bestAgreementType = agreementType.trim();
                         }
                     }
@@ -110,7 +113,7 @@ public class TariffCalculationService {
             }
         }
         // Calculate tariff amount
-        double tariffAmount = finalTariffRate * request.getCustomsValue() / 100.0;
+        double tariffAmount = (bestFinalRate / 100.0) * request.getCustomsValue();
 
         log.info("Tariff calculation completed. Tariff Amount: {}", tariffAmount);
         return TariffCalculationResponse.builder()

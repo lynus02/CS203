@@ -9,7 +9,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
-import { suggestProducts, getTariffRatesBySize } from "../services/tariff";
+import tariffApi from "../services/tariffApi";
+
+// Get constants from tariffApi
+const { suggestProducts, getTariffRatesBySize, calculateTariff, getCountries } = tariffApi;
+
+interface CountryDto{
+    code: string;
+    name: string;
+}
 
 interface Product {
     id: string;
@@ -29,6 +37,7 @@ interface TradeAgreement {
 
 interface TariffResult {
     product: Product;
+    productValue: number;
     originCountry: string;
     destinationCountry: string;
     importDate: Date;
@@ -45,54 +54,129 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
     const [originCountry, setOriginCountry] = useState("");
-    const [destinationCountry, setDestinationCountry] = useState("Singapore");
+    const [destinationCountry, setDestinationCountry] = useState("Singapore");   // Backend expects C702 for Singapore
     const [importDate, setImportDate] = useState<Date>(new Date());
     const [result, setResult] = useState<TariffResult | null>(null);
     const [productOpen, setProductOpen] = useState(false);
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+    const [countries, setCountries] = useState<CountryDto[]>([]);
 
-    const countries = [
-        'Albania',
-        'Argentina',
-        'Belize',
-        'Botswana',
-        'Brazil',
-        'Cambodia',
-        'Canada',
-        'Chile',
-        'China',
-        'Chinese Taipei',
-        'Colombia',
-        'Dominican Republic',
-        'Ecuador',
-        'El Salvador',
-        'Eswatini',
-        'Honduras',
-        'Hong Kong, China',
-        'Jordan',
-        'Korea, Republic of',
-        'Kuwait, the State of',
-        'Lesotho',
-        'Macao, China',
-        'Malaysia',
-        'Mauritius',
-        'Mexico',
-        'Montenegro',
-        'Myanmar',
-        'Namibia',
-        'New Zealand',
-        'North Macedonia',
-        'Saudi Arabia, Kingdom of',
-        'Seychelles',
-        'Singapore',
-        'South Africa',
-        'Switzerland',
-        'Ukraine',
-        'United Kingdom',
-        'United States of America'
-    ];
+    const MAX_SUGGESTION_SIZE = 20;
 
+    // Fetch countries from backend
+    useEffect(() => {
+        getCountries()
+            .then((data: CountryDto[]) => {
+                const sorted = [...data].sort((a, b) =>
+                    a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+                );
+                setCountries(sorted);
+            })
+            .catch((err) => console.error("Failed to fetch countries:", err));
+    }, []);
+
+    // Load product suggestions when popover opens
+    useEffect(() => {
+        if (!productOpen) return;
+
+        setLoadingSuggestions(true);
+        getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
+            .then((data) => {
+                setSuggestedProducts(
+                    data.map((item: any) => ({
+                        id: item.trade_id?.toString(),
+                        name: item.hsDescription,
+                        hsCode: item.productCode6,
+                        category: item.food_category,
+                        baseTariffRate: item.value,
+                        reporterName: item.reporterName,
+                    }))
+                );
+            })
+            .finally(() => setLoadingSuggestions(false));
+    }, [productOpen, destinationCountry]);
+
+    // Search products as user types
+    useEffect(() => {
+        if (productSearch.length === 0) return;
+
+        setLoadingSuggestions(true);
+        suggestProducts(productSearch, destinationCountry, 0, MAX_SUGGESTION_SIZE)
+            .then((data) => {
+                const results = data.content || data;
+                setSuggestedProducts(
+                    results.map((item: any) => ({
+                        id: item.trade_id?.toString(),
+                        name: item.hsDescription,
+                        hsCode: item.productCode6,
+                        category: item.food_category,
+                        baseTariffRate: item.value,
+                        reporterName: item.reporterName,
+                    }))
+                );
+            })
+            .finally(() => setLoadingSuggestions(false));
+    }, [productSearch, destinationCountry]);
+
+    // ========== BACKEND TARIFF CALCULATION ========== //
+    const handleCalculate = async () => {
+        if (!selectedProduct || !productValue || !originCountry || !destinationCountry) {
+            return;
+        }
+
+        try {
+            // Find country code from names
+            const originCountryCode = countries.find(c => c.name === originCountry)?.code || originCountry;
+            const destCountryCode = countries.find(c => c.name === destinationCountry)?.code || destinationCountry;
+
+            const data = await calculateTariff(
+                selectedProduct.hsCode,
+                originCountryCode,
+                destCountryCode,
+                parseFloat(productValue)
+            );
+
+            const value = parseFloat(productValue);
+            const finalRate = (data.tariffAmount / value) * 100;
+
+            const tariffResult: TariffResult = {
+                product: selectedProduct,
+                productValue: value,
+                originCountry,
+                destinationCountry,
+                importDate,
+                baseTariffRate: selectedProduct.baseTariffRate,
+                tradeAgreementReduction: selectedProduct.baseTariffRate - finalRate,
+                finalTariffRate: finalRate,
+                dutyAmount: data.tariffAmount,
+                totalCost: value + data.tariffAmount,
+                tradeAgreement: data.agreementType
+                    ? {
+                        name: data.agreementType,
+                        countries: [originCountry, destinationCountry],
+                        reduction: selectedProduct.baseTariffRate - finalRate,
+                    }
+                    : undefined,
+            };
+
+            setResult(tariffResult);
+            onResultsChange?.(tariffResult);
+        } catch (error: any) {
+            console.error("Tariff calculation failed:", error);
+        }
+    }
+
+    // Reset UI and states
+    const clearState = () => {
+        setProductValue("");
+        setSelectedProduct(null);
+        setProductSearch("");
+        setOriginCountry("");
+        setDestinationCountry("Singapore"); // Singapore default
+        setImportDate(new Date());
+        setResult(null);
+    };
 
     // Trade agreements with tariff reductions
     const tradeAgreements: TradeAgreement[] = [
@@ -128,103 +212,11 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         }
     ];
 
-    const MAX_SUGGESTION_SIZE = 20;
-
-    useEffect(() => {
-        if (productOpen) {
-            setLoadingSuggestions(true);
-            getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
-                .then(data => {
-                    setSuggestedProducts(data.map((rate: any) => ({
-                        id: rate.trade_id?.toString(),
-                        name: rate.hsDescription,
-                        hsCode: rate.productCode6,
-                        category: rate.food_category,
-                        baseTariffRate: rate.value,
-                        reporterName: rate.reporterName
-                    })));
-                })
-                .finally(() => setLoadingSuggestions(false));
-        }
-    }, [productOpen, destinationCountry]);
-
-    useEffect(() => {
-        if (productSearch.length > 0) {
-            setLoadingSuggestions(true);
-            suggestProducts(productSearch, destinationCountry, 0, 20)
-                .then(data => {
-                    const rates = data.content || data; // handle both array and paged response
-                    setSuggestedProducts(rates.map((rate: any) => ({
-                        id: rate.trade_id?.toString(),
-                        name: rate.hsDescription,
-                        hsCode: rate.productCode6,
-                        category: rate.food_category,
-                        baseTariffRate: rate.value,
-                        reporterName: rate.reporterName
-                    })));
-                })
-                .finally(() => setLoadingSuggestions(false));
-        }
-    }, [productSearch, destinationCountry]);
-
     const findApplicableTradeAgreement = (origin: string, destination: string): TradeAgreement | undefined => {
         return tradeAgreements.find(agreement =>
             (agreement.countries.includes(origin) && agreement.countries.includes(destination)) ||
             (agreement.countries.includes(destination) && agreement.countries.includes(origin))
         );
-    };
-
-    const calculateTariff = () => {
-        // console.log("selectedProduct:", selectedProduct);
-        // console.log("productValue:", productValue);
-        // console.log("originCountry:", originCountry);
-        // console.log("destinationCountry:", destinationCountry);
-        if (!selectedProduct || !productValue || !originCountry || !destinationCountry) {
-            return;
-        }
-
-        const value = parseFloat(productValue);
-        let baseTariffRate = selectedProduct.baseTariffRate;
-        let finalTariffRate = baseTariffRate;
-        let tradeAgreementReduction = 0;
-
-        // Check for applicable trade agreements
-        const tradeAgreement = findApplicableTradeAgreement(originCountry, destinationCountry);
-
-        if (tradeAgreement) {
-            tradeAgreementReduction = (baseTariffRate * tradeAgreement.reduction) / 100;
-            finalTariffRate = baseTariffRate - tradeAgreementReduction;
-        }
-
-        const dutyAmount = (value * finalTariffRate) / 100;
-        const totalCost = value + dutyAmount;
-        const result = {
-            product: selectedProduct,
-            productValue: value,
-            originCountry,
-            destinationCountry,
-            importDate,
-            baseTariffRate,
-            tradeAgreementReduction,
-            finalTariffRate,
-            dutyAmount,
-            totalCost,
-            tradeAgreement
-        }
-
-        //console.log("Sending customs result to parent:", result);
-        setResult(result);
-        onResultsChange?.(result);
-    };
-
-    const clearCalculation = () => {
-        setProductValue("");
-        setSelectedProduct(null);
-        setProductSearch("");
-        setOriginCountry("");
-        setDestinationCountry("");
-        setImportDate(new Date());
-        setResult(null);
     };
 
     return (
@@ -253,10 +245,10 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
+                                    <SelectItem key={country.code} value={country.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
+                                            <CountryFlag country={country.name} />
+                                            {country.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -280,10 +272,10 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((country) => (
-                                    <SelectItem key={country} value={country}>
+                                    <SelectItem key={country.code} value={country.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country} />
-                                            {country}
+                                            <CountryFlag country={country.name} />
+                                            {country.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -359,48 +351,48 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                 </div>
 
                 {/* Product Value */}
-                    <div className="space-y-2">
-                        <Label htmlFor="product-value">Product Value (USD)</Label>
-                        <Input
-                            id="product-value"
-                            type="number"
-                            placeholder="Enter product value"
-                            value={productValue}
-                            onChange={(e) => setProductValue(e.target.value)}
-                        />
-                    </div>
+                <div className="space-y-2">
+                    <Label htmlFor="product-value">Product Value (USD)</Label>
+                    <Input
+                        id="product-value"
+                        type="number"
+                        placeholder="Enter product value"
+                        value={productValue}
+                        onChange={(e) => setProductValue(e.target.value)}
+                    />
+                </div>
 
-                    {/* Import Date */}
-                    <div className="space-y-2">
-                        <Label>Import Date</Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-full justify-start text-left font-normal"
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {importDate.toLocaleDateString()}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={importDate}
-                                    onSelect={(date) => date && setImportDate(date)}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
+                {/* Import Date */}
+                <div className="space-y-2">
+                    <Label>Import Date</Label>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="w-full justify-start text-left font-normal"
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {importDate.toLocaleDateString()}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={importDate}
+                                onSelect={(date) => date && setImportDate(date)}
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                </div>
 
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
-                    <Button onClick={calculateTariff} className="flex-1">
+                    <Button onClick={handleCalculate} className="flex-1">
                         Calculate Tariff
                     </Button>
-                    <Button variant="outline" onClick={clearCalculation}>
+                    <Button variant="outline" onClick={clearState}>
                         Clear
                     </Button>
                 </div>

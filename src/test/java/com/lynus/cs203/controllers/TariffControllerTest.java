@@ -117,6 +117,7 @@ class TariffControllerTest {
         verify(tariffCalculationService).calculateTariff(validRequest);
     }
 
+
     @Test
     @DisplayName("Should return list of tariffs")
     void getTariffRatesBySize_ShouldReturnListOfTariffs() {
@@ -127,11 +128,11 @@ class TariffControllerTest {
                 .thenReturn(mockTariffList);
 
         // Act
-        List<TariffDto> result = tariffController.getTariffRatesBySize(size, country);
+        ResponseEntity<List<TariffDto>> response = tariffController.getTariffRatesBySize(size, country);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffList);
-        assertThat(result).hasSize(2);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffList);
 
         // Verify
         verify(tariffSuggestionService).getTariffRatesBySize(size, country);
@@ -146,10 +147,11 @@ class TariffControllerTest {
                 .thenReturn(mockTariffList);
 
         // Act
-        List<TariffDto> result = tariffController.getTariffRatesBySize(size, null);
+        ResponseEntity<List<TariffDto>> response = tariffController.getTariffRatesBySize(size, null);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffList);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffList);
         verify(tariffSuggestionService).getTariffRatesBySize(size, null);
     }
 
@@ -163,10 +165,11 @@ class TariffControllerTest {
                 .thenReturn(mockTariffList);
 
         // Act
-        List<TariffDto> result = tariffController.getTariffRatesBySize(size, country);
+        ResponseEntity<List<TariffDto>> response = tariffController.getTariffRatesBySize(size, country);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffList);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffList);
         verify(tariffSuggestionService).getTariffRatesBySize(size, country);
     }
 
@@ -174,72 +177,67 @@ class TariffControllerTest {
     @DisplayName("Should return paged tariff suggestions")
     void suggestProducts_ShouldReturnPagedTariffSuggestions() {
         // Arrange
-        String query = "test";
-        String country = "US";
-        int page = 0;
-        int size = 20;
-
-        when(tariffSuggestionService.suggestProducts(query, country, page, size))
+        when(tariffSuggestionService.suggestProducts("test", "US", 0, 20))
                 .thenReturn(mockTariffPage);
 
         // Act
-        Page<TariffDto> result = tariffController.suggestProducts(query, country, page, size);
+        ResponseEntity<Page<TariffDto>> response =
+                tariffController.suggestProducts("test", "US", 0, 20);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffPage);
-        assertThat(result.getContent()).hasSize(2);
-        verify(tariffSuggestionService).suggestProducts(query, country, page, size);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffPage);
+        verify(tariffSuggestionService).suggestProducts("test", "US", 0, 20);
     }
 
     @Test
     @DisplayName("Should use default pagination values")
     void suggestProducts_ShouldUseDefaultPaginationValues() {
         // Arrange
-        String query = "test";
-        when(tariffSuggestionService.suggestProducts(query, null, 0, 20))
+        when(tariffSuggestionService.suggestProducts("test", null, 0, 20))
                 .thenReturn(mockTariffPage);
 
         // Act
-        Page<TariffDto> result = tariffController.suggestProducts(query, null, 0, 20);
+        ResponseEntity<Page<TariffDto>> response =
+                tariffController.suggestProducts("test", null, 0, 20);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffPage);
-        verify(tariffSuggestionService).suggestProducts(query, null, 0, 20);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffPage);
+        verify(tariffSuggestionService).suggestProducts("test", null, 0, 20);
     }
 
     @Test
     @DisplayName("Should handle empty query parameter")
     void suggestProducts_ShouldHandleEmptyQueryParameter() {
         // Arrange
-        String query = "";
-        when(tariffSuggestionService.suggestProducts(query, null, 0, 20))
+        when(tariffSuggestionService.suggestProducts("", null, 0, 20))
                 .thenReturn(mockTariffPage);
 
         // Act
-        Page<TariffDto> result = tariffController.suggestProducts(query, null, 0, 20);
+        ResponseEntity<Page<TariffDto>> response =
+                tariffController.suggestProducts("", null, 0, 20);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffPage);
-        verify(tariffSuggestionService).suggestProducts(query, null, 0, 20);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffPage);
+        verify(tariffSuggestionService).suggestProducts("", null, 0, 20);
     }
 
     @Test
     @DisplayName("Should handle custom country parameter in suggestions")
     void suggestProducts_ShouldHandleCustomCountryParameter() {
         // Arrange
-        String query = "test";
-        String country = "CA";
-        int page = 2;
-        int size = 50;
-
-        when(tariffSuggestionService.suggestProducts(query, country, page, size))
+        when(tariffSuggestionService.suggestProducts("test", "CA", 2, 50))
                 .thenReturn(mockTariffPage);
 
         // Act
-        Page<TariffDto> result = tariffController.suggestProducts(query, country, page, size);
+        ResponseEntity<Page<TariffDto>> response =
+                tariffController.suggestProducts("test", "CA", 2, 50);
 
         // Assert
-        assertThat(result).isEqualTo(mockTariffPage);
-        verify(tariffSuggestionService).suggestProducts(query, country, page, size);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(mockTariffPage);
+        verify(tariffSuggestionService).suggestProducts("test", "CA", 2, 50);
     }
 }

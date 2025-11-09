@@ -54,8 +54,27 @@ class TariffControllerIntegrationTest {
 
     @Test
     @DisplayName("Should calculate tariff for valid request")
-    void calculateTariff_WithValidRequest_ShouldReturnTariffCalculation() {
+    void calculateTariff_WithValidRequest_ShouldReturnTariffCalculation() throws Exception {
+        // Arrange
+        Country exportCountry = createUniqueCountry("EXP01", "ExportCountry");
+        Country desCountry = createUniqueCountry("DES01", "DestinationCountry");
+        Product product = createUniqueProduct(12345, "Test Product");
 
+        createTariff(product, desCountry, 8.5);
+
+        TariffCalculationRequest request = TariffCalculationRequest.builder()
+                .productCode(12345)
+                .exportCountryCode("EXP01")
+                .desCountryCode("DES01")
+                .customsValue(100.0)
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/tariffs/calculate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tariffAmount", is(8.5)));
     }
 
     @Test
@@ -107,7 +126,7 @@ class TariffControllerIntegrationTest {
         createTariff(p2, country, 10.0);
 
         // Act & Assert
-        mockMvc.perform(get("/tariffs/size=10")
+        mockMvc.perform(get("/tariffs/rates/10")
                         .param("country", "TestCountry3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
@@ -117,7 +136,7 @@ class TariffControllerIntegrationTest {
     @DisplayName("Should return empty results for non-existent country")
     void getTariffRatesBySize_WithNonExistentCountry_ShouldReturnEmpty() throws Exception {
         // Act & Assert
-        mockMvc.perform(get("/tariffs/size=10")
+        mockMvc.perform(get("/tariffs/rates/10")
                         .param("country", "NonExistentCountry"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
