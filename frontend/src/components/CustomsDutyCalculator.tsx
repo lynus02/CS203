@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
-import { suggestProducts, getTariffRatesBySize } from "../services/tariff";
+import { suggestProducts, getTariffRatesBySize, runAudit as runAuditApi } from "../services/tariff";
 
 interface Product {
     id: string;
@@ -51,6 +51,9 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     const [productOpen, setProductOpen] = useState(false);
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+    const [auditRunning, setAuditRunning] = useState(false);
+    const [auditResult, setAuditResult] = useState<{ status: "ok" | "modified" | "error"; message: string; localHash?: string; onChainHash?: string } | null>(null);
+
 
     const countries = [
         'Albania',
@@ -93,6 +96,35 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         'United States of America'
     ];
 
+    const runAudit = async () => {
+        setAuditRunning(true);
+        setAuditResult(null);
+        try {
+            const data = await runAuditApi(); // backend DTO: { integrityOk, localHash, onChainHash, error, message }
+            if (data.integrityOk) {
+                setAuditResult({
+                    status: "ok",
+                    message: data.message || "Database integrity verified",
+                    localHash: data.localHash ?? undefined,
+                    onChainHash: data.onChainHash ?? undefined
+                });
+            } else if (data.error) {
+                setAuditResult({
+                    status: "error",
+                    message: data.message || "Audit failed"
+                });
+            } else {
+                setAuditResult({
+                    status: "modified",
+                    message: data.message || "Database hash mismatch",
+                });
+            }
+        } catch (e: any) {
+            setAuditResult({ status: "error", message: e?.payload?.message || e?.message || "Audit failed" });
+        } finally {
+            setAuditRunning(false);
+        }
+    };
 
     // Trade agreements with tariff reductions
     const tradeAgreements: TradeAgreement[] = [
@@ -230,10 +262,52 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Food Tariff Calculator</CardTitle>
-                <CardDescription>
-                    Calculate food import duties with trade agreement adjustments and comprehensive food product selection
-                </CardDescription>
+                <div className="flex items-start justify-between w-full">
+                    <div>
+                        <CardTitle>Food Tariff Calculator</CardTitle>
+                        <CardDescription>
+                            Calculate food import duties with trade agreement adjustments and comprehensive food product selection
+                        </CardDescription>
+                    </div>
+                    <div className="ml-4">
+                        <Button onClick={runAudit} disabled={auditRunning} variant="outline">
+                            {auditRunning ? "Running audit…" : "Run DB Audit"}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Audit feedback banner */}
+                {auditResult && (
+                    <div className="mt-3">
+                        {auditResult.status === "ok" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-green-50 border border-green-200 text-green-700">
+                                <CheckCircle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Verified</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                        {auditResult.status === "modified" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-yellow-50 border border-yellow-200 text-yellow-800">
+                                <AlertTriangle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Potential modification detected</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                        {auditResult.status === "error" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-red-50 border border-red-200 text-red-700">
+                                <AlertTriangle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Audit error</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
