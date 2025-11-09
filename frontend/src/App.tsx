@@ -14,10 +14,13 @@ import ProfilePageUser from "./components/authen/auth/ProfilePageUser";
 import ResetPasswordPage from "./components/authen/ResetPasswordPage";
 import { SavedProducts, SavedProductConfig } from "./components/SavedProducts";
 import ThemeToggle from "./components/togglethemebutton/ThemeToggle";
-import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User } from "lucide-react";
+import { Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User, Bookmark } from "lucide-react";
+import { Dialog, DialogContent } from "./components/ui/dialog";
 
 export default function App() {
     const [activeTab, setActiveTab] = useState("customs");
+    const [showSavedProductsPanel, setShowSavedProductsPanel] = useState(false);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
     // Shared state for calculated values
     const [customsResults, setCustomsResults] = useState(null);
@@ -183,9 +186,27 @@ export default function App() {
 
                         {/* Right side: Login/Logout */}
                         <div className="flex items-center gap-4">
-                            {/* Login/User Button */}
-                            {user ? (
-                                <div className="flex items-center gap-2">
+                            {/* My Saved Products button (left of login) */}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    if (user) {
+                                        setShowSavedProductsPanel(true);
+                                    } else {
+                                        setShowLoginPrompt(true);
+                                    }
+                                }}
+                                 className="bg-background text-foreground flex items-center gap-2"
+                                 id="my-saved-products-btn"
+                             >
+                                 <Bookmark className="h-4 w-4" />
+                                 My Saved Products
+                             </Button>
+
+                             {/* Login/User Button */}
+                             {user ? (
+                                 <div className="flex items-center gap-2">
                                     <span className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
                                     <Button
                                         variant="ghost"
@@ -249,9 +270,6 @@ export default function App() {
 
                         <TabsContent value="customs" className="mt-6">
                             <div className="space-y-6">
-                                {/* Saved Products */}
-                                <SavedProducts onLoadProduct={handleLoadProduct} />
-
                                 {/* Food Duty Calculator */}
                                 <CustomsDutyCalculator onResultsChange={setCustomsResults} savedConfig={savedConfigToLoad} />
 
@@ -335,6 +353,27 @@ export default function App() {
                     </div>
                 </div>
             </div>
+
+            {/* Dialog to show Saved Products when header button clicked */}
+            <Dialog open={showSavedProductsPanel} onOpenChange={setShowSavedProductsPanel}>
+                <DialogContent>
+                    <SavedProducts onLoadProduct={handleLoadProduct} />
+                </DialogContent>
+            </Dialog>
+
+            {/* Prompt dialog shown when user is not logged in and clicks My Saved Products */}
+            <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
+                <DialogContent>
+                    <div className="p-4">
+                        <h3 className="text-lg font-medium mb-2">Login required</h3>
+                        <p className="text-sm text-muted-foreground mb-4">Login to view your saved products</p>
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
+                            <Button onClick={() => { setShowLoginPrompt(false); setShowLogin(true); }}>Login</Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
