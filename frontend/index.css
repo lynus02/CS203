@@ -4767,3 +4767,28 @@ html {
     opacity: 0;
   }
 }
+
+#ai-chat-root {
+    position: fixed !important;
+    right: 1.5rem !important;
+    bottom: 1.5rem !important;
+    z-index: 99999 !important;
+    pointer-events: auto;
+
+    width: auto;
+    height: auto;
+
+    transition: all 0.25s ease-in-out;
+}
+
+#ai-chat-root.ai-chat-root--expanded {
+    width: 380px !important;
+    height: 520px !important;
+    max-width: 95vw !important;
+    max-height: 85vh !important;
+
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
