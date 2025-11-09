@@ -27,7 +27,17 @@ public interface TariffRepository extends JpaRepository<Tariff, Long> {
 
     Page<Tariff> findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(String countryName, String productDescription, Pageable pageable);
 
-    @Query("SELECT t FROM Tariff t WHERE LOWER(t.product.productDescription) LIKE :productDescription OR CAST(t.product.productCode AS string) LIKE :productCode%")
+    // @Query("SELECT t FROM Tariff t WHERE LOWER(t.product.productDescription) LIKE :productDescription OR CAST(t.product.productCode AS string) LIKE :productCode%")
+    @Query("""
+        SELECT t FROM Tariff t
+        WHERE LOWER(t.product.productDescription) LIKE LOWER(CONCAT('%', :productDescription, '%'))
+           OR CAST(t.product.productCode AS string) LIKE CONCAT(:productCode, '%')
+    """)
     Page<Tariff> findByProductDescriptionOrProductCodeContaining(@Param("productDescription") String productDescription, @Param("productCode") String productCode, Pageable pageable);
 
+    @Query("""
+    SELECT t FROM Tariff t
+    WHERE LOWER(t.product.productDescription) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    """)
+    Page<Tariff> findSimilarProducts(@Param("keyword") String keyword, Pageable pageable);
 }
