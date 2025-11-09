@@ -16,6 +16,7 @@ import java.util.Optional;
 @Repository
 public interface TariffRepository extends JpaRepository<Tariff, Long> {
     Optional<Tariff> findByProductAndCountry(Product product, Country country);
+
     Page<Tariff> findByCountry_CountryName(String countryName, Pageable pageable);
 
     @Query("SELECT t FROM Tariff t WHERE t.country.countryName = :countryName AND CAST(t.product.productCode AS string) LIKE :productCode")
@@ -35,9 +36,12 @@ public interface TariffRepository extends JpaRepository<Tariff, Long> {
     """)
     Page<Tariff> findByProductDescriptionOrProductCodeContaining(@Param("productDescription") String productDescription, @Param("productCode") String productCode, Pageable pageable);
 
+    @Query("SELECT t FROM Tariff t WHERE LOWER(t.product.productDescription) LIKE %:productDescription% OR CAST(t.product.productCode AS string) LIKE %:productCode%")
+    Page<Tariff> findByProductDescriptionOrProductCodeContaining(@Param("productDescription") String productDescription, @Param("productCode") int productCode, Pageable pageable);
+
     @Query("""
     SELECT t FROM Tariff t
     WHERE LOWER(t.product.productDescription) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    """)
+""")
     Page<Tariff> findSimilarProducts(@Param("keyword") String keyword, Pageable pageable);
 }

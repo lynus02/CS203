@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lynus.cs203.entities.Tariff;
 import com.lynus.cs203.repositories.TariffRepository;
-import com.lynus.cs203.repositories.AgreementCountryRepository;
-import com.lynus.cs203.repositories.TradeAgreementRepository;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -21,71 +19,66 @@ import java.util.stream.Collectors;
 public class OpenAIService {
 
     private final TariffRepository tariffRepo;
-    private final TradeAgreementRepository tradeRepo;
-    private final AgreementCountryRepository agreementCountryRepo;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${openai.api.key}")
     private String apiKey;
 
-    public OpenAIService(TariffRepository tariffRepo, TradeAgreementRepository tradeRepo, AgreementCountryRepository agreementCountryRepo) {
+    public OpenAIService(TariffRepository tariffRepo) {
         this.tariffRepo = tariffRepo;
-        this.tradeRepo = tradeRepo;
-        this.agreementCountryRepo = agreementCountryRepo;
     }
+
+//    private String detectIntent(OpenAiService service, String prompt) {
+//        String classifyPrompt = """
+//        Classify the user's request into one of these categories:
+//        ["HS_CODE", "TRADE_AGREEMENT", "TARIFF_RATE", "OTHER"].
+//        Respond strictly in JSON: {"intent": "<category>"}.
+//        Example:
+//        - "What is the HS code for pork?" → {"intent": "HS_CODE"}
+//        - "Is there a free trade agreement between Japan and Singapore?" → {"intent": "TRADE_AGREEMENT"}
+//    """;
+//
+//        ChatCompletionRequest classifyReq = ChatCompletionRequest.builder()
+//                .model("gpt-4o-mini")
+//                .messages(List.of(
+//                        new ChatMessage("system", classifyPrompt),
+//                        new ChatMessage("user", prompt)
+//                ))
+//                .temperature(0.0)
+//                .build();
+//
+//        try {
+//            String content = service.createChatCompletion(classifyReq)
+//                    .getChoices().get(0).getMessage().getContent();
+//            JsonNode node = new ObjectMapper().readTree(content);
+//            return node.path("intent").asText("OTHER");
+//        } catch (Exception e) {
+//            return "OTHER";
+//        }
+//    }
 
     public Map<String, String> processChat(String userPrompt) throws Exception {
         OpenAiService service = new OpenAiService(apiKey);
+        ObjectMapper mapper = new ObjectMapper();
 
-        // ask openai to categorize user input: hscode/trade agreement/other
-        String classifyPrompt = """
-            Classify the user's question into one of these categories:
-            ["HS_CODE", "TRADE_AGREEMENT", "TARIFF_RATE", "OTHER"].
-            Respond strictly in JSON: {"intent": "<category>"}.
-            Examples:
-            - "What is the HS code for pork?" → {"intent": "HS_CODE"}
-            - "Is there a free trade agreement between Japan and Singapore?" → {"intent": "TRADE_AGREEMENT"}
-            - "What is the tariff rate for rice imported to Japan?" → {"intent": "TARIFF_RATE"}
-        """;
+        // extract product keyword
+        String extractPrompt = """
+        Extract ONLY the main product keyword from the question.
+        Return JSON: {"product": "<word>"}.
+    """;
 
-        ChatCompletionRequest classifyReq = ChatCompletionRequest.builder()
+        ChatCompletionRequest extractReq = ChatCompletionRequest.builder()
                 .model("gpt-4o-mini")
                 .messages(List.of(
-                        new ChatMessage("system", classifyPrompt),
+                        new ChatMessage("system", extractPrompt),
                         new ChatMessage("user", userPrompt)
                 ))
                 .temperature(0.0)
                 .build();
 
-        String classifyJson = service.createChatCompletion(classifyReq)
+        String extractJson = service.createChatCompletion(extractReq)
                 .getChoices().get(0).getMessage().getContent();
 
-        JsonNode classifyNode = mapper.readTree(classifyJson);
-        String intent = classifyNode.path("intent").asText("OTHER").trim().toUpperCase();
-
-        switch (intent) {
-            case "HS_CODE":
-                return handleHSCodeQuery(service, userPrompt);
-            case "TRADE_AGREEMENT":
-                return handleTradeAgreementQuery(service, userPrompt);
-            case "TARIFF_RATE":
-                return handleTariffRateQuery(service, userPrompt);
-            default:
-                return Map.of("answer", "I can help with HS codes, trade agreements, or tariff rates — could you clarify what you’d like to know?");
-        }
-    }
-
-    // -----------------------------------------------
-    // HS CODE QUERIES
-    // -----------------------------------------------
-    private Map<String, String> handleHSCodeQuery(OpenAiService service, String userPrompt) throws Exception {
-        // ask openai to extract product keyword
-        String extractPrompt = """
-            Extract ONLY the main product keyword from the question.
-            Return JSON: {"product": "<word>"}.
-        """;
-
-        String extractJson = ask(service, extractPrompt, userPrompt);
         JsonNode extraction = mapper.readTree(extractJson);
         String product = extraction.path("product").asText("").trim();
 
@@ -93,26 +86,40 @@ public class OpenAIService {
             return Map.of("answer", "Could you rephrase that? I couldn’t detect a product name.");
         }
 
-        // search db for matching products
+        // query db
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
-                .findByProductDescriptionOrProductCodeContaining(product, product, limit)
-                .getContent(); // executes sql query from TariffRepository, limit to 10 results only
+                .findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(product, safeParseInt(product), limit)
+                .getContent();
 
-        // if no matches, fallback to gpt reasoning to give likely HS code
+        // fallback if no result
         if (tariffs.isEmpty()) {
             String fallbackPrompt = String.format("""
-                The product is "%s".
-                The database has no match.
-                Based on Harmonized System classification knowledge, give one likely HS code and short reason.
-                Respond in plain text.
-            """, product);
+            The product is "%s".
+            The database has no match.
+            Based on Harmonized System classification knowledge, give one likely HS code and short reason.
+            Respond in plain text, without apology or unrelated examples.
+        """, product);
 
-            String gptAnswer = ask(service, "You are an HS code expert.", fallbackPrompt, 0.2);
-            return Map.of("answer", gptAnswer, "product", product);
+            ChatCompletionRequest req = ChatCompletionRequest.builder()
+                    .model("gpt-4o-mini")
+                    .messages(List.of(
+                            new ChatMessage("system", "You are an HS code expert."),
+                            new ChatMessage("user", fallbackPrompt)
+                    ))
+                    .temperature(0.2)
+                    .build();
+
+            String gptAnswer = service.createChatCompletion(req)
+                    .getChoices().get(0).getMessage().getContent();
+
+            return Map.of(
+                    "answer", gptAnswer,
+                    "product", product
+            );
         }
 
-        // summarize matching tariffs
+        // summarize results
         String summary = tariffs.stream()
                 .map(t -> String.format(
                         "HS %s — %s (%.2f%% tariff in %s)",
@@ -124,218 +131,73 @@ public class OpenAIService {
                 .collect(Collectors.joining("\n"));
 
         String answerPrompt = String.format("""
-            You are an HS code assistant.
-            The user asked: "%s"
-            Database records:
-            %s
+        You are an HS code assistant.
+        The user asked: "%s"
+        Database records:
+        %s
 
-            Summarize in 1–3 sentences which HS code best matches.
-        """, userPrompt, summary);
+        Summarize in 1–3 sentences which HS code best matches the query.
+        If multiple are similar, name the top one and mention others briefly.
+        Do not invent data.
+    """, userPrompt, summary);
 
-        // build chat completion request (message to gpt)
-        String answer = ask(service, "You are a factual customs assistant.", answerPrompt, 0.2);
-        return Map.of("answer", answer, "product", product);
-    }
-
-    // -----------------------------------------------
-    // TRADE AGREEMENT QUERIES
-    // -----------------------------------------------
-    private Map<String, String> handleTradeAgreementQuery(OpenAiService service, String userPrompt) throws Exception {
-        // ask openai to extract the two countries being compared
-        String extractPrompt = """
-        Extract the two countries being compared in the question.
-        Return JSON: {"country1": "<name>", "country2": "<name>"}.
-    """;
-
-        // get ChatCompletionResult object (more than one) --> return the first choice --> extract the message --> extract the content to JSON string
-        String extractJson = ask(service, extractPrompt, userPrompt);
-        JsonNode extraction = mapper.readTree(extractJson); // behaves like a mini JSON document in mem
-
-        // extract country names from tree and return missing node instead of crashing if not found --> convert to string
-        String country1 = normalizeCountryName(extraction.path("country1").asText("").trim());
-        String country2 = normalizeCountryName(extraction.path("country2").asText("").trim());
-        // ^^ normalize country names
-
-        if (country1.isBlank() || country2.isBlank()) {
-            return Map.of("answer", "Could you specify both countries?");
-        }
-
-        // find all list of matching trade agreements from db
-        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(country1, country2);
-
-        if (agreementIds.isEmpty()) {
-            return Map.of("answer", String.format("No trade agreement found between %s and %s.", country1, country2));
-        }
-
-        // fetch agreement details (Name + Type)
-        List<String> agreements = tradeRepo.findAllByIds(agreementIds).stream()
-                .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
-                .toList();
-
-        // summarize results
-        String joinedAgreements = String.join("; ", agreements);
-        String answer = String.format(
-                "Yes, there is at least one trade agreement between %s and %s: %s.",
-                country1, country2, joinedAgreements
-        );
-
-        // if user also asked about tariff rates, combine results w tariff calculation
-        if (userPrompt.toLowerCase().contains("tariff")) {
-            String product = extractProductFromPrompt(service, userPrompt);
-            if (!product.isBlank()) {
-                return calculateEffectiveTariff(product, country1, country2);
-            }
-        }
-
-        return Map.of("answer", answer, "agreements", joinedAgreements);
-    }
-
-    // -----------------------------------------------
-    // TARIFF RATE QUERIES
-    // -----------------------------------------------
-    private Map<String, String> handleTariffRateQuery(OpenAiService service, String userPrompt) throws Exception {
-        // extract relevant product and destination country
-        String extractPrompt = """
-        Extract the product and destination country mentioned in the question.
-        Return JSON: {"product": "<word>", "destination": "<country>"}.
-        If the country is not specified, leave it blank.
-        """;
-
-        String extractJson = ask(service, extractPrompt, userPrompt);
-        JsonNode extraction = mapper.readTree(extractJson);
-        String product = extraction.path("product").asText("").trim();
-        String destination = extraction.path("destination").asText("").trim();
-
-        destination = normalizeCountryName(destination);
-
-        if (product.isBlank()) {
-            return Map.of("answer", "Could you rephrase that? I couldn’t detect a product name.");
-        }
-
-        if (destination.isBlank()) {
-            destination = "singapore"; // default fallback if user omits country
-        }
-
-        // search db for matching tariffs on destination + product
-        var limit = PageRequest.of(0, 10);
-        List<Tariff> tariffs = tariffRepo
-                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destination, product, limit)
-                .getContent();
-
-        // fallback if no matches found
-        if (tariffs.isEmpty()) {
-            String fallbackPrompt = String.format("""
-            The product is "%s".
-            The database has no match for tariffs to %s.
-            Based on global customs data, estimate a likely tariff range (in percent)
-            and explain the reasoning briefly (1–2 sentences).
-        """, product, destination);
-
-            String gptAnswer = ask(service, "You are a customs tariff expert.", fallbackPrompt, 0.2);
-            return Map.of("answer", gptAnswer);
-        }
-
-        // summarize result
-        double avgTariff = tariffs.stream()
-                .mapToDouble(Tariff::getTariffRate)
-                .average()
-                .orElse(0);
-
-        String summary = tariffs.stream()
-                .map(t -> String.format("HS %s — %.2f%% tariff", t.getProduct().getProductCode(), t.getTariffRate()))
-                .collect(Collectors.joining(", "));
-
-        String answer = String.format(
-                "The average tariff rate for %s imported to %s is approximately %.2f%% based on available records (%s).",
-                product, destination, avgTariff, summary);
-
-        return Map.of("answer", answer);
-    }
-
-    // -----------------------------------------------
-    // TARIFF RATE CALCULATION WITH AGREEMENTS
-    // -----------------------------------------------
-    private Map<String, String> calculateEffectiveTariff(String product, String originCountry, String destinationCountry) {
-        var limit = PageRequest.of(0, 5);
-        List<Tariff> tariffs = tariffRepo
-                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destinationCountry, product, limit)
-                .getContent();
-
-        if (tariffs.isEmpty()) {
-            return Map.of("answer",
-                    String.format("No tariff data found for %s imported to %s.", product, destinationCountry));
-        }
-
-        double avgTariff = tariffs.stream()
-                .mapToDouble(Tariff::getTariffRate)
-                .average()
-                .orElse(0);
-
-        List<Long> agreements = agreementCountryRepo.findAgreementsBetweenCountries(originCountry, destinationCountry);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                "For %s imported to %s (HS %s), the base tariff is around %.2f%%.",
-                product,
-                destinationCountry,
-                tariffs.get(0).getProduct().getProductCode(),
-                avgTariff
-        ));
-
-        if (!agreements.isEmpty()) {
-            List<String> agreementNames = tradeRepo.findAllByIds(agreements).stream()
-                    .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
-                    .toList();
-            sb.append(String.format(
-                    " However, since %s and %s are covered by %s, preferential or zero-tariff rates may apply.",
-                    originCountry, destinationCountry, String.join("; ", agreementNames)
-            ));
-        } else {
-            sb.append(String.format(" There are no active trade agreements between %s and %s.", originCountry, destinationCountry));
-        }
-
-        return Map.of("answer", sb.toString());
-    }
-
-    // -----------------------------------------------
-    // HELPER METHODS
-    // -----------------------------------------------
-    private String extractProductFromPrompt(OpenAiService service, String prompt) throws Exception {
-        String extractPrompt = "Extract only the main product keyword. Return JSON: {\"product\": \"<word>\"}.";
-        String json = ask(service, extractPrompt, prompt);
-        return mapper.readTree(json).path("product").asText("").trim();
-    }
-
-    // 0.0: deterministic (for extraction, classification)
-    private String ask(OpenAiService service, String systemPrompt, String userPrompt) {
-        return ask(service, systemPrompt, userPrompt, 0.0);
-    }
-
-    // 0.2: more flexible (ex. matcha powder --> green tea --> tea)
-    private String ask(OpenAiService service, String systemPrompt, String userPrompt, double temperature) {
-        ChatCompletionRequest req = ChatCompletionRequest.builder()
+        ChatCompletionRequest answerReq = ChatCompletionRequest.builder()
                 .model("gpt-4o-mini")
                 .messages(List.of(
-                        new ChatMessage("system", systemPrompt),
-                        new ChatMessage("user", userPrompt)
+                        new ChatMessage("system", "You are a factual customs assistant."),
+                        new ChatMessage("user", answerPrompt)
                 ))
-                .temperature(temperature)
+                .temperature(0.2)
                 .build();
-        return service.createChatCompletion(req).getChoices().get(0).getMessage().getContent();
+
+        String answer = service.createChatCompletion(answerReq)
+                .getChoices().get(0).getMessage().getContent();
+
+        return Map.of(
+                "answer", answer,
+                "product", product
+        );
     }
 
-    private String normalizeCountryName(String input) {
-        Map<String, String> aliases = Map.ofEntries(
-                Map.entry("usa", "united states of america"),
-                Map.entry("us", "united states of america"),
-                Map.entry("u.s.", "united states of america"),
-                Map.entry("uk", "united kingdom"),
-                Map.entry("uae", "united arab emirates"),
-                Map.entry("south korea", "republic of korea"),
-                Map.entry("north korea", "democratic people's republic of korea"),
-                Map.entry("vietnam", "viet nam")
-        );
-        String lower = input.toLowerCase().trim();
-        return aliases.getOrDefault(lower, lower);
+    // util methods
+    private String getSynonym(OpenAiService service, String product) {
+        try {
+            String prompt = String.format("""
+                Suggest a more general or related food keyword (single word)
+                that customs databases might use for "%s".
+                Respond only with one word.
+            """, product);
+
+            ChatCompletionRequest synonymReq = ChatCompletionRequest.builder()
+                    .model("gpt-4o-mini")
+                    .messages(List.of(
+                            new ChatMessage("system", "You are helping map food names to standardized HS terms."),
+                            new ChatMessage("user", prompt)
+                    ))
+                    .temperature(0.3)
+                    .build();
+
+            ChatCompletionResult synonymRes = service.createChatCompletion(synonymReq);
+            return synonymRes.getChoices().get(0).getMessage().getContent().trim();
+        } catch (Exception e) {
+            return product;
+        }
+    }
+
+    private static int safeParseInt(String s) {
+        try {
+            return Integer.parseInt(s.replaceAll("\\D", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private static double similarityScore(String text1, String text2) {
+        Set<String> words1 = new HashSet<>(Arrays.asList(text1.toLowerCase().split("\\s+")));
+        Set<String> words2 = new HashSet<>(Arrays.asList(text2.toLowerCase().split("\\s+")));
+        if (words1.isEmpty() || words2.isEmpty()) return 0;
+        Set<String> intersection = new HashSet<>(words1);
+        intersection.retainAll(words2);
+        return (double) intersection.size() / Math.max(words1.size(), words2.size());
     }
 }

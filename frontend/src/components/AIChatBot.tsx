@@ -16,13 +16,7 @@ export function AIChat() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: "1",
-            text:
-                "Good day. I am the FoodTariff Assistant.\n\n" +
-                "I can assist you with the following:\n" +
-                "• Understanding and computing tariff rates\n" +
-                "• Identifying the appropriate HS codes for food products\n" +
-                "• Providing information on trade agreements between countries\n" +
-                "How may I assist you today?",
+            text: "Hi! I'm your FoodTariff assistant. I can help you with:\n\n• Understanding tariff calculations\n• Finding HS codes for food products\n• Explaining trade agreements\n• Shipping cost estimates\n\nHow can I help you today?",
             sender: "bot",
             timestamp: new Date(),
         },
@@ -200,12 +194,7 @@ export function AIChat() {
                                                 : "bg-muted"
                                         }`}
                                     >
-                                        <div
-                                            className="text-sm"
-                                            style={{ whiteSpace: "pre-line" }}
-                                        >
-                                            {message.text}
-                                        </div>
+                                        <div className="text-sm whitespace-pre-line">{message.text}</div>
                                         <div
                                             className={`text-xs mt-1 ${
                                                 message.sender === "user"
