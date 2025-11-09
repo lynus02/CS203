@@ -1,6 +1,17 @@
 // services/tariffApi.js
 import api from './api.ts';
 
+export const runAudit = async (): Promise<any> => {
+    try {
+        const response = await api.post('/api/audit/check');
+        return response.data;
+    } catch (err: any) {
+        const payload = err?.response?.data;
+        const message = payload?.message || err?.message || 'Audit request failed';
+        throw { message, status: err?.response?.status, payload };
+    }
+};
+
 // Suggest products based on search and country
 export const suggestProducts = async (query: string, country?: string, page = 0, size = 20) => {
     const params: any = { q: query, page, size };

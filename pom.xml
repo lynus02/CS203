@@ -240,6 +240,17 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>crypto</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -249,6 +260,24 @@
 
             <!-- ========== CORE PLUGINS ========== -->
             <!-- Spring Boot Maven Plugin -->
+<!--            This plugin is used to generate Java classes from Solidity contracts-->
+<!--            <plugin>-->
+<!--                <groupId>org.web3j</groupId>-->
+<!--                <artifactId>web3j-maven-plugin</artifactId>-->
+<!--                <version>4.14.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>generate-sources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <sourceDestination>src/main/resources/contracts</sourceDestination>-->
+<!--                            <outputDir>src/main/java</outputDir>-->
+<!--                            <packageName>com.lynus.cs203.blockchain</packageName>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

@@ -76,6 +76,7 @@ public class SecurityConfig {
                             .requestMatchers("/products/**").permitAll()
                             .requestMatchers("/tariff-rates/**").permitAll()
                             .requestMatchers("/").permitAll()
+                            .requestMatchers("api/audit/**").permitAll()
 
                             // Swagger and API docs
                             .requestMatchers("/v3/api-docs/**").permitAll()
