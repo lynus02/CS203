@@ -23,7 +23,7 @@ public interface AgreementCountryRepository extends JpaRepository<AgreementCount
 
     Optional<AgreementCountry> findByAgreementAndCountry(TradeAgreement agreement, Country country);
 
-    // Find agreements between two countries
+    // Find agreements between two countries (where both are signatories)
     @Query("""
     SELECT ac.agreement.agreementId
     FROM AgreementCountry ac

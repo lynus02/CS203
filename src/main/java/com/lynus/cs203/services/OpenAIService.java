@@ -37,7 +37,7 @@ public class OpenAIService {
     public Map<String, String> processChat(String userPrompt) throws Exception {
         OpenAiService service = new OpenAiService(apiKey);
 
-        // Step 1: Classify the intent
+        // ask openai to categorize user input: hscode/trade agreement/other
         String classifyPrompt = """
             Classify the user's question into one of these categories:
             ["HS_CODE", "TRADE_AGREEMENT", "OTHER"].
@@ -75,6 +75,7 @@ public class OpenAIService {
     // HS CODE QUERIES
     // -----------------------------------------------
     private Map<String, String> handleHSCodeQuery(OpenAiService service, String userPrompt) throws Exception {
+        // ask openai to extract product keyword
         String extractPrompt = """
             Extract ONLY the main product keyword from the question.
             Return JSON: {"product": "<word>"}.
@@ -99,11 +100,13 @@ public class OpenAIService {
             return Map.of("answer", "Could you rephrase that? I couldn’t detect a product name.");
         }
 
+        // search db for matching products
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByProductDescriptionOrProductCodeContaining(product, product, limit)
-                .getContent();
+                .getContent(); // executes sql query from TariffRepository, limit to 10 results only
 
+        // if no matches, fallback to gpt reasoning to give likely HS code
         if (tariffs.isEmpty()) {
             String fallbackPrompt = String.format("""
                 The product is "%s".
@@ -127,6 +130,7 @@ public class OpenAIService {
             return Map.of("answer", gptAnswer, "product", product);
         }
 
+        // summarize matching tariffs
         String summary = tariffs.stream()
                 .map(t -> String.format(
                         "HS %s — %s (%.2f%% tariff in %s)",
@@ -146,15 +150,17 @@ public class OpenAIService {
             Summarize in 1–3 sentences which HS code best matches.
         """, userPrompt, summary);
 
+        // build chat completion request (message to gpt)
         ChatCompletionRequest answerReq = ChatCompletionRequest.builder()
                 .model("gpt-4o-mini")
-                .messages(List.of(
+                .messages(List.of( // tells gpt how to behave
                         new ChatMessage("system", "You are a factual customs assistant."),
-                        new ChatMessage("user", answerPrompt)
+                        new ChatMessage("user", answerPrompt) // in this case is to summarize results
                 ))
-                .temperature(0.2)
-                .build();
+                .temperature(0.2) // 0.0-1.0, higher = more creative/unpredictable
+                .build(); // finalize config into ready-to-send object
 
+        // send request to openai and get response
         String answer = service.createChatCompletion(answerReq)
                 .getChoices().get(0).getMessage().getContent();
 
@@ -165,6 +171,7 @@ public class OpenAIService {
     // TRADE AGREEMENT QUERIES
     // -----------------------------------------------
     private Map<String, String> handleTradeAgreementQuery(OpenAiService service, String userPrompt) throws Exception {
+        // ask openai to extract the two countries being compared
         String extractPrompt = """
         Extract the two countries being compared in the question.
         Return JSON: {"country1": "<name>", "country2": "<name>"}.
@@ -176,16 +183,19 @@ public class OpenAIService {
                         new ChatMessage("system", extractPrompt),
                         new ChatMessage("user", userPrompt)
                 ))
-                .temperature(0.0)
+                .temperature(0.0) // 0.0 for precision, everytime user ask the same ques, return same answer
                 .build();
 
+        // get ChatCompletionResult object (more than one) --> return the first choice --> extract the message --> extract the content to JSON string
         String extractJson = service.createChatCompletion(extractReq)
                 .getChoices().get(0).getMessage().getContent();
 
-        JsonNode extraction = mapper.readTree(extractJson);
+        JsonNode extraction = mapper.readTree(extractJson); // behaves like a mini JSON document in mem
+        // extract country names from tree and return missing node instead of crashing if not found --> convert to string
         String country1 = extraction.path("country1").asText("").trim();
         String country2 = extraction.path("country2").asText("").trim();
 
+        // normalize country names
         country1 = normalizeCountryName(country1);
         country2 = normalizeCountryName(country2);
 
@@ -193,20 +203,20 @@ public class OpenAIService {
             return Map.of("answer", "Could you specify both countries?");
         }
 
-        // Step 1: Find all shared trade agreements
+        // find all list of matching trade agreements from db
         List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(country1, country2);
 
         if (agreementIds.isEmpty()) {
             return Map.of("answer", String.format("No trade agreement found between %s and %s.", country1, country2));
         }
 
-        // Step 2: Fetch agreement details (Name + Type)
+        // fetch agreement details (Name + Type)
         List<String> agreements = tradeRepo.findAllByIds(agreementIds).stream()
                 .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
                 .toList();
 
 
-        // Step 3: Build a friendly summary
+        // summarize results
         String joinedAgreements = String.join("; ", agreements);
         String answer = String.format(
                 "Yes, there is at least one trade agreement between %s and %s: %s.",
