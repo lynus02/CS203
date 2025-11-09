@@ -407,4 +407,198 @@ class TariffCalculationServiceTest {
         assertThat(response.getTariffAmount()).isEqualTo(50.0);
         assertThat(response.getAgreementType()).isEqualTo("MFN");
     }
+
+    @Test
+    @DisplayName("Should calculate tariff with PSA agreement for high sensitivity product")
+    void calculateTariff_WithPSAAgreementHighSensitivity_ShouldCalculatePreferentialTariff() {
+        // Arrange
+        testProduct.setProductCode(1001);       // HIGH sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("PSA");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert
+        assertThat(response.getTariffAmount()).isEqualTo(45.0);  // 0.9 * 5% of 1000.0
+        assertThat(response.getAgreementType()).isEqualTo("PSA");
+    }
+
+    @Test
+    @DisplayName("should calculate tariff with CU agreement for high sensitivity product")
+    void calculateTariff_WithCUAgreementHighSensitivity_ShouldCalculatePreferentialTariff() {
+        // Arrange
+        testProduct.setProductCode(1001);       // HIGH sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("CU");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert
+        assertThat(response.getTariffAmount()).isEqualTo(25.0);  // 0.5 * 5% of 1000.0
+        assertThat(response.getAgreementType()).isEqualTo("CU");
+    }
+
+    @Test
+    @DisplayName("should calculate tariff with EIA agreement for medium sensitivity product")
+    void calculateTariff_WithEIAAgreementMediumSensitivity_ShouldCalculatePreferentialTariff() {
+        // Arrange
+        testProduct.setProductCode(2001);       // MEDIUM sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("EIA");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert
+        assertThat(response.getTariffAmount()).isEqualTo(5.0);  // (5 * 0.10) /100 * 1000 = 10.0
+        assertThat(response.getAgreementType()).isEqualTo("EIA");
+    }
+
+    @Test
+    @DisplayName("Should calculate tariff with other agreement for medium sensitivity product")
+    void calculateTariff_WithOtherAgreementMediumSensitivity_ShouldCalculateMFNTariff() {
+        // Arrange
+        testProduct.setProductCode(2001);       // MEDIUM sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("OTHERS");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert
+        assertThat(response.getTariffAmount()).isEqualTo(50.0);  // Full MFN rate
+        assertThat(response.getAgreementType()).isEqualTo("MFN");
+    }
+
+    @Test
+    @DisplayName("Should handle default sensitivity tier in discount multiplier")
+    void getDiscountMultiplier_DefaultSensitivityTier_ShouldReturnNoDiscount() {
+        // This tests the default case in getDiscountMultiplier method
+        // Arrange
+        testProduct.setProductCode(9999);       // Will default to MEDIUM sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("FTA");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert - For default sensitivity (treated as MEDIUM), FTA should give 50% discount
+        assertThat(response.getTariffAmount()).isEqualTo(25.0);  // (5 * 0.5) /100 * 1000 = 25.
+        assertThat(response.getAgreementType()).isEqualTo("FTA");
+    }
+
+    @Test
+    @DisplayName("Should handle tariff with FTA with LOW sensitivity product")
+    void calculateTariff_WithFTAAgreementLowSensitivity_ShouldCalculatePreferentialTariff() {
+        // Arrange
+        testProduct.setProductCode(5001);       // LOW sensitivity
+
+        TradeAgreement tradeAgreement = new TradeAgreement();
+        tradeAgreement.setAgreementId(1L);
+        tradeAgreement.setAgreementType("FTA");
+
+        when(productRepository.findByProductCode(validRequest.getProductCode()))
+                .thenReturn(Optional.of(testProduct));
+        when(countryRepository.findByCountryCode(validRequest.getExportCountryCode()))
+                .thenReturn(Optional.of(exportCountry));
+        when(countryRepository.findByCountryCode(validRequest.getDesCountryCode()))
+                .thenReturn(Optional.of(desCountry));
+        when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
+                .thenReturn(Optional.of(testTariff));
+        when(agreementCountryRepository
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of(1L));
+        when(tradeAgreementRepository.findByAgreementId(1L))
+                .thenReturn(Optional.of(tradeAgreement));
+
+        // Act
+        TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
+
+        // Assert
+        assertThat(response.getTariffAmount()).isEqualTo(15.0);  // 5%*0.3*1000.0
+        assertThat(response.getAgreementType()).isEqualTo("FTA");
+    }
+
 }
