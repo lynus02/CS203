@@ -53,17 +53,17 @@ public interface TariffRepository extends JpaRepository<Tariff, Long> {
     """)
     Page<Tariff> findSimilarProducts(@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("""
-        SELECT t FROM Tariff t
-        WHERE t.product = :product
-          AND t.country = :country
-          AND t.effectiveDate <= :date
-          AND (t.expiryDate IS NULL OR t.expiryDate >= :date)
-        ORDER BY t.effectiveDate DESC
-    """)
-    Optional<Tariff> findApplicableTariff(
-            @Param("product") Product product,
-            @Param("country") Country country,
-            @Param("date") java.time.LocalDate date
-    );
+//    @Query("""
+//        SELECT t FROM Tariff t
+//        WHERE t.product = :product
+//          AND t.country = :country
+//          AND t.effectiveDate <= :date
+//          AND (t.expiryDate IS NULL OR t.expiryDate >= :date)
+//        ORDER BY t.effectiveDate DESC
+//    """)
+//    Optional<Tariff> findApplicableTariff(
+//            @Param("product") Product product,
+//            @Param("country") Country country,
+//            @Param("date") java.time.LocalDate date
+//    );
 }

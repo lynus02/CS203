@@ -24,6 +24,6 @@ server:
   error:
     include-message: always
 
-openai:
+open:
   api:
-    key: sk-your-open-api-key
+    key: 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

@@ -130,9 +130,9 @@ public class DataMigrationIntegrationTest {
         List<Product> productList = productRepository.findAll();
         assertThat(productList.size()).isGreaterThanOrEqualTo(3);
 
-        Optional<Product> wheatFlour = productRepository.findByProductCode(1001);
-        Optional<Product> cornMeal = productRepository.findByProductCode(1002);
-        Optional<Product> rice = productRepository.findByProductCode(1003);
+        Optional<Product> wheatFlour = productRepository.findByProductCode("1001");
+        Optional<Product> cornMeal = productRepository.findByProductCode("1002");
+        Optional<Product> rice = productRepository.findByProductCode("1003");
 
         assertThat(wheatFlour).isPresent();
         assertThat(cornMeal).isPresent();
@@ -263,9 +263,9 @@ public class DataMigrationIntegrationTest {
         assertThat(countryRepository.findByCountryCode("TH")).isPresent();
 
         // Verify products migrated
-        assertThat(productRepository.findByProductCode(1001)).isPresent();
-        assertThat(productRepository.findByProductCode(1002)).isPresent();
-        assertThat(productRepository.findByProductCode(1003)).isPresent();
+        assertThat(productRepository.findByProductCode("1001")).isPresent();
+        assertThat(productRepository.findByProductCode("1002")).isPresent();
+        assertThat(productRepository.findByProductCode("1003")).isPresent();
 
         // Verify tariffs migrated
         assertThat(tariffRepository.count()).isGreaterThanOrEqualTo(7);

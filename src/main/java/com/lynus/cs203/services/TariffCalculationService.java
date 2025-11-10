@@ -68,7 +68,7 @@ public class TariffCalculationService {
         // Find tariff
         log.debug("Looking up tariff for Product: {} and Country: {}",
                 product.getProductCode(), desCountry.getCountryCode());
-        Tariff tariff = tariffRepository.findApplicableTariff(product, desCountry, dateToUse)
+        Tariff tariff = tariffRepository.findByProductAndCountry(product, desCountry)
                 .orElseThrow(() -> {
                     log.warn("No tariff found for Product Code: {} and Country Code: {}",
                             product.getProductCode(), desCountry.getCountryCode());
@@ -86,8 +86,8 @@ public class TariffCalculationService {
         log.debug("Calculated sensitivity tier: {} for HS Code: {}", sensitivityTier, product.getProductCode());
 
         // Check for trade agreements and calculate preferential rate
-        List<Long> tradeAgreementIds = agreementCountryRepository.findAgreementsBetweenCountries(
-                exportCountry.getCountryName(), desCountry.getCountryName());
+        List<Long> tradeAgreementIds = agreementCountryRepository.findAgreementsBetweenCountriesOnDate(
+                exportCountry.getCountryName(), desCountry.getCountryName(), dateToUse);
 
         log.debug("Found {} trade agreements between Export Country: {} and Destination Country: {}",
                 tradeAgreementIds.size(), exportCountry.getCountryName(), desCountry.getCountryName());

@@ -27,9 +27,6 @@ public class TradeAgreement {
     @Column(name = "agreement_type")
     private String agreementType; // e.g., "FTA", "EIA", etc.
 
-    @Column(name = "status")
-    private String status = "In force"; // default as In force
-
     @Column(name = "effective_date")
     private LocalDate effectiveDate;
 
