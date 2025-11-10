@@ -170,11 +170,7 @@ public class TradeAgreementMigrationService {
                     agreement = new TradeAgreement();
                     agreement.setAgreementName(agreementName);
                     agreement.setAgreementType(agreementType);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    if (effectiveDateStr == null || effectiveDateStr.isBlank() || expirationDateStr == null || expirationDateStr.isBlank()) {
-                        log.warn("Skipping row due to missing effective_date: {}");
-                        continue; // skip this row
-                    }
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
                     agreement.setEffectiveDate(LocalDate.parse(effectiveDateStr, formatter));
                     agreement.setExpirationDate(LocalDate.parse(expirationDateStr, formatter));
                     existingAgreements.put(agreementName, agreement);
