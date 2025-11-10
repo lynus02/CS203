@@ -12,6 +12,10 @@ jobs:
   test:
     runs-on: ubuntu-latest    # Use latest Ubuntu runner
 
+    env:
+      SPRING_PROFILES_ACTIVE: test
+      JWT_SECRET: test-secret-key-for-ci-cd-pipeline
+
     steps:
       - uses: actions/checkout@v4     # Downloads the repository
 
@@ -45,9 +49,6 @@ jobs:
       # Runs all backend tests (unit + integration tests)
       - name: Run backend tests
         run: mvn clean test
-        env:
-          SPRING_PROFILES_ACTIVE: test
-          JWT_SECRET: test-secret-key-for-ci-cd-pipeline
 
       # Installs frontend dependencies
       - name: Install frontend dependencies
