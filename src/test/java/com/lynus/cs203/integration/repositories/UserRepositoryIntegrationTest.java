@@ -1,5 +1,6 @@
 package com.lynus.cs203.integration.repositories;
 
+import com.lynus.cs203.Cs203Application;
 import com.lynus.cs203.entities.User;
 import com.lynus.cs203.entities.UserProfile;
 import com.lynus.cs203.integration.BaseIntegrationTest;

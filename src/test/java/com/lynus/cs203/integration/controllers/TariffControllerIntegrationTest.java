@@ -1,6 +1,7 @@
 package com.lynus.cs203.integration.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lynus.cs203.Cs203Application;
 import com.lynus.cs203.dtos.request.TariffCalculationRequest;
 import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.entities.Product;

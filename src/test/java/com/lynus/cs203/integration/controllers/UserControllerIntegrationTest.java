@@ -1,5 +1,6 @@
 package com.lynus.cs203.integration.controllers;
 
+import com.lynus.cs203.Cs203Application;
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;

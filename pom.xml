@@ -34,7 +34,7 @@
     <!-- ========== PROPERTIES ========== -->
     <properties>
         <!-- Java Version -->
-        <java.version>17</java.version>
+        <java.version>21</java.version>
 
         <!-- Framework Versions -->
         <spring-ai.version>1.0.1</spring-ai.version>

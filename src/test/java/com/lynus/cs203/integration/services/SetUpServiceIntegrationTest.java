@@ -1,5 +1,6 @@
 package com.lynus.cs203.integration.services;
 
+import com.lynus.cs203.Cs203Application;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.response.AdminCreationResponse;
 import com.lynus.cs203.dtos.response.SetupStatusResponse;
