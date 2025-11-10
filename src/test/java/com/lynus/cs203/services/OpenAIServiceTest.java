@@ -89,7 +89,7 @@ class OpenAIServiceTest {
                 .thenReturn(new PageImpl<>(emptyList()));
 
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
-        ChatCompletionResult fallbackRes = completionResultWithContent("Likely HS 1006.30 — reasoning...");
+        ChatCompletionResult fallbackRes = completionResultWithContent("Likely HS 1006.10 — reasoning...");
 
         try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
             when(mock.createChatCompletion(any())).thenReturn(extractRes, fallbackRes);
@@ -98,7 +98,7 @@ class OpenAIServiceTest {
 
             assertNotNull(resp);
             assertEquals("rice", resp.get("product"));
-            assertEquals("Likely HS 1006.30 — reasoning...", resp.get("answer"));
+            assertEquals("Likely HS 1006.10 — reasoning...", resp.get("answer"));
 
             OpenAiService created = mc.constructed().get(0);
             verify(created, times(2)).createChatCompletion(any());
@@ -108,12 +108,12 @@ class OpenAIServiceTest {
 
     @Test
     void processChat_withDbMatches_returnsSummaryAnswer() throws Exception {
-        Tariff t = buildTariff(100630, "rice", 5.0, "japan");
+        Tariff t = buildTariff(100610, "rice", 5.0, "japan");
         when(tariffRepo.findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(anyString(), anyInt(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
-        ChatCompletionResult summaryRes = completionResultWithContent("HS 1006.30 seems the best match.");
+        ChatCompletionResult summaryRes = completionResultWithContent("HS 1006.10 seems the best match.");
 
         try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
             when(mock.createChatCompletion(any())).thenReturn(extractRes, summaryRes);
@@ -122,7 +122,7 @@ class OpenAIServiceTest {
 
             assertNotNull(resp);
             assertEquals("rice", resp.get("product"));
-            assertEquals("HS 1006.30 seems the best match.", resp.get("answer"));
+            assertEquals("HS 1006.10 seems the best match.", resp.get("answer"));
 
             OpenAiService created = mc.constructed().get(0);
             verify(created, times(2)).createChatCompletion(any());
