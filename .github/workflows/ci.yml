@@ -53,15 +53,25 @@ jobs:
       - name: Run backend tests
         run: mvn -B clean test
 
+      # Always upload Surefire reports, even if tests fail
+      - name: Upload Surefire reports
+        if: always()   # <-- THIS IS IMPORTANT
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: |
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+
       # Installs frontend dependencies
       - name: Install frontend dependencies
         run: npm ci
         working-directory: ./frontend
 
       # Skip frontend tests with coverage reporting
-#      - name: Run frontend tests
-#        run: npm test -- --coverage --watchAll=false
-#        working-directory: ./frontend
+      #      - name: Run frontend tests
+      #        run: npm test -- --coverage --watchAll=false
+      #        working-directory: ./frontend
 
       # Builds the complete application (backend + frontend)
       - name: Build application
