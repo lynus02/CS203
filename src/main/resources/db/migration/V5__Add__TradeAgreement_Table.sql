@@ -2,7 +2,11 @@ CREATE TABLE trade_agreement (
     agreement_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     agreement_name VARCHAR(500) NOT NULL,
     agreement_type VARCHAR(100),
-    status VARCHAR(50) DEFAULT 'In Force'
+    status VARCHAR(50) DEFAULT 'In Force',
+    effective_date DATE,
+    expiration_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
 CREATE TABLE agreement_country (

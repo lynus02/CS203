@@ -12,7 +12,7 @@ public class TariffCalculationResponse {
             description = "Product code for tariff calculation",
             example = "123456"
     )
-    private Integer productCode;
+    private String productCode;
 
     @Schema(
             description = "Export country code",

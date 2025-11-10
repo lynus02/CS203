@@ -49,7 +49,7 @@ public class TariffDto {
         return TariffDto.builder()
                 .trade_id(tariff.getTradeId())
                 .hsDescription(tariff.getProduct().getProductDescription())
-                .productCode6(String.valueOf(tariff.getProduct().getProductCode()))
+                .productCode6(tariff.getProduct().getProductCode())
                 .food_category(tariff.getProduct().getFoodCategory())
                 .value(tariff.getTariffRate())
                 .reporterName(tariff.getCountry().getCountryName())

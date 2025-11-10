@@ -7,16 +7,18 @@ import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Builder
 @Data
 @Schema(description = "Request object for tariff calculation")
 public class TariffCalculationRequest {
     @Schema(
             description = "Product code for tariff calculation",
-            example = "80550"
+            example = "080550" // now a STRING
     )
-    @NotNull(message = "Product code is required")
-    private Integer productCode;
+    @NotBlank(message = "Product code is required")
+    private String productCode;
 
     @Schema(
             description = "Export Country code (C + 3 numeric characters)",
@@ -42,4 +44,10 @@ public class TariffCalculationRequest {
     )
     @Positive(message = "Customs value must be positive")
     private double customsValue;
+
+    @Schema(
+            description = "Declaration date (used to determine applicable tariff)",
+            example = "2025-01-01"
+    )
+    private LocalDate date;
 }

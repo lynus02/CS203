@@ -46,9 +46,9 @@ const tariffApi = {
     },
 
     // POST /tariffs/calculate
-    calculateTariff(productCode: string, exportCountryCode: string, desCountryCode: string, customsValue: number) {
+    calculateTariff(productCode: string, exportCountryCode: string, desCountryCode: string, customsValue: number, date) {
         return api.post('/tariffs/calculate',
-            { productCode, exportCountryCode, desCountryCode, customsValue })
+            { productCode, exportCountryCode, desCountryCode, customsValue, date, })
             .then((res) => res.data);
     }
 }

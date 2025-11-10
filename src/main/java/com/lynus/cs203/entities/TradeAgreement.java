@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Getter
 @Setter
@@ -26,5 +29,17 @@ public class TradeAgreement {
 
     @Column(name = "status")
     private String status = "In force"; // default as In force
+
+    @Column(name = "effective_date")
+    private LocalDate effectiveDate;
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }

@@ -16,11 +16,9 @@ public class Product {
     @Column(name = "product_id")
     private Long productId;
 
-    @Getter
-    @Column(name = "product_code")
-    private Integer productCode; // hsCode
+    @Column(name = "product_code", unique = true)
+    private String productCode; // hsCode
 
-    @Getter
     @Column(name = "hs_description")
     private String productDescription; //hs_description
 
