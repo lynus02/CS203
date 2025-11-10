@@ -37,11 +37,18 @@ import {AIChat} from "./components/AIChatBot";
 export default function App() {
     const [activeTab, setActiveTab] = useState("customs");
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+    // Split view state: when true, show two calculators side-by-side
+    const [splitView, setSplitView] = useState(false);
 
     // Calculation values
     const [customsResults, setCustomsResults] = useState(null);
+    const [leftCustomsResults, setLeftCustomsResults] = useState(null);
+    const [rightCustomsResults, setRightCustomsResults] = useState(null);
     const [shippingResults, setShippingResults] = useState(null);
     const [savedConfigToLoad, setSavedConfigToLoad] = useState<SavedProductConfig | undefined>(undefined);
+
+    // Choose which customs result to feed downstream calculators
+    const displayedCustomsResults = splitView ? (leftCustomsResults ?? rightCustomsResults ?? null) : customsResults;
 
     // Auth states
     const [user, setUser] = useState(null);
@@ -336,9 +343,37 @@ export default function App() {
 
                             <TabsContent value="customs" className="mt-6">
                                 <div className="space-y-6">
-                                    {/* Food Duty Calculator */}
-                                    <CustomsDutyCalculator onResultsChange={setCustomsResults}
-                                                           savedConfig={savedConfigToLoad}/>
+                                    {/* Food Duty Calculator (single or split view) */}
+                                    <Card>
+                                        <CardHeader className="flex items-center justify-between">
+                                            <CardTitle className="flex items-center gap-2">
+                                                <Calculator className="h-5 w-5"/>
+                                                Food Duty Calculator
+                                            </CardTitle>
+                                            <div className="flex items-center gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => setSplitView(!splitView)}>
+                                                    {splitView ? "Single View" : "Compare with another product"}
+                                                </Button>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            {splitView ? (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <CustomsDutyCalculator
+                                                        onResultsChange={setLeftCustomsResults}
+                                                        savedConfig={savedConfigToLoad}
+                                                    />
+                                                    <CustomsDutyCalculator
+                                                        onResultsChange={setRightCustomsResults}
+                                                        savedConfig={savedConfigToLoad}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <CustomsDutyCalculator onResultsChange={setCustomsResults}
+                                                                       savedConfig={savedConfigToLoad}/>
+                                            )}
+                                        </CardContent>
+                                    </Card>
 
                                     {/* Shipping Section */}
                                     <Card>
@@ -363,7 +398,7 @@ export default function App() {
                                         </CardHeader>
                                         <CardContent>
                                             <TotalLandedCostCalculator
-                                                customsResults={customsResults}
+                                                customsResults={displayedCustomsResults}
                                                 shippingResults={shippingResults}
                                             />
                                         </CardContent>
