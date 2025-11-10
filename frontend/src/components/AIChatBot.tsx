@@ -30,6 +30,16 @@ export function AIChat() {
     };
 
     useEffect(() => {
+        console.log("AIChat mounted — isOpen:", isOpen);
+        (window as any).aiChatMounted = true;
+        (window as any).aiChatIsOpen = isOpen;
+    }, []);
+    useEffect(() => {
+        (window as any).aiChatIsOpen = isOpen;
+        console.log("AIChat isOpen changed:", isOpen);
+    }, [isOpen]);
+
+    useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
@@ -108,20 +118,24 @@ export function AIChat() {
     return (
         <div
             id="ai-chat-root"
-            className={`fixed bottom-6 right-6 z-[99999] flex flex-col items-end pointer-events-none ${
-                isOpen ? "ai-chat-root--expanded" : ""
-            }`}
+            style={{
+                position: "fixed",   // prevents stacking context override
+                bottom: "24px",
+                right: "24px",
+                zIndex: 9999999,
+            }}
+            className="pointer-events-auto flex flex-col items-end"
         >
-            {/* Chat Window */}
+
+        {/* Chat Window */}
             {isOpen && (
                 <Card
                     className="
-                    flex flex-col shadow-2xl border border-border bg-card
-                    w-full h-full
-                    max-w-[90vw] max-h-[80vh]
-                    overflow-hidden rounded-xl pointer-events-auto
-                  "
-                >
+                        flex flex-col shadow-2xl border border-border bg-card
+                        w-96 h-[500px]
+                        overflow-hidden rounded-xl pointer-events-auto
+                      ">
+
                     {/* Header */}
                     <div className="flex-shrink-0 flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
                         <div className="flex items-center gap-2">
@@ -263,14 +277,15 @@ export function AIChat() {
                     onClick={() => setIsOpen(true)}
                     size="icon"
                     className="
-                      !h-74 !w-74
-                      rounded-full
-                      shadow-xl hover:scale-110 transition-transform
-                      bg-primary text-primary-foreground pointer-events-auto
-                      flex items-center justify-center
+                        pointer-events-auto
+                        h-14 w-14
+                        rounded-full
+                        shadow-xl hover:scale-110 transition-transform
+                        bg-primary text-primary-foreground
+                        flex items-center justify-center
                     "
                 >
-                    <MessageCircle className="h-24 w-24" />
+                    <MessageCircle className="h-6 w-6" />
                 </Button>
             )}
         </div>

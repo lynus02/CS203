@@ -178,47 +178,6 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         setResult(null);
     };
 
-    // Trade agreements with tariff reductions
-    const tradeAgreements: TradeAgreement[] = [
-        {
-            countries: ["United States", "Mexico", "Canada"],
-            name: "USMCA (NAFTA)",
-            reduction: 100, // 100% reduction (duty-free)
-            conditions: "Must meet rules of origin"
-        },
-        {
-            countries: ["United States", "Australia"],
-            name: "US-Australia FTA",
-            reduction: 100,
-            conditions: "Qualifying goods only"
-        },
-        {
-            countries: ["Australia", "Singapore"],
-            name: "SAFTA",
-            reduction: 50,
-            conditions: "Preferential tariff treatment"
-        },
-        {
-            countries: ["European Union", "Japan"],
-            name: "EU-Japan EPA",
-            reduction: 75,
-            conditions: "Economic Partnership Agreement"
-        },
-        {
-            countries: ["China", "Australia"],
-            name: "ChAFTA",
-            reduction: 30,
-            conditions: "China-Australia Free Trade Agreement"
-        }
-    ];
-
-    const findApplicableTradeAgreement = (origin: string, destination: string): TradeAgreement | undefined => {
-        return tradeAgreements.find(agreement =>
-            (agreement.countries.includes(origin) && agreement.countries.includes(destination)) ||
-            (agreement.countries.includes(destination) && agreement.countries.includes(origin))
-        );
-    };
-
     return (
         <Card>
             <CardHeader>

@@ -5382,3 +5382,230 @@ Need more flexibility with validation rules? Learn more: https://rd.gt/3AbJUZE
 2025-11-10T07:48:17.137+08:00  INFO 27632 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-10T07:48:17.138+08:00  INFO 27632 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-10T07:48:17.142+08:00  INFO 27632 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T08:02:30.644+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 24.0.2 with PID 28156 (/Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203/target/classes started by lynusphua in /Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203)
+2025-11-10T08:02:30.644+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T08:02:30.644+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T08:02:30.937+08:00  INFO 28156 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T08:02:30.965+08:00  INFO 28156 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 24 ms. Found 9 JPA repository interfaces.
+2025-11-10T08:02:31.179+08:00  INFO 28156 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T08:02:31.185+08:00  INFO 28156 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T08:02:31.185+08:00  INFO 28156 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T08:02:31.209+08:00  INFO 28156 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T08:02:31.209+08:00  INFO 28156 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 550 ms
+2025-11-10T08:02:31.309+08:00  INFO 28156 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T08:02:31.491+08:00  INFO 28156 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@58182b96
+2025-11-10T08:02:31.492+08:00  INFO 28156 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T08:02:31.511+08:00  INFO 28156 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T08:02:31.516+08:00  WARN 28156 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T08:02:31.541+08:00  INFO 28156 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.020s)
+2025-11-10T08:02:31.549+08:00  INFO 28156 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T08:02:31.551+08:00  INFO 28156 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T08:02:31.587+08:00  INFO 28156 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T08:02:31.607+08:00  INFO 28156 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T08:02:31.618+08:00  INFO 28156 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T08:02:31.713+08:00  INFO 28156 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T08:02:31.733+08:00  WARN 28156 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T08:02:31.734+08:00  WARN 28156 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T08:02:31.737+08:00  INFO 28156 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T08:02:32.099+08:00  INFO 28156 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T08:02:32.155+08:00  INFO 28156 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T08:02:32.268+08:00 DEBUG 28156 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T08:02:32.275+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T08:02:32.279+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T08:02:32.279+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T08:02:32.279+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T08:02:32.292+08:00  INFO 28156 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T08:02:32.490+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T08:02:32.508+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T08:02:32.946+08:00  WARN 28156 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-10T08:02:32.954+08:00  INFO 28156 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-11-10T08:02:33.035+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-10T08:02:33.035+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-10T08:02:33.035+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-10T08:02:33.035+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-10T08:02:33.037+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-10T08:02:33.043+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-10T08:02:33.043+08:00 DEBUG 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-10T08:02:33.044+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-10T08:02:33.167+08:00  INFO 28156 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-10T08:02:33.171+08:00  INFO 28156 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.699 seconds (process running for 2.816)
+2025-11-10T08:02:33.173+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-10T08:02:33.173+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-10T08:02:33.173+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-10T08:02:33.174+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-10T08:02:33.174+08:00  INFO 28156 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-10T08:02:33.193+08:00  INFO 28156 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-10T07:46:09, skipping
+2025-11-10T08:02:33.193+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 19ms
+2025-11-10T08:02:33.193+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-10T08:02:33.193+08:00  INFO 28156 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-10T08:02:33.195+08:00  INFO 28156 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-10T07:46:09, skipping
+2025-11-10T08:02:33.195+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 2ms
+2025-11-10T08:02:33.195+08:00  INFO 28156 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 22ms ===
+2025-11-10T08:04:21.945+08:00  INFO 28156 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-10T08:04:21.956+08:00  INFO 28156 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-10T08:04:21.964+08:00  INFO 28156 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T08:04:21.966+08:00  INFO 28156 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T08:04:21.971+08:00  INFO 28156 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T08:04:40.578+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 24.0.2 with PID 28272 (/Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203/target/classes started by lynusphua in /Users/lynusphua/Dropbox/Y2S2/CS203/Project/CS203)
+2025-11-10T08:04:40.578+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T08:04:40.578+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T08:04:40.867+08:00  INFO 28272 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T08:04:40.902+08:00  INFO 28272 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 31 ms. Found 9 JPA repository interfaces.
+2025-11-10T08:04:41.100+08:00  INFO 28272 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T08:04:41.105+08:00  INFO 28272 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T08:04:41.105+08:00  INFO 28272 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T08:04:41.123+08:00  INFO 28272 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T08:04:41.123+08:00  INFO 28272 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 529 ms
+2025-11-10T08:04:41.204+08:00  INFO 28272 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T08:04:41.349+08:00  INFO 28272 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4005e485
+2025-11-10T08:04:41.349+08:00  INFO 28272 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T08:04:41.365+08:00  INFO 28272 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T08:04:41.371+08:00  WARN 28272 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T08:04:41.393+08:00  INFO 28272 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.018s)
+2025-11-10T08:04:41.402+08:00  INFO 28272 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T08:04:41.403+08:00  INFO 28272 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T08:04:41.437+08:00  INFO 28272 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T08:04:41.456+08:00  INFO 28272 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T08:04:41.466+08:00  INFO 28272 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T08:04:41.557+08:00  INFO 28272 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T08:04:41.578+08:00  WARN 28272 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T08:04:41.578+08:00  WARN 28272 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T08:04:41.582+08:00  INFO 28272 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T08:04:41.932+08:00  INFO 28272 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T08:04:41.989+08:00  INFO 28272 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T08:04:42.094+08:00 DEBUG 28272 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T08:04:42.104+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T08:04:42.107+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T08:04:42.107+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T08:04:42.107+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T08:04:42.120+08:00  INFO 28272 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T08:04:42.307+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T08:04:42.325+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T08:04:42.761+08:00  WARN 28272 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-10T08:04:42.770+08:00  INFO 28272 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-10T08:04:42.846+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-10T08:04:42.846+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-10T08:04:42.847+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-10T08:04:42.847+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-10T08:04:42.848+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-10T08:04:42.854+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-10T08:04:42.854+08:00 DEBUG 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-10T08:04:42.855+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-10T08:04:42.974+08:00  INFO 28272 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-10T08:04:42.979+08:00  INFO 28272 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.572 seconds (process running for 2.7)
+2025-11-10T08:04:42.981+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-10T08:04:42.981+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-10T08:04:42.981+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-10T08:04:42.981+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-10T08:04:42.981+08:00  INFO 28272 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-10T08:04:43.001+08:00  INFO 28272 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-10T07:46:09, skipping
+2025-11-10T08:04:43.001+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 20ms
+2025-11-10T08:04:43.001+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-10T08:04:43.001+08:00  INFO 28272 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-10T08:04:43.003+08:00  INFO 28272 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-10T07:46:09, skipping
+2025-11-10T08:04:43.003+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 2ms
+2025-11-10T08:04:43.003+08:00  INFO 28272 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 22ms ===
+2025-11-10T08:04:49.281+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-10T08:04:49.281+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-10T08:04:49.283+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-10T08:04:49.307+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:04:49.307+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:04:49.319+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:05:15.442+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /auth/login
+2025-11-10T08:05:15.442+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:05:15.490+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.AuthController     : Login attempt for email: john.doe@example.com
+2025-11-10T08:05:15.490+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.AuthService     : Authenticating user with email: john.doe@example.com
+2025-11-10T08:05:15.490+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.AuthService     : Authenticating credentials for email: john.doe@example.com
+2025-11-10T08:05:15.570+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.CustomUserDetailsService  : Loading user details for email: john.doe@example.com
+2025-11-10T08:05:15.586+08:00  WARN 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.CustomUserDetailsService  : User not found for email: john.doe@example.com
+2025-11-10T08:05:15.655+08:00  WARN 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.AuthService     : Authentication failed - Invalid credentials for email: john.doe@example.com
+2025-11-10T08:05:15.656+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.UserService     : Retrieving user by email: john.doe@example.com
+2025-11-10T08:05:15.659+08:00  WARN 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.UserService     : User not found by email: john.doe@example.com
+2025-11-10T08:05:15.661+08:00  WARN 28272 --- [cs203] [http-nio-8080-exec-3] com.lynus.cs203.services.AuthService     : Authentication failed - User not found for email: john.doe@example.com
+2025-11-10T08:05:15.662+08:00  WARN 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.c.GlobalExceptionHandler           : User not found: User not found with email: john.doe@example.com
+2025-11-10T08:05:19.379+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:05:19.380+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:05:19.380+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:07:52.132+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:07:52.132+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:07:52.133+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:11:46.710+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:11:46.710+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:11:46.710+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:11:57.316+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:11:57.317+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:11:57.317+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:12:15.923+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:12:15.923+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:12:15.923+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:17:31.004+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:17:31.004+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:17:31.005+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:18:26.595+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:18:26.596+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:18:26.596+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:19:41.570+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:19:41.570+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:19:41.571+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:22:30.693+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:22:30.693+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:22:30.694+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:24:06.980+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:24:06.981+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:24:06.981+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:25:14.471+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:25:14.472+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:25:14.472+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:30:21.742+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:30:21.742+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:30:21.743+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:31:56.256+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:31:56.256+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:31:56.257+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:36:53.148+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:36:53.148+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:36:53.148+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:36:53.269+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:36:53.269+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:36:53.269+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:41:21.970+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:41:21.970+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:41:21.971+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:41:22.713+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:41:22.714+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:41:22.714+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:41:54.157+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:41:54.157+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:41:54.158+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:41:54.386+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:41:54.386+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:41:54.386+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:43:19.619+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:43:19.620+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:43:19.621+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:43:19.638+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:43:19.638+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:43:19.638+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:50:12.925+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:50:12.928+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:50:12.929+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:50:13.426+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:50:13.426+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:50:13.427+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T08:50:13.528+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T08:50:13.529+08:00 DEBUG 28272 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T08:50:13.530+08:00  INFO 28272 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
