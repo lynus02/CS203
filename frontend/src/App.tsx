@@ -119,7 +119,7 @@ export default function App() {
         {
             icon: Database,
             title: "Food Tariff Database",
-            description: "Search current food tariff rates by HS code and country"
+            description: "Search current food tariff rates by HS code and country. Verify data integrity with blockchain"
         }
     ];
 
