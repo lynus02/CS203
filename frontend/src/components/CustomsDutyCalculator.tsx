@@ -4,11 +4,13 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
 import { CountryFlag } from "./ui/country-flags";
+import { SaveProductDialog, SavedProductConfig } from "./SavedProducts";
 import tariffApi from "../services/tariffApi";
 
 // Get constants from tariffApi
@@ -49,12 +51,17 @@ interface TariffResult {
     tradeAgreement?: TradeAgreement;
 }
 
-export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (data: any) => void }) {
+interface CustomsDutyCalculatorProps {
+    onResultsChange?: (results: TariffResult | null) => void;
+    savedConfig?: SavedProductConfig;
+}
+
+export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsDutyCalculatorProps) {
     const [productValue, setProductValue] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
     const [originCountry, setOriginCountry] = useState("");
-    const [destinationCountry, setDestinationCountry] = useState("Singapore");   // Backend expects C702 for Singapore
+    const [destinationCountry, setDestinationCountry] = useState("Singapore");
     const [importDate, setImportDate] = useState<Date>(new Date());
     const [result, setResult] = useState<TariffResult | null>(null);
     const [productOpen, setProductOpen] = useState(false);
@@ -176,7 +183,9 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
         setDestinationCountry("Singapore"); // Singapore default
         setImportDate(new Date());
         setResult(null);
+        onResultsChange?.(null);
     };
+
 
     return (
         <Card>
@@ -186,6 +195,7 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     Calculate food import duties with trade agreement adjustments and comprehensive food product selection
                 </CardDescription>
             </CardHeader>
+
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Country of Origin */}
@@ -309,17 +319,18 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                     </Popover>
                 </div>
 
-                {/* Product Value */}
-                <div className="space-y-2">
-                    <Label htmlFor="product-value">Product Value (USD)</Label>
-                    <Input
-                        id="product-value"
-                        type="number"
-                        placeholder="Enter product value"
-                        value={productValue}
-                        onChange={(e) => setProductValue(e.target.value)}
-                    />
-                </div>
+                {<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Product Value */}
+                    <div className="space-y-2">
+                        <Label htmlFor="product-value">Product Value (USD)</Label>
+                        <Input
+                            id="product-value"
+                            type="number"
+                            placeholder="Enter product value"
+                            value={productValue}
+                            onChange={(e) => setProductValue(e.target.value)}
+                        />
+                    </div>
 
                 {/* Import Date */}
                 <div className="space-y-2">
@@ -359,9 +370,20 @@ export function CustomsDutyCalculator({ onResultsChange }: { onResultsChange?: (
                 {/* Results Display */}
                 {result && (
                     <div className="space-y-4 p-6 bg-muted rounded-lg">
-                        <div className="flex items-center gap-2 mb-4">
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                            <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-green-600" />
+                                <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
+                            </div>
+                            {canSaveProduct && selectedProduct && (
+                                <SaveProductDialog
+                                    product={selectedProduct}
+                                    productValue={parseFloat(productValue)}
+                                    originCountry={originCountry}
+                                    destinationCountry={destinationCountry}
+                                    importDate={importDate}
+                                />
+                            )}
                         </div>
 
                         {/* Product Information */}

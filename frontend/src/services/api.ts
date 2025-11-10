@@ -46,11 +46,32 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("token");
+        // Log helpful details
+        console.error('API Error:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message
+        });
+
+        // If unauthorized, clear local token and notify app so it can prompt for login
+        const status = error.response?.status;
+        if (status === 401) {
+            try {
+                localStorage.removeItem('token');
+            } catch (e) {
+                console.warn('Failed to remove token from localStorage', e);
+            }
+            try {
+                window.dispatchEvent(new Event('auth:unauthorized'));
+            } catch (e) {
+                console.warn('Failed to dispatch auth:unauthorized event', e);
+            }
         }
+
         return Promise.reject(error);
     }
 );

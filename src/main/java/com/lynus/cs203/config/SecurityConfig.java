@@ -77,6 +77,7 @@ public class SecurityConfig {
                             .requestMatchers("/tariff-rates/**").permitAll()
                             .requestMatchers("/api/chatbot").permitAll()
                             .requestMatchers("/").permitAll()
+                            .requestMatchers("api/audit/**").permitAll()
 
                             // Swagger and API docs
                             .requestMatchers("/api/chatbot/**").permitAll()
