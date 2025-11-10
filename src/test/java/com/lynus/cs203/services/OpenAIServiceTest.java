@@ -1,13 +1,10 @@
-// java
 package com.lynus.cs203.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.entities.Product;
 import com.lynus.cs203.entities.Tariff;
-import com.lynus.cs203.entities.TradeAgreement;
-import com.lynus.cs203.repositories.AgreementCountryRepository;
 import com.lynus.cs203.repositories.TariffRepository;
-import com.lynus.cs203.repositories.TradeAgreementRepository;
 import com.theokanning.openai.completion.chat.ChatCompletionChoice;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -22,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -29,21 +28,14 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("OpenAI Sevice Unit Tests")
+@DisplayName("OpenAI Service Unit Tests (updated)")
 class OpenAIServiceTest {
 
     @Mock
     private TariffRepository tariffRepo;
-
-    @Mock
-    private TradeAgreementRepository tradeRepo;
-
-    @Mock
-    private AgreementCountryRepository agreementCountryRepo;
 
     @InjectMocks
     private OpenAIService svc;
@@ -60,7 +52,7 @@ class OpenAIServiceTest {
 
     private Tariff buildTariff(int hsCodeAsInt, String desc, double rate, String countryName) {
         Product p = new Product();
-        p.setProductCode(hsCodeAsInt); // Integer expected by production code
+        p.setProductCode(hsCodeAsInt);
         p.setProductDescription(desc);
 
         Country c = new Country();
@@ -73,34 +65,18 @@ class OpenAIServiceTest {
         return t;
     }
 
-
-    // helper: create a mocked Tariff with provided fields
-    private Tariff mockTariff(int hsCodeAsInt, String desc, double rate, String countryName) {
-        Tariff t = mock(Tariff.class);
-        Product p = mock(Product.class);
-        Country c = mock(Country.class);
-
-        when(p.getProductCode()).thenReturn(hsCodeAsInt); // return Integer
-        when(p.getProductDescription()).thenReturn(desc);
-        when(c.getCountryName()).thenReturn(countryName);
-
-        when(t.getProduct()).thenReturn(p);
-        when(t.getTariffRate()).thenReturn(rate);
-        when(t.getCountry()).thenReturn(c);
-        return t;
-    }
-
     @Test
-    void processChat_whenIntentOther_returnsClarificationPrompt() throws Exception {
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"OTHER\"}");
+    void processChat_extractBlank_returnsClarification() throws Exception {
+        ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"\"}");
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, context) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes);
+        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
+            when(mock.createChatCompletion(any())).thenReturn(extractRes);
         })) {
-            var resp = svc.processChat("Tell me a joke");
+            Map<String, String> resp = svc.processChat("I want something");
 
             assertNotNull(resp);
-            assertTrue(resp.get("answer").toLowerCase().contains("hs codes") || resp.get("answer").length() > 0);
+            assertTrue(resp.get("answer").toLowerCase().contains("could you rephrase")
+                    || resp.get("answer").length() > 0);
 
             OpenAiService created = mc.constructed().get(0);
             verify(created, times(1)).createChatCompletion(any());
@@ -108,16 +84,15 @@ class OpenAIServiceTest {
     }
 
     @Test
-    void processChat_hsCode_noDbMatches_returnsFallbackAnswerAndProduct() throws Exception {
-        when(tariffRepo.findByProductDescriptionOrProductCodeContaining(anyString(), anyString(), any(PageRequest.class)))
+    void processChat_noDbMatches_returnsFallback() throws Exception {
+        when(tariffRepo.findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(anyString(), anyInt(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(emptyList()));
 
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"HS_CODE\"}");
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
         ChatCompletionResult fallbackRes = completionResultWithContent("Likely HS 1006.30 — reasoning...");
 
         try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, fallbackRes);
+            when(mock.createChatCompletion(any())).thenReturn(extractRes, fallbackRes);
         })) {
             Map<String, String> resp = svc.processChat("What is the HS code for rice?");
 
@@ -126,23 +101,22 @@ class OpenAIServiceTest {
             assertEquals("Likely HS 1006.30 — reasoning...", resp.get("answer"));
 
             OpenAiService created = mc.constructed().get(0);
-            verify(created, times(3)).createChatCompletion(any());
-            verify(tariffRepo, times(1)).findByProductDescriptionOrProductCodeContaining(eq("rice"), eq("rice"), any(PageRequest.class));
+            verify(created, times(2)).createChatCompletion(any());
+            verify(tariffRepo, times(1)).findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(eq("rice"), anyInt(), any(PageRequest.class));
         }
     }
 
     @Test
-    void processChat_hsCode_withDbMatches_returnsSummaryAndProduct() throws Exception {
+    void processChat_withDbMatches_returnsSummaryAnswer() throws Exception {
         Tariff t = buildTariff(100630, "rice", 5.0, "japan");
-        when(tariffRepo.findByProductDescriptionOrProductCodeContaining(anyString(), anyString(), any(PageRequest.class)))
+        when(tariffRepo.findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(anyString(), anyInt(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"HS_CODE\"}");
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
         ChatCompletionResult summaryRes = completionResultWithContent("HS 1006.30 seems the best match.");
 
         try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, summaryRes);
+            when(mock.createChatCompletion(any())).thenReturn(extractRes, summaryRes);
         })) {
             Map<String, String> resp = svc.processChat("Which HS code matches rice?");
 
@@ -151,144 +125,43 @@ class OpenAIServiceTest {
             assertEquals("HS 1006.30 seems the best match.", resp.get("answer"));
 
             OpenAiService created = mc.constructed().get(0);
-            verify(tariffRepo, times(1)).findByProductDescriptionOrProductCodeContaining(eq("rice"), eq("rice"), any(PageRequest.class));
-            verify(created, times(3)).createChatCompletion(any());
-        }
-    }
-
-    @Test
-    void processChat_tariffRate_noMatches_returnsGptFallback() throws Exception {
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(anyString(), anyString(), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(emptyList()));
-
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TARIFF_RATE\"}");
-        ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\",\"destination\":\"japan\"}");
-        ChatCompletionResult fallbackRes = completionResultWithContent("Estimated tariff range: 5-10% based on category.");
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, fallbackRes);
-        })) {
-            Map<String, String> resp = svc.processChat("What is the tariff rate for rice imported to Japan?");
-
-            assertNotNull(resp);
-            assertEquals("Estimated tariff range: 5-10% based on category.", resp.get("answer"));
-
-            OpenAiService created = mc.constructed().get(0);
-            verify(created, times(3)).createChatCompletion(any());
-            verify(tariffRepo, times(1)).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("japan"), eq("rice"), any(PageRequest.class));
-        }
-    }
-
-    @Test
-    void processChat_tariffRate_withMatches_returnsAvgTariff() throws Exception {
-        Tariff t1 = buildTariff(100630, "rice", 3.0, "japan");
-        Tariff t2 = buildTariff(100630, "rice", 5.0, "japan");
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("japan"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(t1, t2)));
-
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TARIFF_RATE\"}");
-        ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\",\"destination\":\"japan\"}");
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes);
-        })) {
-            Map<String, String> resp = svc.processChat("What is the tariff for rice imported to Japan?");
-
-            assertNotNull(resp);
-            String answer = resp.get("answer");
-            assertTrue(answer.toLowerCase().contains("average tariff rate"));
-            assertTrue(answer.contains("4.00") || answer.contains("4.0"));
-
-            OpenAiService created = mc.constructed().get(0);
-            verify(tariffRepo, times(1)).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("japan"), eq("rice"), any(PageRequest.class));
             verify(created, times(2)).createChatCompletion(any());
+            verify(tariffRepo, times(1)).findByProduct_ProductDescriptionContainingIgnoreCaseOrProduct_ProductCode(eq("rice"), anyInt(), any(PageRequest.class));
         }
     }
 
     @Test
-    void processChat_tradeAgreement_noAgreements_returnsNoAgreementMessage() throws Exception {
-        when(agreementCountryRepo.findAgreementsBetweenCountries("japan", "singapore"))
-                .thenReturn(List.of());
+    void private_safeParseInt_and_similarityScore_behaviour() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Class<?> cls = OpenAIService.class;
+        Method safeParse = cls.getDeclaredMethod("safeParseInt", String.class);
+        safeParse.setAccessible(true);
 
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractRes = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Singapore\"}");
+        assertEquals(123, safeParse.invoke(null, "123"));
+        assertEquals(456, safeParse.invoke(null, "abc456def"));
+        assertEquals(0, safeParse.invoke(null, "no digits"));
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes);
-        })) {
-            Map<String, String> resp = svc.processChat("Is there a free trade agreement between Japan and Singapore?");
+        Method sim = cls.getDeclaredMethod("similarityScore", String.class, String.class);
+        sim.setAccessible(true);
 
-            assertNotNull(resp);
-            assertEquals("No trade agreement found between japan and singapore.", resp.get("answer"));
-
-            OpenAiService created = mc.constructed().get(0);
-            verify(agreementCountryRepo, times(1)).findAgreementsBetweenCountries("japan", "singapore");
-            verify(created, times(2)).createChatCompletion(any());
-        }
+        double s1 = (double) sim.invoke(null, "rice grain", "rice");
+        double s2 = (double) sim.invoke(null, "completely different", "nothing shared");
+        assertTrue(s1 > 0);
+        assertEquals(0.0, s2, 1e-9);
     }
 
     @Test
-    void processChat_tradeAgreement_withAgreements_and_tariffCombines_returnsCombinedAnswerOrTariff() throws Exception {
-        when(agreementCountryRepo.findAgreementsBetweenCountries("japan", "singapore"))
-                .thenReturn(List.of(1L));
+    void private_getSynonym_usesOpenAiResponse() throws Exception {
+        // prepare a mocked OpenAiService that returns a single-word synonym
+        OpenAiService mockedClient = mock(OpenAiService.class);
+        ChatCompletionResult synonymRes = completionResultWithContent("grain");
+        when(mockedClient.createChatCompletion(any())).thenReturn(synonymRes);
 
-        TradeAgreement ta = mock(TradeAgreement.class);
-        when(ta.getAgreementName()).thenReturn("JP-SG FTA");
-        when(ta.getAgreementType()).thenReturn("FTA");
-        when(tradeRepo.findAllByIds(List.of(1L))).thenReturn(List.of(ta));
+        // invoke private method getSynonym via reflection
+        Method getSyn = OpenAIService.class.getDeclaredMethod("getSynonym", OpenAiService.class, String.class);
+        getSyn.setAccessible(true);
 
-        Tariff tariff = buildTariff(100630, "rice", 3.0, "singapore");
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(tariff)));
-
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Singapore\"}");
-        ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractCountries, extractProduct);
-        })) {
-            Map<String, String> resp = svc.processChat("Is there a trade agreement and what's the tariff for rice between Japan and Singapore?");
-
-            assertNotNull(resp);
-            String answer = resp.get("answer");
-            assertNotNull(answer);
-            assertTrue(answer.toLowerCase().contains("jp-sg fta") || answer.contains("JP-SG FTA") || answer.toLowerCase().contains("average tariff"));
-
-            OpenAiService created = mc.constructed().get(0);
-            verify(agreementCountryRepo, times(2)).findAgreementsBetweenCountries("japan", "singapore");
-            verify(tradeRepo, times(2)).findAllByIds(List.of(1L));
-            verify(tariffRepo, atLeastOnce()).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class));
-            verify(created, times(3)).createChatCompletion(any());
-        }
-    }
-
-    @Test
-    void processChat_tradeAgreement_withAgreements_but_noTariffData_returnsNoTariffDataMessage() throws Exception {
-        when(agreementCountryRepo.findAgreementsBetweenCountries("japan", "singapore")).thenReturn(List.of(1L));
-        TradeAgreement ta = mock(TradeAgreement.class);
-        when(ta.getAgreementName()).thenReturn("JP-SG FTA");
-        when(ta.getAgreementType()).thenReturn("FTA");
-        when(tradeRepo.findAllByIds(List.of(1L))).thenReturn(List.of(ta));
-
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(emptyList()));
-
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Singapore\"}");
-        ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractCountries, extractProduct);
-        })) {
-            Map<String, String> resp = svc.processChat("Is there a trade agreement and what's the tariff for rice between Japan and Singapore?");
-
-            assertNotNull(resp);
-            assertTrue(resp.get("answer").toLowerCase().contains("no tariff data found"));
-
-            OpenAiService created = mc.constructed().get(0);
-            verify(tariffRepo, times(1)).findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class));
-            verify(created, times(3)).createChatCompletion(any());
-        }
+        String result = (String) getSyn.invoke(svc, mockedClient, "rice");
+        assertEquals("grain", result);
+        verify(mockedClient, times(1)).createChatCompletion(any());
     }
 }

@@ -23,7 +23,7 @@ public class OpenAIService {
 
     private final String apiKey;
 
-    public OpenAIService(TariffRepository tariffRepo, @Value("${OPEN_API_KEY:dummy-test-key}") String apiKey) {
+    public OpenAIService(TariffRepository tariffRepo, @Value("${open.api.key:dummy-test-key}") String apiKey) {
         this.apiKey = apiKey;
         this.tariffRepo = tariffRepo;
     }
