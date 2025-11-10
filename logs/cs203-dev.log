@@ -6197,3 +6197,405 @@ Need more flexibility with validation rules? Learn more: https://rd.gt/3AbJUZE
 2025-11-10T13:35:17.510+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-10T13:35:17.512+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-10T13:35:17.515+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:48:49.398+08:00  INFO 95937 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 95937 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:48:49.400+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:48:49.400+08:00  INFO 95937 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:48:49.714+08:00  INFO 95937 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:48:49.740+08:00  INFO 95937 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 22 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:48:49.949+08:00  INFO 95937 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:48:49.955+08:00  INFO 95937 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:48:49.955+08:00  INFO 95937 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:48:49.980+08:00  INFO 95937 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:48:49.981+08:00  INFO 95937 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 567 ms
+2025-11-10T13:48:50.061+08:00  INFO 95937 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:48:50.189+08:00  INFO 95937 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6210666c
+2025-11-10T13:48:50.189+08:00  INFO 95937 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:48:50.209+08:00  INFO 95937 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:48:50.216+08:00  WARN 95937 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:48:50.243+08:00  INFO 95937 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.022s)
+2025-11-10T13:48:50.251+08:00  INFO 95937 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:48:50.252+08:00  INFO 95937 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:48:50.288+08:00  INFO 95937 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:48:50.314+08:00  INFO 95937 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:48:50.328+08:00  INFO 95937 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:48:50.432+08:00  INFO 95937 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:48:50.457+08:00  WARN 95937 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:48:50.458+08:00  WARN 95937 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:48:50.462+08:00  INFO 95937 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:48:50.842+08:00  INFO 95937 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:48:50.887+08:00  INFO 95937 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:48:50.992+08:00 DEBUG 95937 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:48:51.001+08:00  INFO 95937 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:48:51.004+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:48:51.004+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:48:51.004+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:48:51.017+08:00  INFO 95937 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:48:51.216+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:48:51.234+08:00 DEBUG 95937 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:48:51.605+08:00  WARN 95937 --- [cs203] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+2025-11-10T13:48:51.606+08:00  INFO 95937 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:48:51.606+08:00  INFO 95937 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:48:51.609+08:00  INFO 95937 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:48:51.610+08:00  INFO 95937 --- [cs203] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-10T13:48:51.615+08:00  INFO 95937 --- [cs203] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-10T13:48:51.623+08:00 ERROR 95937 --- [cs203] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.5.jar:3.5.5]
+	at com.lynus.cs203.Cs203Application.main(Cs203Application.java:11) ~[classes/:na]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:515) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1459) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:606) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1690) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 21 common frames omitted
+Caused by: org.springframework.util.PlaceholderResolutionException: Could not resolve placeholder 'openai.api.key' in value "${openai.api.key}"
+	at org.springframework.util.PlaceholderResolutionException.withValue(PlaceholderResolutionException.java:81) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser$ParsedValue.resolve(PlaceholderParser.java:423) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser.replacePlaceholders(PlaceholderParser.java:128) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:118) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:114) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:293) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:264) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:186) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:971) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1657) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 32 common frames omitted
+
+2025-11-10T13:53:04.783+08:00  INFO 96024 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 96024 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:53:04.784+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:53:04.785+08:00  INFO 96024 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:53:05.095+08:00  INFO 96024 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:53:05.122+08:00  INFO 96024 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:53:05.327+08:00  INFO 96024 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:53:05.332+08:00  INFO 96024 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:53:05.332+08:00  INFO 96024 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:53:05.357+08:00  INFO 96024 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:53:05.357+08:00  INFO 96024 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 559 ms
+2025-11-10T13:53:05.436+08:00  INFO 96024 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:53:05.566+08:00  INFO 96024 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2c2a903f
+2025-11-10T13:53:05.567+08:00  INFO 96024 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:53:05.585+08:00  INFO 96024 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:53:05.593+08:00  WARN 96024 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:53:05.620+08:00  INFO 96024 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.023s)
+2025-11-10T13:53:05.628+08:00  INFO 96024 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:53:05.629+08:00  INFO 96024 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:53:05.663+08:00  INFO 96024 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:53:05.689+08:00  INFO 96024 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:53:05.703+08:00  INFO 96024 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:53:05.802+08:00  INFO 96024 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:53:05.825+08:00  WARN 96024 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:53:05.825+08:00  WARN 96024 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:53:05.829+08:00  INFO 96024 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:53:06.205+08:00  INFO 96024 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:53:06.256+08:00  INFO 96024 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:53:06.360+08:00 DEBUG 96024 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:53:06.367+08:00  INFO 96024 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:53:06.370+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:53:06.370+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:53:06.370+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:53:06.383+08:00  INFO 96024 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:53:06.578+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:53:06.597+08:00 DEBUG 96024 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:53:06.966+08:00  WARN 96024 --- [cs203] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+2025-11-10T13:53:06.967+08:00  INFO 96024 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:53:06.967+08:00  INFO 96024 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:53:06.970+08:00  INFO 96024 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:53:06.970+08:00  INFO 96024 --- [cs203] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-10T13:53:06.975+08:00  INFO 96024 --- [cs203] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-10T13:53:06.982+08:00 ERROR 96024 --- [cs203] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.5.jar:3.5.5]
+	at com.lynus.cs203.Cs203Application.main(Cs203Application.java:11) ~[classes/:na]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:515) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1459) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:606) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1690) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 21 common frames omitted
+Caused by: org.springframework.util.PlaceholderResolutionException: Could not resolve placeholder 'openai.api.key' in value "${openai.api.key}"
+	at org.springframework.util.PlaceholderResolutionException.withValue(PlaceholderResolutionException.java:81) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser$ParsedValue.resolve(PlaceholderParser.java:423) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser.replacePlaceholders(PlaceholderParser.java:128) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:118) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:114) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:293) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:264) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:186) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:971) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1657) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 32 common frames omitted
+
+2025-11-10T13:54:27.791+08:00  INFO 96091 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 96091 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:54:27.793+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:54:27.793+08:00  INFO 96091 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:54:28.104+08:00  INFO 96091 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:54:28.130+08:00  INFO 96091 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:54:28.334+08:00  INFO 96091 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:54:28.340+08:00  INFO 96091 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:54:28.340+08:00  INFO 96091 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:54:28.364+08:00  INFO 96091 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:54:28.364+08:00  INFO 96091 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 558 ms
+2025-11-10T13:54:28.444+08:00  INFO 96091 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:54:28.574+08:00  INFO 96091 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6c830ebd
+2025-11-10T13:54:28.575+08:00  INFO 96091 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:54:28.593+08:00  INFO 96091 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:54:28.598+08:00  WARN 96091 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:54:28.624+08:00  INFO 96091 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.023s)
+2025-11-10T13:54:28.632+08:00  INFO 96091 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:54:28.633+08:00  INFO 96091 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:54:28.664+08:00  INFO 96091 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:54:28.691+08:00  INFO 96091 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:54:28.705+08:00  INFO 96091 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:54:28.804+08:00  INFO 96091 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:54:28.826+08:00  WARN 96091 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:54:28.827+08:00  WARN 96091 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:54:28.831+08:00  INFO 96091 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:54:29.212+08:00  INFO 96091 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:54:29.258+08:00  INFO 96091 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:54:29.364+08:00 DEBUG 96091 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:54:29.372+08:00  INFO 96091 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:54:29.375+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:54:29.375+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:54:29.375+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:54:29.391+08:00  INFO 96091 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:54:29.582+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:54:29.601+08:00 DEBUG 96091 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:54:29.984+08:00  WARN 96091 --- [cs203] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+2025-11-10T13:54:29.985+08:00  INFO 96091 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:54:29.985+08:00  INFO 96091 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:54:29.988+08:00  INFO 96091 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:54:29.988+08:00  INFO 96091 --- [cs203] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-10T13:54:29.994+08:00  INFO 96091 --- [cs203] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-10T13:54:30.001+08:00 ERROR 96091 --- [cs203] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'chatController' defined in file [/Users/kaixingloh/IdeaProjects/CS203/target/classes/com/lynus/cs203/controllers/ChatController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1222) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1188) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1123) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.5.jar:3.5.5]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.5.jar:3.5.5]
+	at com.lynus.cs203.Cs203Application.main(Cs203Application.java:11) ~[classes/:na]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'openAIService': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:515) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1459) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:606) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1690) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 21 common frames omitted
+Caused by: org.springframework.util.PlaceholderResolutionException: Could not resolve placeholder 'openai.api.key' in value "${openai.api.key}"
+	at org.springframework.util.PlaceholderResolutionException.withValue(PlaceholderResolutionException.java:81) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser$ParsedValue.resolve(PlaceholderParser.java:423) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PlaceholderParser.replacePlaceholders(PlaceholderParser.java:128) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:118) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:114) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:293) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:264) ~[spring-core-6.2.10.jar:6.2.10]
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:186) ~[spring-context-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:971) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1657) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1635) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146) ~[spring-beans-6.2.10.jar:6.2.10]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.2.10.jar:6.2.10]
+	... 32 common frames omitted
+
+2025-11-10T13:56:09.995+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 96152 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:56:09.997+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:56:09.997+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:56:10.303+08:00  INFO 96152 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:56:10.330+08:00  INFO 96152 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:56:10.538+08:00  INFO 96152 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:56:10.543+08:00  INFO 96152 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:56:10.543+08:00  INFO 96152 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:56:10.568+08:00  INFO 96152 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:56:10.568+08:00  INFO 96152 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 559 ms
+2025-11-10T13:56:10.648+08:00  INFO 96152 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:56:10.779+08:00  INFO 96152 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@19d27c27
+2025-11-10T13:56:10.779+08:00  INFO 96152 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:56:10.800+08:00  INFO 96152 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:56:10.807+08:00  WARN 96152 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:56:10.888+08:00  INFO 96152 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.076s)
+2025-11-10T13:56:10.897+08:00  INFO 96152 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:56:10.898+08:00  INFO 96152 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:56:10.938+08:00  INFO 96152 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:56:10.964+08:00  INFO 96152 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:56:10.979+08:00  INFO 96152 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:56:11.076+08:00  INFO 96152 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:56:11.098+08:00  WARN 96152 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:56:11.099+08:00  WARN 96152 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:56:11.103+08:00  INFO 96152 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:56:11.481+08:00  INFO 96152 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:56:11.531+08:00  INFO 96152 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:56:11.639+08:00 DEBUG 96152 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:56:11.646+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:56:11.649+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:56:11.649+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:56:11.649+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:56:11.662+08:00  INFO 96152 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:56:11.856+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:56:11.874+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:56:12.299+08:00  WARN 96152 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-10T13:56:12.309+08:00  INFO 96152 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-10T13:56:12.387+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-10T13:56:12.387+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-10T13:56:12.387+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-10T13:56:12.387+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-10T13:56:12.389+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-10T13:56:12.392+08:00  WARN 96152 --- [cs203] [main] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/audit/**] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-11-10T13:56:12.396+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-10T13:56:12.396+08:00 DEBUG 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-10T13:56:12.396+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-10T13:56:12.520+08:00  INFO 96152 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-10T13:56:12.524+08:00  INFO 96152 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.694 seconds (process running for 2.824)
+2025-11-10T13:56:12.526+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-10T13:56:12.526+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-10T13:56:12.526+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-10T13:56:12.526+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-10T13:56:12.526+08:00  INFO 96152 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-10T13:56:12.546+08:00  INFO 96152 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:56:12.546+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 20ms
+2025-11-10T13:56:12.546+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-10T13:56:12.546+08:00  INFO 96152 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-10T13:56:12.548+08:00  INFO 96152 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:56:12.548+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 2ms
+2025-11-10T13:56:12.548+08:00  INFO 96152 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 22ms ===
+2025-11-10T13:56:37.759+08:00  INFO 96152 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-10T13:56:37.759+08:00  INFO 96152 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-10T13:56:37.761+08:00  INFO 96152 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-10T13:56:37.773+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /api/chatbot
+2025-11-10T13:56:37.773+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:56:55.583+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /api/chatbot
+2025-11-10T13:56:55.583+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:57:11.456+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /api/chatbot
+2025-11-10T13:57:11.457+08:00 DEBUG 96152 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:57:23.055+08:00  INFO 96152 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-10T13:57:23.064+08:00  INFO 96152 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-10T13:57:23.072+08:00  INFO 96152 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:57:23.074+08:00  INFO 96152 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:57:23.076+08:00  INFO 96152 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
