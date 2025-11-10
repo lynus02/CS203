@@ -18,7 +18,7 @@ jobs:
       SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: ""
-      openai.api.key: dummy-test-key
+      OPEN_API_KEY: dummy-test-key
 
     steps:
       - uses: actions/checkout@v4     # Downloads the repository
