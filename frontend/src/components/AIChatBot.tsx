@@ -120,7 +120,7 @@ export function AIChat() {
             {/* Chat Window */}
             {isOpen && (
                 <Card
-                    cclassName="
+                    className="
                         !w-auto         /* override Shadcn's w-full */
                         w-[95vw] sm:w-[50vw] lg:w-[33vw]
                         max-w-[420px] min-w-[300px]
