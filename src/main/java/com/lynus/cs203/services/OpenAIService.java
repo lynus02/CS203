@@ -21,10 +21,10 @@ public class OpenAIService {
     private final TariffRepository tariffRepo;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${openai.api.key}")
-    private String apiKey;
+    private final String apiKey;
 
-    public OpenAIService(TariffRepository tariffRepo) {
+    public OpenAIService(TariffRepository tariffRepo, @Value("${OPEN_API_KEY:dummy-test-key}") String apiKey) {
+        this.apiKey = apiKey;
         this.tariffRepo = tariffRepo;
     }
 
