@@ -290,8 +290,8 @@
                             <goal>generate-sources</goal>
                         </goals>
                         <configuration>
-                            <sourceDestination>src/main/resources/contracts</sourceDestination>
-                            <outputDir>src/main/java</outputDir>
+                            <packageName>src/main/resources/contracts</packageName>
+                            <sourceDestination>src/main/java</sourceDestination>
                             <packageName>com.lynus.cs203.blockchain</packageName>
                         </configuration>
                     </execution>
