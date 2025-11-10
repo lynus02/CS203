@@ -23,3 +23,9 @@ server:
   port: ${PORT:8080}
   error:
     include-message: always
+
+openai:
+  api:
+    key: ${OPEN_API_KEY}
+  chat:
+    model: gpt-4o-mini
