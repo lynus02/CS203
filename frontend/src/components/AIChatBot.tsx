@@ -1,8 +1,8 @@
-import React, {useState, useRef, useEffect} from "react";
-import {Button} from "./ui/button";
-import {Card} from "./ui/card";
-import {Input} from "./ui/input";
-import {MessageCircle, X, Send, Bot, User} from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { Input } from "./ui/input";
+import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 
 interface Message {
     id: string;
@@ -26,7 +26,7 @@ export function AIChat() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
@@ -66,9 +66,9 @@ export function AIChat() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    ...(token ? {Authorization: `Bearer ${token}`} : {}),
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
-                body: JSON.stringify({prompt: inputValue}),
+                body: JSON.stringify({ prompt: inputValue }),
             });
 
             if (!response.ok) throw new Error("Failed to fetch AI response");
@@ -108,34 +108,25 @@ export function AIChat() {
     return (
         <div
             id="ai-chat-root"
-            style={{
-                position: "fixed",   // prevents stacking context override
-                bottom: "24px",
-                right: "24px",
-                zIndex: 9999999,
-            }}
-            className="pointer-events-auto flex flex-col items-end max-w-[420px]"
+            className={`fixed bottom-6 right-6 z-[99999] flex flex-col items-end pointer-events-none ${
+                isOpen ? "ai-chat-root--expanded" : ""
+            }`}
         >
-
             {/* Chat Window */}
             {isOpen && (
                 <Card
                     className="
-                        !w-auto         /* override Shadcn's w-full */
-                        w-[95vw] sm:w-[50vw] lg:w-[33vw]
-                        max-w-[420px] min-w-[300px]
-                        flex flex-col shadow-2xl border border-border bg-card
-                        h-[500px]
-                        overflow-hidden rounded-xl pointer-events-auto
-                      ">
-
+                    flex flex-col shadow-2xl border border-border bg-card
+                    w-full h-full
+                    max-w-[90vw] max-h-[80vh]
+                    overflow-hidden rounded-xl pointer-events-auto
+                  "
+                >
                     {/* Header */}
-                    <div
-                        className="flex-shrink-0 flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
+                    <div className="flex-shrink-0 flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
                         <div className="flex items-center gap-2">
-                            <div
-                                className="h-8 w-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-                                <Bot className="h-5 w-5"/>
+                            <div className="h-8 w-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                                <Bot className="h-5 w-5" />
                             </div>
                             <div>
                                 <div className="font-medium">FoodTariff Assistant</div>
@@ -148,7 +139,7 @@ export function AIChat() {
                             onClick={() => setIsOpen(false)}
                             className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
                         >
-                            <X className="h-4 w-4"/>
+                            <X className="h-4 w-4" />
                         </Button>
                     </div>
 
@@ -191,9 +182,9 @@ export function AIChat() {
                                         }`}
                                     >
                                         {message.sender === "user" ? (
-                                            <User className="h-4 w-4"/>
+                                            <User className="h-4 w-4" />
                                         ) : (
-                                            <Bot className="h-4 w-4"/>
+                                            <Bot className="h-4 w-4" />
                                         )}
                                     </div>
                                     <div
@@ -222,25 +213,24 @@ export function AIChat() {
                             {isTyping && (
                                 <div className="flex gap-2">
                                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                                        <Bot className="h-4 w-4"/>
+                                        <Bot className="h-4 w-4" />
                                     </div>
                                     <div className="rounded-lg px-4 py-2 bg-muted">
                                         <div className="flex gap-1">
-                                            <div
-                                                className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce"/>
+                                            <div className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" />
                                             <div
                                                 className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce"
-                                                style={{animationDelay: "150ms"}}
+                                                style={{ animationDelay: "150ms" }}
                                             />
                                             <div
                                                 className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce"
-                                                style={{animationDelay: "300ms"}}
+                                                style={{ animationDelay: "300ms" }}
                                             />
                                         </div>
                                     </div>
                                 </div>
                             )}
-                            <div ref={messagesEndRef}/>
+                            <div ref={messagesEndRef} />
                         </div>
                     </div>
 
@@ -260,7 +250,7 @@ export function AIChat() {
                                 size="icon"
                                 disabled={!inputValue.trim()}
                             >
-                                <Send className="h-4 w-4"/>
+                                <Send className="h-4 w-4" />
                             </Button>
                         </div>
                     </div>
@@ -273,17 +263,17 @@ export function AIChat() {
                     onClick={() => setIsOpen(true)}
                     size="icon"
                     className="
-                        pointer-events-auto
-                        h-14 w-14
-                        rounded-full
-                        shadow-xl hover:scale-110 transition-transform
-                        bg-primary text-primary-foreground
-                        flex items-center justify-center
+                      !h-74 !w-74
+                      rounded-full
+                      shadow-xl hover:scale-110 transition-transform
+                      bg-primary text-primary-foreground pointer-events-auto
+                      flex items-center justify-center
                     "
                 >
-                    <MessageCircle className="h-6 w-6"/>
+                    <MessageCircle className="h-24 w-24" />
                 </Button>
             )}
         </div>
     );
 }
+

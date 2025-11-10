@@ -6037,3 +6037,163 @@ Need more flexibility with validation rules? Learn more: https://rd.gt/3AbJUZE
 2025-11-10T10:33:48.782+08:00  INFO 31786 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-10T10:33:48.784+08:00  INFO 31786 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-10T10:33:48.787+08:00  INFO 31786 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:31:26.139+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 95212 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:31:26.140+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:31:26.141+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:31:26.458+08:00  INFO 95212 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:31:26.486+08:00  INFO 95212 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:31:26.698+08:00  INFO 95212 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:31:26.703+08:00  INFO 95212 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:31:26.703+08:00  INFO 95212 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:31:26.729+08:00  INFO 95212 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:31:26.730+08:00  INFO 95212 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 576 ms
+2025-11-10T13:31:26.812+08:00  INFO 95212 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:31:26.947+08:00  INFO 95212 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@19d27c27
+2025-11-10T13:31:26.948+08:00  INFO 95212 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:31:26.967+08:00  INFO 95212 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:31:26.974+08:00  WARN 95212 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:31:27.000+08:00  INFO 95212 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.022s)
+2025-11-10T13:31:27.008+08:00  INFO 95212 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:31:27.009+08:00  INFO 95212 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:31:27.043+08:00  INFO 95212 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:31:27.069+08:00  INFO 95212 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:31:27.083+08:00  INFO 95212 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:31:27.181+08:00  INFO 95212 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:31:27.207+08:00  WARN 95212 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:31:27.208+08:00  WARN 95212 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:31:27.212+08:00  INFO 95212 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:31:27.598+08:00  INFO 95212 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:31:27.645+08:00  INFO 95212 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:31:27.750+08:00 DEBUG 95212 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:31:27.760+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:31:27.763+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:31:27.763+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:31:27.763+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:31:27.775+08:00  INFO 95212 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:31:27.972+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:31:27.991+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:31:28.419+08:00  WARN 95212 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-10T13:31:28.432+08:00  INFO 95212 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-10T13:31:28.514+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-10T13:31:28.514+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-10T13:31:28.514+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-10T13:31:28.514+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-10T13:31:28.516+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-10T13:31:28.519+08:00  WARN 95212 --- [cs203] [main] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/audit/**] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-11-10T13:31:28.523+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-10T13:31:28.523+08:00 DEBUG 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-10T13:31:28.523+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-10T13:31:28.638+08:00  INFO 95212 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-10T13:31:28.643+08:00  INFO 95212 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.674 seconds (process running for 2.806)
+2025-11-10T13:31:28.645+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-10T13:31:28.646+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-10T13:31:28.646+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-10T13:31:28.646+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-10T13:31:28.646+08:00  INFO 95212 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-10T13:31:28.666+08:00  INFO 95212 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:31:28.666+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 20ms
+2025-11-10T13:31:28.666+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-10T13:31:28.666+08:00  INFO 95212 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-10T13:31:28.667+08:00  INFO 95212 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:31:28.667+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 1ms
+2025-11-10T13:31:28.667+08:00  INFO 95212 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 21ms ===
+2025-11-10T13:31:33.159+08:00  INFO 95212 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-10T13:31:33.159+08:00  INFO 95212 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-10T13:31:33.160+08:00  INFO 95212 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-10T13:31:33.178+08:00 DEBUG 95212 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T13:31:33.178+08:00 DEBUG 95212 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:31:33.187+08:00  INFO 95212 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T13:32:22.465+08:00 DEBUG 95212 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-10T13:32:22.467+08:00 DEBUG 95212 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:32:22.471+08:00  INFO 95212 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-10T13:32:30.893+08:00  INFO 95212 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-10T13:32:30.901+08:00  INFO 95212 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-10T13:32:30.910+08:00  INFO 95212 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:32:30.911+08:00  INFO 95212 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:32:30.916+08:00  INFO 95212 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-10T13:34:27.778+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 95413 (/Users/kaixingloh/IdeaProjects/CS203/target/classes started by kaixingloh in /Users/kaixingloh/IdeaProjects/CS203)
+2025-11-10T13:34:27.780+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-10T13:34:27.780+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-10T13:34:28.095+08:00  INFO 95413 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-10T13:34:28.122+08:00  INFO 95413 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 9 JPA repository interfaces.
+2025-11-10T13:34:28.330+08:00  INFO 95413 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-10T13:34:28.338+08:00  INFO 95413 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-10T13:34:28.338+08:00  INFO 95413 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-10T13:34:28.363+08:00  INFO 95413 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-10T13:34:28.363+08:00  INFO 95413 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 570 ms
+2025-11-10T13:34:28.442+08:00  INFO 95413 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-10T13:34:28.570+08:00  INFO 95413 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@19d27c27
+2025-11-10T13:34:28.571+08:00  INFO 95413 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-10T13:34:28.589+08:00  INFO 95413 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 9.4)
+2025-11-10T13:34:28.599+08:00  WARN 95413 --- [cs203] [main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: MySQL 9.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2025-11-10T13:34:28.625+08:00  INFO 95413 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.022s)
+2025-11-10T13:34:28.633+08:00  INFO 95413 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-10T13:34:28.634+08:00  INFO 95413 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-10T13:34:28.666+08:00  INFO 95413 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-10T13:34:28.693+08:00  INFO 95413 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-10T13:34:28.707+08:00  INFO 95413 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-10T13:34:28.805+08:00  INFO 95413 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-10T13:34:28.830+08:00  WARN 95413 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-10T13:34:28.830+08:00  WARN 95413 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-10T13:34:28.835+08:00  INFO 95413 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-10T13:34:29.219+08:00  INFO 95413 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-10T13:34:29.267+08:00  INFO 95413 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:34:29.370+08:00 DEBUG 95413 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-10T13:34:29.378+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-10T13:34:29.381+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-10T13:34:29.381+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-10T13:34:29.381+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-10T13:34:29.394+08:00  INFO 95413 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-10T13:34:29.582+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-10T13:34:29.601+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-10T13:34:30.021+08:00  WARN 95413 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-10T13:34:30.030+08:00  INFO 95413 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-10T13:34:30.114+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-10T13:34:30.115+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-10T13:34:30.115+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-10T13:34:30.115+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-10T13:34:30.116+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-10T13:34:30.120+08:00  WARN 95413 --- [cs203] [main] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/audit/**] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-11-10T13:34:30.123+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-10T13:34:30.123+08:00 DEBUG 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-10T13:34:30.123+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-10T13:34:30.237+08:00  INFO 95413 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-10T13:34:30.241+08:00  INFO 95413 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 2.632 seconds (process running for 2.768)
+2025-11-10T13:34:30.243+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-10T13:34:30.243+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-10T13:34:30.243+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-10T13:34:30.243+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-10T13:34:30.243+08:00  INFO 95413 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-10T13:34:30.263+08:00  INFO 95413 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:34:30.263+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 20ms
+2025-11-10T13:34:30.263+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-10T13:34:30.263+08:00  INFO 95413 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-10T13:34:30.265+08:00  INFO 95413 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-09T16:33:06, skipping
+2025-11-10T13:34:30.265+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 2ms
+2025-11-10T13:34:30.265+08:00  INFO 95413 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 22ms ===
+2025-11-10T13:34:34.802+08:00  INFO 95413 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-10T13:34:34.802+08:00  INFO 95413 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-10T13:34:34.803+08:00  INFO 95413 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-10T13:34:34.813+08:00 DEBUG 95413 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /api/chatbot
+2025-11-10T13:34:34.813+08:00 DEBUG 95413 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:35:04.849+08:00 DEBUG 95413 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /api/chatbot
+2025-11-10T13:35:04.850+08:00 DEBUG 95413 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-10T13:35:17.493+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-10T13:35:17.502+08:00  INFO 95413 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-10T13:35:17.510+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-10T13:35:17.512+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-10T13:35:17.515+08:00  INFO 95413 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
