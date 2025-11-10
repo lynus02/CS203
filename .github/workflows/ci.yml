@@ -15,6 +15,9 @@ jobs:
     env:
       SPRING_PROFILES_ACTIVE: test
       JWT_SECRET: test-secret-key-for-ci-cd-pipeline
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ""
 
     steps:
       - uses: actions/checkout@v4     # Downloads the repository
@@ -48,7 +51,7 @@ jobs:
 
       # Runs all backend tests (unit + integration tests)
       - name: Run backend tests
-        run: mvn clean test
+        run: mvn -B clean test
 
       # Installs frontend dependencies
       - name: Install frontend dependencies
@@ -62,4 +65,4 @@ jobs:
 
       # Builds the complete application (backend + frontend)
       - name: Build application
-        run: mvn clean package -DskipTests
+        run: mvn -B package -DskipTests
