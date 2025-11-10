@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Calendar } from "./ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
-import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
-import { CountryFlag } from "./ui/country-flags";
-import { SaveProductDialog, SavedProductConfig } from "./SavedProducts";
+import {useState, useEffect} from "react";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
+import {Input} from "./ui/input";
+import {Label} from "./ui/label";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
+import {Button} from "./ui/button";
+import {Badge} from "./ui/badge";
+import {Calendar} from "./ui/calendar";
+import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "./ui/command";
+import {CalendarIcon, Search, CheckCircle, AlertTriangle, Info} from "lucide-react";
+import {CountryFlag} from "./ui/country-flags";
+import {SaveProductDialog, SavedProductConfig} from "./SavedProducts";
 import tariffApi from "../services/tariffApi";
 
 // Get constants from tariffApi
-const { suggestProducts, getTariffRatesBySize, calculateTariff, getCountries } = tariffApi;
+const { runAudit: runAuditApi, suggestProducts, getTariffRatesBySize, calculateTariff, getCountries } = tariffApi;
 
-interface CountryDto{
+interface CountryDto {
     code: string;
     name: string;
 }
@@ -56,7 +56,7 @@ interface CustomsDutyCalculatorProps {
     savedConfig?: SavedProductConfig;
 }
 
-export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsDutyCalculatorProps) {
+export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDutyCalculatorProps) {
     const [productValue, setProductValue] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
@@ -68,26 +68,64 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
     const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const [countries, setCountries] = useState<CountryDto[]>([]);
+    const [auditRunning, setAuditRunning] = useState(false);
+    const [auditResult, setAuditResult] = useState<{
+        status: "ok" | "modified" | "error";
+        message: string;
+        localHash?: string;
+        onChainHash?: string
+    } | null>(null);
+
+    const runAudit = async () => {
+        setAuditRunning(true);
+        setAuditResult(null);
+        try {
+            const data = await runAuditApi(); // ✅ correctly calls backend audit API
+            if (data.integrityOk) {
+                setAuditResult({
+                    status: "ok",
+                    message: data.message || "Database integrity verified",
+                    localHash: data.localHash ?? undefined,
+                    onChainHash: data.onChainHash ?? undefined
+                });
+            } else if (data.error) {
+                setAuditResult({
+                    status: "error",
+                    message: data.message || "Audit failed"
+                });
+            } else {
+                setAuditResult({
+                    status: "modified",
+                    message: data.message || "Database hash mismatch",
+                });
+            }
+        } catch (e: any) {
+            setAuditResult({ status: "error", message: e?.payload?.message || e?.message || "Audit failed" });
+        } finally {
+            setAuditRunning(false);
+        }
+    };
+
 
     const MAX_SUGGESTION_SIZE = 20;
 
-    // Fetch countries from backend
+    // Load countries from backend
     useEffect(() => {
         getCountries()
             .then((data: CountryDto[]) => {
                 const sorted = [...data].sort((a, b) =>
-                    a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+                    a.name.localeCompare(b.name, "en", {sensitivity: "base"})
                 );
                 setCountries(sorted);
             })
             .catch((err) => console.error("Failed to fetch countries:", err));
     }, []);
 
-    // Load product suggestions when popover opens
+    // Initial product suggestions
     useEffect(() => {
         if (!productOpen) return;
-
         setLoadingSuggestions(true);
+
         getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
             .then((data) => {
                 setSuggestedProducts(
@@ -107,8 +145,8 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
     // Search products as user types
     useEffect(() => {
         if (productSearch.length === 0) return;
-
         setLoadingSuggestions(true);
+
         suggestProducts(productSearch, destinationCountry, 0, MAX_SUGGESTION_SIZE)
             .then((data) => {
                 const results = data.content || data;
@@ -174,6 +212,22 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
         }
     }
 
+    // Saved config auto-load
+    useEffect(() => {
+        if (!savedConfig) return;
+
+        setSelectedProduct(savedConfig.product);
+        setProductValue(savedConfig.productValue.toString());
+        setOriginCountry(savedConfig.originCountry);
+        setDestinationCountry(savedConfig.destinationCountry);
+        setImportDate(new Date(savedConfig.importDate));
+
+        setTimeout(handleCalculate, 200);
+    }, [savedConfig]);
+
+    const canSaveProduct =
+        selectedProduct && productValue && originCountry && destinationCountry;
+
     // Reset UI and states
     const clearState = () => {
         setProductValue("");
@@ -190,34 +244,75 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Food Tariff Calculator</CardTitle>
-                <CardDescription>
-                    Calculate food import duties with trade agreement adjustments and comprehensive food product selection
-                </CardDescription>
+                <div className="flex items-start justify-between w-full">
+                    <div>
+                        <CardTitle>Food Tariff Calculator</CardTitle>
+                        <CardDescription>
+                            Calculate food import duties with trade agreement adjustments and comprehensive food product selection
+                        </CardDescription>
+                    </div>
+                    <div className="ml-4">
+                        <Button onClick={runAudit} disabled={auditRunning} variant="outline">
+                            {auditRunning ? "Running audit…" : "Run DB Audit"}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Audit feedback banner */}
+                {auditResult && (
+                    <div className="mt-3">
+                        {auditResult.status === "ok" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-green-50 border border-green-200 text-green-700">
+                                <CheckCircle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Verified</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                        {auditResult.status === "modified" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-yellow-50 border border-yellow-200 text-yellow-800">
+                                <AlertTriangle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Potential modification detected</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                        {auditResult.status === "error" && (
+                            <div className="flex items-center gap-2 p-2 rounded bg-red-50 border border-red-200 text-red-700">
+                                <AlertTriangle className="h-4 w-4" />
+                                <div>
+                                    <div className="font-medium">Audit error</div>
+                                    <div className="text-sm">{auditResult.message}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardHeader>
 
             <CardContent className="space-y-6">
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Country of Origin */}
                     <div className="space-y-2">
-                        <Label htmlFor="origin-country">Country of Origin</Label>
+                        <Label>Country of Origin</Label>
                         <Select value={originCountry} onValueChange={setOriginCountry}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select origin country">
                                     {originCountry && (
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={originCountry} />
-                                            {originCountry}
+                                            <CountryFlag country={originCountry}/> {originCountry}
                                         </div>
                                     )}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {countries.map((country) => (
-                                    <SelectItem key={country.code} value={country.name}>
+                                {countries.map((c) => (
+                                    <SelectItem key={c.code} value={c.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country.name} />
-                                            {country.name}
+                                            <CountryFlag country={c.name}/> {c.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -227,24 +322,22 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
 
                     {/* Destination Country */}
                     <div className="space-y-2">
-                        <Label htmlFor="destination-country">Destination Country</Label>
+                        <Label>Destination Country</Label>
                         <Select value={destinationCountry} onValueChange={setDestinationCountry}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select destination">
                                     {destinationCountry && (
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={destinationCountry} />
-                                            {destinationCountry}
+                                            <CountryFlag country={destinationCountry}/> {destinationCountry}
                                         </div>
                                     )}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {countries.map((country) => (
-                                    <SelectItem key={country.code} value={country.name}>
+                                {countries.map((c) => (
+                                    <SelectItem key={c.code} value={c.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={country.name} />
-                                            {country.name}
+                                            <CountryFlag country={c.name}/> {c.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -262,17 +355,15 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={productOpen}
-                                className="w-full flex justify-between items-center"
-                                style={{ minWidth: 0 }}
+                                className="w-full justify-between"
                             >
-                <span className="truncate block" style={{ maxWidth: "70%" }}>
-                  {selectedProduct
-                      ? `${selectedProduct.name} (${selectedProduct.hsCode})`
-                      : "Search products by name or HS code..."}
-                </span>
-                                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                {selectedProduct
+                                    ? `${selectedProduct.name} (${selectedProduct.hsCode})`
+                                    : "Search products by name or HS code..."}
+                                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                             </Button>
                         </PopoverTrigger>
+
                         <PopoverContent className="w-full p-0">
                             <Command>
                                 <CommandInput
@@ -307,7 +398,8 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
                                                 <div className="flex flex-col">
                                                     <div className="font-medium">{product.name}</div>
                                                     <div className="text-sm text-muted-foreground">
-                                                        HS: {product.hsCode} • {product.category} • Base Rate: {product.baseTariffRate}%
+                                                        HS: {product.hsCode} • {product.category} • Base
+                                                        Rate: {product.baseTariffRate}%
                                                     </div>
                                                 </div>
                                             </CommandItem>
@@ -319,7 +411,7 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
                     </Popover>
                 </div>
 
-                {<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Product Value */}
                     <div className="space-y-2">
                         <Label htmlFor="product-value">Product Value (USD)</Label>
@@ -332,28 +424,29 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
                         />
                     </div>
 
-                {/* Import Date */}
-                <div className="space-y-2">
-                    <Label>Import Date</Label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start text-left font-normal"
-                            >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {importDate.toLocaleDateString()}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={importDate}
-                                onSelect={(date) => date && setImportDate(date)}
-                                initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
+                    {/* Import Date */}
+                    <div className="space-y-2">
+                        <Label>Import Date</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start text-left font-normal"
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4"/>
+                                    {importDate.toLocaleDateString()}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={importDate}
+                                    onSelect={(date) => date && setImportDate(date)}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
                 </div>
 
 
@@ -372,7 +465,7 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
                     <div className="space-y-4 p-6 bg-muted rounded-lg">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                                <CheckCircle className="h-5 w-5 text-green-600" />
+                                <CheckCircle className="h-5 w-5 text-green-600"/>
                                 <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
                             </div>
                             {canSaveProduct && selectedProduct && (
@@ -432,9 +525,10 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
 
                         {/* Trade Agreement Information */}
                         {result.tradeAgreement && (
-                            <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded border border-green-200 dark:border-green-800">
+                            <div
+                                className="p-4 bg-green-50 dark:bg-green-950/20 rounded border border-green-200 dark:border-green-800">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <Info className="h-4 w-4 text-green-600" />
+                                    <Info className="h-4 w-4 text-green-600"/>
                                     <h4 className="font-medium text-green-800 dark:text-green-200">
                                         Trade Agreement Applied
                                     </h4>
@@ -467,9 +561,12 @@ export function CustomsDutyCalculator({ onResultsChange, savedConfig }: CustomsD
 
                         {/* Savings Information */}
                         {result.tradeAgreement && result.tradeAgreementReduction > 0 && (
-                            <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
+                            <div
+                                className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
                                 <div className="text-sm text-blue-700 dark:text-blue-300">
-                                    <strong>You saved ${((parseFloat(productValue) * result.tradeAgreementReduction) / 100).toFixed(2)}</strong> in customs duties thanks to the {result.tradeAgreement.name} trade agreement.
+                                    <strong>You saved
+                                        ${((parseFloat(productValue) * result.tradeAgreementReduction) / 100).toFixed(2)}</strong> in
+                                    customs duties thanks to the {result.tradeAgreement.name} trade agreement.
                                 </div>
                             </div>
                         )}

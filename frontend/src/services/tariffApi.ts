@@ -11,6 +11,20 @@ export interface TariffDto {
 }
 
 const tariffApi = {
+    // Run Audit
+    async runAudit(): Promise<any> {
+        try {
+            const response = await api.post('/api/audit/check');
+            return response.data;
+        } catch (err: any) {
+            const payload = err?.response?.data;
+            const message =
+                payload?.message || err?.message || 'Audit request failed';
+
+            throw { message, status: err?.response?.status, payload };
+        }
+    },
+
     // GET /tariffs/suggest?q=xxx&country=xxx&page=0&size=20
     suggestProducts(query: string, country?: string, page = 0, size = 20) {
         return api.get('/tariffs/suggest',
