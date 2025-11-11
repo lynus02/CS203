@@ -154,7 +154,7 @@ public class TariffCalculationService {
         }
     }
 
-    private double getDiscountMultiplier(String sensitivityTier, String agreementType) {
+    public double getDiscountMultiplier(String sensitivityTier, String agreementType) {
         switch (sensitivityTier.toUpperCase()) {
             case "HIGH":
                 switch (agreementType.toUpperCase()) {

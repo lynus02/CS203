@@ -31,4 +31,19 @@ public interface TradeAgreementRepository extends JpaRepository<TradeAgreement, 
             @Param("exportCountry") String exportCountry,
             @Param("destCountry") String destCountry,
             @Param("date") LocalDate date);
+
+    //
+    @Query("SELECT DISTINCT ta.effectiveDate AS effectiveDate, ta.expirationDate AS expirationDate " +
+            "FROM TradeAgreement ta " +
+            "JOIN AgreementCountry ac1 ON ta.agreementId = ac1.agreement.agreementId " +
+            "JOIN AgreementCountry ac2 ON ta.agreementId = ac2.agreement.agreementId " +
+            "WHERE ac1.country.countryName = :exportCountry " +
+            "AND ac2.country.countryName = :destCountry " +
+            "AND (ta.effectiveDate IS NULL OR ta.effectiveDate <= :date) " +
+            "AND (ta.expirationDate IS NULL OR ta.expirationDate >= :date)")
+
+    List<Long> findDateOfEntryBetweenCountriesOnDate(
+            @Param("exportCountry") String exportCountry,
+            @Param("destCountry") String destCountry,
+            @Param("date") LocalDate date);
 }
