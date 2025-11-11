@@ -99,7 +99,7 @@ CREATE TABLE `flyway_schema_history` (
 
 LOCK TABLES `flyway_schema_history` WRITE;
 /*!40000 ALTER TABLE `flyway_schema_history` DISABLE KEYS */;
-INSERT INTO `flyway_schema_history` VALUES (1,'1','Add HSCode Table','SQL','V1__Add_HSCode_Table.sql',-740402316,'root','2025-11-11 18:27:53',108,1),(2,'2','Add UserManagement Tables','SQL','V2__Add_UserManagement_Tables.sql',840743649,'root','2025-11-11 18:27:53',264,1),(3,'3','Add Country Product Tariff Tables','SQL','V3__Add_Country_Product_Tariff_Tables.sql',954356854,'root','2025-11-11 18:27:53',8,1),(4,'4','Add Migration Status Table','SQL','V4__Add_Migration_Status_Table.sql',-1010265155,'root','2025-11-11 18:27:53',4,1),(5,'5','Add  TradeAgreement Table','SQL','V5__Add__TradeAgreement_Table.sql',-975366445,'root','2025-11-11 18:27:53',6,1);
+INSERT INTO `flyway_schema_history` VALUES (1,'1','Add HSCode Table','SQL','V1__Add_HSCode_Table.sql',-740402316,'root','2025-11-11 22:12:47',97,1),(2,'2','Add UserManagement Tables','SQL','V2__Add_UserManagement_Tables.sql',-1924383789,'root','2025-11-11 22:12:48',297,1),(3,'3','Add Country Product Tariff Tables','SQL','V3__Add_Country_Product_Tariff_Tables.sql',954356854,'root','2025-11-11 22:12:48',10,1),(4,'4','Add Migration Status Table','SQL','V4__Add_Migration_Status_Table.sql',-1010265155,'root','2025-11-11 22:12:48',2,1),(5,'5','Add  TradeAgreement Table','SQL','V5__Add__TradeAgreement_Table.sql',-975366445,'root','2025-11-11 22:12:48',8,1);
 /*!40000 ALTER TABLE `flyway_schema_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +152,7 @@ CREATE TABLE `migration_status` (
 
 LOCK TABLES `migration_status` WRITE;
 /*!40000 ALTER TABLE `migration_status` DISABLE KEYS */;
-INSERT INTO `migration_status` VALUES ('csv_data_migration',1,'2025-11-11 18:28:19'),('csv_tradeAgreement_migration',1,'2025-11-11 18:28:19');
+INSERT INTO `migration_status` VALUES ('csv_data_migration',1,'2025-11-11 22:13:13'),('csv_tradeAgreement_migration',1,'2025-11-11 22:13:13');
 /*!40000 ALTER TABLE `migration_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,21 +220,22 @@ DROP TABLE IF EXISTS `saved_products`;
 CREATE TABLE `saved_products` (
   `id` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `product_id` varchar(255) NOT NULL,
   `product_name` varchar(255) NOT NULL,
-  `hs_code` varchar(50) NOT NULL,
+  `hs_code` varchar(255) NOT NULL,
   `category` varchar(255) NOT NULL,
-  `base_tariff_rate` decimal(10,4) NOT NULL,
-  `product_value` decimal(15,2) NOT NULL,
-  `origin_country` varchar(100) NOT NULL,
-  `destination_country` varchar(100) NOT NULL,
+  `base_tariff_rate` double NOT NULL,
+  `product_value` double NOT NULL,
+  `origin_country` varchar(255) NOT NULL,
+  `destination_country` varchar(255) NOT NULL,
   `import_date` datetime NOT NULL,
   `saved_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_product` (`user_id`,`product_id`),
+  UNIQUE KEY `UKiaftdy9f5ce5gqdnhgotdph88` (`user_id`,`product_id`),
   KEY `idx_user_id` (`user_id`),
-  KEY `idx_saved_at` (`saved_at`),
-  CONSTRAINT `saved_products_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+  KEY `idx_saved_at` (`saved_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -331,7 +332,6 @@ CREATE TABLE `user_profiles` (
 
 LOCK TABLES `user_profiles` WRITE;
 /*!40000 ALTER TABLE `user_profiles` DISABLE KEYS */;
-INSERT INTO `user_profiles` VALUES ('1111c78c-24da-44c9-b648-110cbf36831b','John','Doe',NULL);
 /*!40000 ALTER TABLE `user_profiles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -359,7 +359,6 @@ CREATE TABLE `user_roles` (
 
 LOCK TABLES `user_roles` WRITE;
 /*!40000 ALTER TABLE `user_roles` DISABLE KEYS */;
-INSERT INTO `user_roles` VALUES ('1111c78c-24da-44c9-b648-110cbf36831b',1,'2025-11-11 18:29:13');
 /*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -388,7 +387,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('1111c78c-24da-44c9-b648-110cbf36831b','john.doe@example.com','$2a$10$C6Ey9cTTBv0679UMWp4Ts.rynHDMppb10J7J0K/ml9kp5f4K0jEsq',1,'2025-11-11 10:29:13','2025-11-11 10:29:13');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -401,4 +399,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-12  6:05:33
+-- Dump completed on 2025-11-12  6:15:01
