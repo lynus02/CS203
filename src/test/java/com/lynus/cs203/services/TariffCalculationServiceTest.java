@@ -401,7 +401,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -433,7 +433,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -465,7 +465,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -497,7 +497,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -529,7 +529,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -562,7 +562,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -594,7 +594,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));

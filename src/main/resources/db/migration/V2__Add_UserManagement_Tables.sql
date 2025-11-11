@@ -34,3 +34,26 @@ INSERT INTO roles (name, description) VALUES
 ('USER', 'Regular user with limited access'),
 ('ADMIN', 'Administrator with full access');
 
+-- Create saved_products table
+CREATE TABLE saved_products (
+                                id VARCHAR(255) PRIMARY KEY,
+                                user_id VARCHAR(255) NOT NULL,
+                                name VARCHAR(255) NOT NULL,
+                                product_id VARCHAR(255) NOT NULL,
+                                product_name VARCHAR(255) NOT NULL,
+                                hs_code VARCHAR(50) NOT NULL,
+                                category VARCHAR(255) NOT NULL,
+                                base_tariff_rate DECIMAL(10,4) NOT NULL,
+                                product_value DECIMAL(15,2) NOT NULL,
+                                origin_country VARCHAR(100) NOT NULL,
+                                destination_country VARCHAR(100) NOT NULL,
+                                import_date DATETIME NOT NULL,
+                                saved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    -- Prevent duplicate saves for same user + product
+                                UNIQUE KEY uk_user_product (user_id, product_id),
+
+    -- Index for faster queries
+                                KEY idx_user_id (user_id),
+                                KEY idx_saved_at (saved_at)
+);

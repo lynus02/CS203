@@ -18,6 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "./ui/alert-dialog";
+import savedProductsService from "../services/savedProductsService";
 
 interface Product {
     id: string;
@@ -243,14 +244,16 @@ export function SaveProductDialog({
                                   }: SaveProductDialogProps) {
     const [open, setOpen] = useState(false);
     const [configName, setConfigName] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSave = () => {
+    // handle saving product configuration to backend
+    const handleSave = async() => {
         if (!configName.trim()) {
             toast.error("Please enter a name for this configuration");
             return;
         }
 
-        const newConfig: SavedProductConfig = {
+        const productData: SavedProductConfig = {
             id: `saved-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             name: configName,
             product,
@@ -262,24 +265,19 @@ export function SaveProductDialog({
         };
 
         // Load existing saved products
-        const stored = localStorage.getItem("foodTariffSavedProducts");
-        const existing = stored ? JSON.parse(stored) : [];
-
-        // Add new configuration
-        const updated = [...existing, newConfig];
-        localStorage.setItem("foodTariffSavedProducts", JSON.stringify(updated));
-
-        toast.success("Product configuration saved!");
-        setConfigName("");
-        setOpen(false);
-        onSave?.();
-        console.log('SaveProductDialog: saved newConfig', newConfig, 'totalSaved:', updated.length);
-        // Notify other components that saved products changed (useful when Save dialog is used elsewhere)
         try {
-            window.dispatchEvent(new CustomEvent('savedProductsChanged', { detail: newConfig }));
-            console.log('SaveProductDialog: dispatched savedProductsChanged event');
-        } catch (e) {
-            console.warn('Could not dispatch savedProductsChanged event', e);
+            setLoading(true);
+            const saved = await savedProductsService.saveProduct(productData);
+            toast.success("Product configuration saved to your account!");
+            setConfigName("");
+            setOpen(false);
+            onSave?.();
+            console.log('SaveProductDialog: saved to backend', saved);
+        } catch (error: any) {
+            console.error('Error saving product configuration', error);
+            toast.error(`Failed to save product: ${error.message || 'Unknown error'}`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -329,8 +327,8 @@ export function SaveProductDialog({
                     <Button variant="outline" onClick={() => setOpen(false)}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSave}>
-                        Save Product
+                    <Button onClick={handleSave} disable={loading}>
+                        {loading ? "Saving..." : "Save Product"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
