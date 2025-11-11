@@ -1,3 +1,4 @@
+// java
 package com.lynus.cs203.services;
 
 import com.lynus.cs203.dtos.response.CountryDto;
@@ -126,16 +127,18 @@ class TariffSuggestionServiceTest {
     void suggestProducts_WithTextQueryAndCountry_ShouldReturnTariffDtos() {
         // Arrange
         String query = "honey";
+        String country = "United States";
         int page = 0;
         int size = 10;
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
-        when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq("%" + query.toLowerCase() + "%"), eq("%-1%"), any(Pageable.class)))
+        // service will call the country+description method when country is provided and query is text
+        when(tariffRepository.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
+                eq(country), eq(query), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
-        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, null, page, size);
+        Page<TariffDto> result = tariffSuggestionService.suggestProducts(query, country, page, size);
 
         // Assert
         assertThat(result).isNotNull();
@@ -143,8 +146,8 @@ class TariffSuggestionServiceTest {
 
         // Verify
         verify(tariffRepository)
-                .findByProductDescriptionOrProductCodeContaining(
-                        eq("%" + query.toLowerCase() + "%"), eq("%-1%"), any(Pageable.class));
+                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(
+                        eq(country), eq(query), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -158,7 +161,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of(testTariff1));
         when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq("%" + query.toLowerCase() + "%"), eq("%1001%"), any(Pageable.class)))
+                eq(query), eq(query), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -171,7 +174,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByProductDescriptionOrProductCodeContaining(
-                        eq("%" + query.toLowerCase() + "%"), eq("%1001%"), any(Pageable.class));
+                        eq(query), eq(query), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -185,7 +188,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of());
         when(tariffRepository.findByProductDescriptionOrProductCodeContaining(
-                eq("%" + query.toLowerCase() + "%"), eq("%-1%"), any(Pageable.class)))
+                eq(query), eq(query), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -198,7 +201,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByProductDescriptionOrProductCodeContaining(
-                        eq("%" + query.toLowerCase() + "%"), eq("%-1%"), any(Pageable.class));
+                        eq(query), eq(query), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 
@@ -235,7 +238,7 @@ class TariffSuggestionServiceTest {
 
         Page<Tariff> tariffPage = new PageImpl<>(List.of());
         when(tariffRepository.findByCountry_CountryNameAndProduct_ProductCodeContaining(
-                eq(country), eq("%123456789%"), any(Pageable.class)))
+                eq(country), eq(query), any(Pageable.class)))
                 .thenReturn(tariffPage);
 
         // Act
@@ -247,7 +250,7 @@ class TariffSuggestionServiceTest {
         // Verify
         verify(tariffRepository)
                 .findByCountry_CountryNameAndProduct_ProductCodeContaining(
-                        eq(country), eq("%123456789%"), any(Pageable.class));
+                        eq(country), eq(query), any(Pageable.class));
         verifyNoMoreInteractions(tariffRepository);
     }
 

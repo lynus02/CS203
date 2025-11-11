@@ -55,7 +55,7 @@ class OpenAIServiceTest {
         return res;
     }
 
-    private Tariff buildTariff(int hsCode, String desc, double rate, String countryName) {
+    private Tariff buildTariff(String hsCode, String desc, double rate, String countryName) {
         Product p = new Product();
         p.setProductCode(hsCode);
         p.setProductDescription(desc);
@@ -113,7 +113,7 @@ class OpenAIServiceTest {
     @Test
     void processChat_hsCode_withDbMatches_returnsSummaryAnswer() throws Exception {
         // Arrange
-        Tariff t = buildTariff(100630, "rice", 5.0, "japan");
+        Tariff t = buildTariff("100630", "rice", 5.0, "japan");
         when(tariffRepo.findByProductDescriptionOrProductCodeContaining(anyString(), anyString(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
@@ -161,7 +161,7 @@ class OpenAIServiceTest {
         ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"japan\",\"country2\":\"singapore\"}");
         ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
 
-        Tariff t = buildTariff(100630, "rice", 3.5, "singapore");
+        Tariff t = buildTariff("100630", "rice", 3.5, "singapore");
         when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
@@ -200,7 +200,7 @@ class OpenAIServiceTest {
         ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"japan\",\"country2\":\"singapore\"}");
         ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
 
-        Tariff t = buildTariff(100630, "rice", 3.5, "singapore");
+        Tariff t = buildTariff("100630", "rice", 3.5, "singapore");
         when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
@@ -233,8 +233,8 @@ class OpenAIServiceTest {
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TARIFF_RATE\"}");
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\",\"destination\":\"japan\"}");
 
-        Tariff t1 = buildTariff(100630, "rice", 5.0, "japan");
-        Tariff t2 = buildTariff(100630, "rice", 7.0, "japan");
+        Tariff t1 = buildTariff("100630", "rice", 5.0, "japan");
+        Tariff t2 = buildTariff("100630", "rice", 7.0, "japan");
         when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("japan"), eq("rice"), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t1, t2)));
 
