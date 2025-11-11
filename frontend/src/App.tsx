@@ -126,7 +126,7 @@ export default function App() {
         {
             icon: Database,
             title: "Food Tariff Database",
-            description: "Search current food tariff rates by HS code and country"
+            description: "Search current food tariff rates by HS code and country. Verify data integrity with blockchain"
         }
     ];
 
@@ -260,10 +260,10 @@ export default function App() {
                     <div className="border-b border-gray-250 px-6 py-8 bg-primary">
                         <div className="flex items-center justify-between gap-4">
                             {/* Header with logo and theme toggle */}
-                            <div className="px-8 py-8 flex items-center gap-4 text-foreground">
+                            <div className="px-8 py-8 flex items-center gap-4">
                                 <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                    <Globe className="h-6 w-6 text-background"/>
-                                    <span className="text-xl font-medium">FoodTariff Pro</span>
+                                    <Globe className="h-6 w-6 text-white"/>
+                                    <span className="text-xl font-medium text-white">FoodTariff Pro</span>
                                 </a>
                                 <ThemeToggle/>
                             </div>
@@ -271,25 +271,25 @@ export default function App() {
                             {/* Right side */}
                             <div className="flex items-center gap-4">
                                 {/* My Saved Products button (left of login) */}
-                                <MySavedProductsButton className="text-primary" onLoadProduct={handleLoadProduct}/>
+                                <MySavedProductsButton onLoadProduct={handleLoadProduct}/>
 
                                 {/* Login/User Button */}
                                 {user ? (
-                                    <div className="flex items-center gap-2 text-primary">
+                                    <div className="flex items-center gap-2">
                                         <span
                                             className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             onClick={handleShowProfile}
-                                            className="bg-primary text-foreground flex items-center gap-2"
+                                            className="bg-background text-foreground flex items-center gap-2"
                                         >
                                             <User className="h-9 w-9"/>
                                         </Button>
                                     </div>
                                 ) : (
                                     <Button variant="outline" onClick={handleShowLogin}
-                                            className="bg-primary text-foreground flex items-center gap-2">
+                                            className="bg-background text-foreground flex items-center gap-2">
                                         <LogIn className="h-4 w-4"/>
                                         Login
                                     </Button>
@@ -303,7 +303,7 @@ export default function App() {
                         <div className="text-center mb-8">
                             <div className="flex items-center justify-center gap-2 mb-4">
                                 <Globe className="h-8 w-8 text-primary"/>
-                                <h1 className="text-3xl text-primary">FoodTariff Pro</h1>
+                                <h1 className="text-3xl">FoodTariff Pro</h1>
                             </div>
                             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                                 Specialized tariff and shipping cost calculator for food imports and exports.

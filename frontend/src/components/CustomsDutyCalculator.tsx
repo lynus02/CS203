@@ -179,8 +179,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                 selectedProduct.hsCode,
                 originCountryCode,
                 destCountryCode,
-                parseFloat(productValue),
-                importDate.toISOString().split("T")[0]
+                parseFloat(productValue)
             );
 
             const value = parseFloat(productValue);
