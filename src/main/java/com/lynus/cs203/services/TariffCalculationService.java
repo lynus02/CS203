@@ -96,6 +96,7 @@ public class TariffCalculationService {
         double baseRate = tariff.getTariffRate();
         double bestFinalRate = baseRate;
         String bestAgreementType = "MFN"; // set default to Most Favored Nation
+        String bestAgreementName = "No Trade Agreement";
 
         if (!tradeAgreementIds.isEmpty()) {
             for (Long agreementId : tradeAgreementIds) {
@@ -114,6 +115,7 @@ public class TariffCalculationService {
                         if (discountedRate < bestFinalRate) {
                             bestFinalRate = discountedRate;
                             bestAgreementType = agreementType.trim();
+                            bestAgreementName = agreement.getAgreementName();
                         }
                     }
                 }
@@ -121,7 +123,7 @@ public class TariffCalculationService {
         }
         // Calculate tariff amount
         double tariffAmount = (bestFinalRate / 100.0) * request.getCustomsValue();
-
+        log.info("Tariff calculation trade name: {}", bestAgreementName);
         log.info("Tariff calculation completed. Tariff Amount: {}", tariffAmount);
         return TariffCalculationResponse.builder()
                 .productCode(product.getProductCode())
