@@ -3,6 +3,9 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import api from "../services/api";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 interface Message {
     id: string;
@@ -62,7 +65,7 @@ export function AIChat() {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch("http://localhost:8080/api/chatbot", {
+            const response = await fetch(`${API_BASE_URL}/api/chatbot`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
