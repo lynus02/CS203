@@ -40,37 +40,35 @@ export interface SavedProductConfig {
 }
 
 interface SavedProductsProps {
+    userId: string;
     onLoadProduct?: (config: SavedProductConfig) => void;
 }
 
-export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
+export function SavedProducts({ userId, onLoadProduct }: SavedProductsProps) {
     const [savedProducts, setSavedProducts] = useState<SavedProductConfig[]>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
     // Reload saved products from localStorage into state
-    const reloadSaved = () => {
-        const stored = localStorage.getItem("foodTariffSavedProducts");
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored) as SavedProductConfig[];
-                setSavedProducts(parsed);
-                console.log('reloadSaved: loaded', parsed.length, 'saved products');
-                return;
-            } catch (e) {
-                console.error('Failed to parse saved products', e);
-            }
+    const reloadSaved = async () => {
+        if (!userId) return;
+        setLoading(true);
+        try {
+            const products = await savedProductsService.smartGet(userId);
+            setSavedProducts(products);
+        } catch (err: any) {
+            console.error('Failed to load saved products from backend', err);
+            toast.error(err.message || "Failed to load saved products");
+        } finally {
+            setLoading(false);
         }
-        // If no stored items or parse failed, ensure empty list
-        setSavedProducts([]);
-        console.log('reloadSaved: no saved products found');
     };
 
     // Load saved products from localStorage on mount
     useEffect(() => {
         reloadSaved();
-        console.log('SavedProducts component mounted');
-    }, []);
+        }, [userId]);
 
     // Listen for global saved-products changes so external save actions (from other components)
     // can notify this component to reload the list.
@@ -85,12 +83,16 @@ export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
         setDeleteDialogOpen(true);
     };
 
-    const confirmDelete = () => {
-        if (productToDelete) {
-            const updated = savedProducts.filter(p => p.id !== productToDelete);
-            setSavedProducts(updated);
-            localStorage.setItem("foodTariffSavedProducts", JSON.stringify(updated));
-            toast.success("Product configuration deleted");
+    const confirmDelete = async () => {
+        if (!productToDelete || !userId) return;
+        try {
+            await savedProductsService.smartDelete(userId, productToDelete);
+            setSavedProducts(prev => prev.filter(p => p.id !== productToDelete));
+            toast.success(" Product configuration deleted");
+        } catch (err: any){
+            console.error('Failed to delete product', err);
+            toast.error(err.message || "Failed to delete product");
+        } finally {
             setDeleteDialogOpen(false);
             setProductToDelete(null);
         }

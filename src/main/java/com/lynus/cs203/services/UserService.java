@@ -10,6 +10,7 @@ import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.exceptions.InvalidPasswordException;
 import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.mappers.UserMapper;
+import com.lynus.cs203.repositories.SavedProductConfigRepository;
 import com.lynus.cs203.repositories.UserProfileRepository;
 import com.lynus.cs203.repositories.UserRepository;
 import com.lynus.cs203.repositories.UserRoleRepository;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserProfileRepository userProfileRepository;
     private final UserRoleRepository userRoleRepository;
+    private final SavedProductConfigRepository savedProductConfigRepository;
 
     /* DTO Methods */
     public List<UserDto> getAllUsersAsDto(String sort) {
@@ -287,4 +290,20 @@ public class UserService {
         return exists;
     }
 
+    // Get all saved products for a user
+    public List<SavedProductConfig> getSavedProducts(String userId) {
+        return savedProductConfigRepository.findByUserId(userId);
+    }
+
+    public SavedProductConfig saveProduct(String userId, SavedProductConfig savedProduct) {
+        savedProduct.setUserId(userId);
+        if (savedProduct.getSavedAt() == null){
+            savedProduct.setSavedAt(LocalDateTime.now());
+        }
+        return savedProductConfigRepository.save(savedProduct);
+    }
+
+    public void deleteSavedProduct(String userId, String productId){
+        savedProductConfigRepository.deleteByUserIdAndProductId(userId, productId);
+    }
 }

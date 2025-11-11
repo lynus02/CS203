@@ -112,7 +112,7 @@ const savedProductsService = {
         return newConfig;
     },
 
-    async smartGet(userId: string, productData: SaveProductRequest): Promise<SavedProductConfig[]> {
+    async smartGet(userId: string): Promise<SavedProductConfig[]> {
         if (!this.isAuthenticated()) return this.getFromLocalStorage();
 
         try {
