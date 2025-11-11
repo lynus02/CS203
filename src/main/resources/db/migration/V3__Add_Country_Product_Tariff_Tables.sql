@@ -18,7 +18,6 @@ CREATE TABLE tariff (
                         country_id BIGINT,
                         tariff_rate DOUBLE,
                         effective_date DATE NOT NULL DEFAULT '2020-01-01',
-                        expiry_date DATE DEFAULT NULL,
                         CONSTRAINT fk_tariff_product FOREIGN KEY (product_id) REFERENCES product(product_id),
                         CONSTRAINT fk_tariff_country FOREIGN KEY (country_id) REFERENCES country(country_id)
 );

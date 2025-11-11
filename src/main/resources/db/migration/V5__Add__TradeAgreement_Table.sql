@@ -3,9 +3,7 @@ CREATE TABLE trade_agreement (
     agreement_name VARCHAR(500) NOT NULL,
     agreement_type VARCHAR(100),
     effective_date DATE,
-    expiration_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    expiration_date DATE
     );
 
 CREATE TABLE agreement_country (
