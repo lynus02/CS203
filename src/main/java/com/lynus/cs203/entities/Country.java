@@ -26,7 +26,7 @@ public class Country {
     @Column(name = "country_name")
     private String countryName; // reporter_name
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Tariff> tariffs;
 
 }

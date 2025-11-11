@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -43,16 +44,27 @@ class OpenAIServiceTest {
     @Mock
     private AgreementCountryRepository agreementCountryRepo;
 
+    @Mock
+    private TariffCalculationService calculationService;
+
     @InjectMocks
     private OpenAIService svc;
 
     private ChatCompletionResult completionResultWithContent(String content) {
-        ChatCompletionResult res = mock(ChatCompletionResult.class);
-        ChatCompletionChoice choice = mock(ChatCompletionChoice.class);
         ChatMessage message = new ChatMessage("assistant", content);
-        when(choice.getMessage()).thenReturn(message);
-        when(res.getChoices()).thenReturn(List.of(choice));
-        return res;
+
+        ChatCompletionChoice choice = new ChatCompletionChoice();
+        choice.setMessage(message);
+        choice.setFinishReason("stop");
+        choice.setIndex(0);
+
+        ChatCompletionResult result = new ChatCompletionResult();
+        result.setChoices(List.of(choice));
+        result.setId("test-id");
+        result.setCreated(System.currentTimeMillis() / 1000L);
+        result.setModel("gpt-4o-mini");
+
+        return result;
     }
 
     private Tariff buildTariff(String hsCode, String desc, double rate, String countryName) {
@@ -71,210 +83,150 @@ class OpenAIServiceTest {
     }
 
     @Test
+    @DisplayName("Should return clarification for OTHER intent")
     void processChat_classify_other_returnsClarification() throws Exception {
-        // Arrange
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"OTHER\"}");
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("Hello?");
 
-            // Assert
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes))) {
+
+            Map<String, String> resp = svc.processChat("Hi?");
+
             assertNotNull(resp);
-            assertTrue(resp.get("answer").toLowerCase().contains("i can help") || resp.get("answer").length() > 0);
-            verify(mc.constructed().get(0), atLeastOnce()).createChatCompletion(any());
+            assertTrue(resp.get("answer").contains("clarify"));
         }
     }
 
     @Test
+    @DisplayName("Should return fallback reasoning for HS_CODE intent with no DB matches")
     void processChat_hsCode_noDbMatches_returnsFallback() throws Exception {
-        // Arrange
         when(tariffRepo.findByProductDescriptionOrProductCodeContaining(anyString(), anyString(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(emptyList()));
 
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"HS_CODE\"}");
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
-        ChatCompletionResult fallbackRes = completionResultWithContent("Likely HS 1006.30 — reasoning...");
+        ChatCompletionResult fallbackRes = completionResultWithContent("Likely HS 1006 — reasoning...");
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, fallbackRes);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("What is HS code for rice?");
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, fallbackRes))) {
 
-            // Assert
+            Map<String, String> resp = svc.processChat("HS code for rice?");
+
             assertNotNull(resp);
             assertEquals("rice", resp.get("product"));
-            assertEquals("Likely HS 1006.30 — reasoning...", resp.get("answer"));
+            assertEquals("Likely HS 1006 — reasoning...", resp.get("answer"));
         }
     }
 
     @Test
+    @DisplayName("Should return summary answer for HS_CODE intent with DB matches")
     void processChat_hsCode_withDbMatches_returnsSummaryAnswer() throws Exception {
-        // Arrange
         Tariff t = buildTariff("100630", "rice", 5.0, "japan");
         when(tariffRepo.findByProductDescriptionOrProductCodeContaining(anyString(), anyString(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(List.of(t)));
 
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"HS_CODE\"}");
         ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\"}");
-        ChatCompletionResult summaryRes = completionResultWithContent("HS 1006.30 seems the best match.");
+        ChatCompletionResult summaryRes = completionResultWithContent("HS 1006.30 seems best.");
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, summaryRes);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("Which HS code matches rice?");
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes, summaryRes))) {
 
-            // Assert
+            Map<String, String> resp = svc.processChat("Find HS code for rice");
+
             assertNotNull(resp);
             assertEquals("rice", resp.get("product"));
-            assertEquals("HS 1006.30 seems the best match.", resp.get("answer"));
+            assertEquals("HS 1006.30 seems best.", resp.get("answer"));
         }
     }
 
     @Test
-    void processChat_tradeAgreement_noAgreement_returnsNoAgreementMessage() throws Exception {
-        // Arrange
-        when(agreementCountryRepo.findAgreementsBetweenCountries(anyString(), anyString())).thenReturn(List.of());
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Atlantis\"}");
+    @DisplayName("Should return no agreement message for TRADE_AGREEMENT intent when none exists")
+    void processChat_tradeAgreement_noAgreement_returnsMessage() throws Exception {
+        when(agreementCountryRepo.findAgreementsBetweenCountriesOnDate(anyString(), anyString(), any(LocalDate.class)))
+                .thenReturn(emptyList());
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractCountries);
-        })) {
-            // Act
+        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
+        ChatCompletionResult extractRes = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Atlantis\"}");
+
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes))) {
+
             Map<String, String> resp = svc.processChat("Is there a trade agreement between Japan and Atlantis?");
 
-            // Assert
             assertNotNull(resp);
-            String ans = resp.get("answer").toLowerCase();
-            assertTrue(ans.contains("no trade agreement found") || ans.contains("no trade agreement"));
+            assertTrue(resp.get("answer").toLowerCase().contains("no trade agreement"));
         }
     }
 
     @Test
-    void processChat_tradeAgreement_withTariff_whenAgreementExists_showsPreferentialRates() throws Exception {
-        // Arrange
+    @DisplayName("Should return agreement details for TRADE_AGREEMENT intent when an agreement exists")
+    void processChat_tradeAgreement_withAgreement_returnsCorrectText() throws Exception {
+        when(agreementCountryRepo.findAgreementsBetweenCountriesOnDate(anyString(), anyString(), any(LocalDate.class)))
+                .thenReturn(List.of(99L));
+
+        TradeAgreement agr = new TradeAgreement();
+        agr.setAgreementName("JSEPA");
+        agr.setAgreementType("FTA");
+        agr.setEffectiveDate(LocalDate.of(2006, 1, 1));
+        agr.setExpirationDate(null);
+
+        when(tradeRepo.findAllByIds(eq(List.of(99L)))).thenReturn(List.of(agr));
+
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"japan\",\"country2\":\"singapore\"}");
-        ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
+        ChatCompletionResult extractRes = completionResultWithContent("{\"country1\":\"Japan\",\"country2\":\"Singapore\"}");
 
-        Tariff t = buildTariff("100630", "rice", 3.5, "singapore");
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(t)));
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes))) {
 
-        when(agreementCountryRepo.findAgreementsBetweenCountries(eq("japan"), eq("singapore")))
-                .thenReturn(List.of(1L));
+            Map<String, String> resp = svc.processChat("Trade agreement between Japan and Singapore?");
 
-        TradeAgreement mockAgreement = mock(TradeAgreement.class);
-        when(mockAgreement.getAgreementName()).thenReturn("JSEPA");
-        when(mockAgreement.getAgreementType()).thenReturn("FTA");
-        when(tradeRepo.findAllByIds(eq(List.of(1L))))
-                .thenReturn(List.of(mockAgreement));
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractCountries, extractProduct);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("Is there a trade agreement between Japan and Singapore and what is the tariff for rice?");
-
-            // Assert
             assertNotNull(resp);
-            String ans = resp.get("answer").toLowerCase();
-            assertTrue(
-                    ans.contains("preferential") ||
-                            ans.contains("zero-tariff") ||
-                            ans.contains("jsepa") ||
-                            ans.contains("fta"),
-                    "Expected preferential/agreement mention when agreement exists, got: " + ans
-            );
+            assertTrue(resp.get("answer").contains("JSEPA"));
         }
     }
 
     @Test
-    void processChat_tradeAgreement_withTariff_invokesTariffCalculation_noAgreementBranch() throws Exception {
-        // Arrange
-        ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TRADE_AGREEMENT\"}");
-        ChatCompletionResult extractCountries = completionResultWithContent("{\"country1\":\"japan\",\"country2\":\"singapore\"}");
-        ChatCompletionResult extractProduct = completionResultWithContent("{\"product\":\"rice\"}");
-
-        Tariff t = buildTariff("100630", "rice", 3.5, "singapore");
-        when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("singapore"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(t)));
-
-        when(agreementCountryRepo.findAgreementsBetweenCountries(eq("japan"), eq("singapore"))).thenReturn(List.of(1L));
-
-        // mock a TradeAgreement entity returned by tradeRepo.findAllByIds(...)
-        TradeAgreement mockAgreement = mock(TradeAgreement.class);
-        when(mockAgreement.getAgreementName()).thenReturn("JSEPA");
-        when(mockAgreement.getAgreementType()).thenReturn("FTA");
-        when(tradeRepo.findAllByIds(eq(List.of(1L))))
-                .thenReturn(List.of(mockAgreement));
-
-
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractCountries, extractProduct);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("Is there a trade agreement between Japan and Singapore and what is the tariff for rice?");
-
-            // Assert
-            assertNotNull(resp);
-            String ans = resp.get("answer").toLowerCase();
-            assertTrue(ans.contains("for rice imported to singapore") || ans.contains("no active trade agreements") || ans.contains("there are no active trade agreements"));
-        }
-    }
-
-    @Test
-    void processChat_tariffRate_withMatches_returnsAverage() throws Exception {
-        // Arrange
+    @DisplayName("Should return final tariff rate for TARIFF_RATE intent with DB matches")
+    void processChat_tariffRate_withMatches_returnsFinalRate() throws Exception {
         ChatCompletionResult classifyRes = completionResultWithContent("{\"intent\":\"TARIFF_RATE\"}");
-        ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\",\"destination\":\"japan\"}");
+        ChatCompletionResult extractRes = completionResultWithContent("{\"product\":\"rice\",\"destination\":\"japan\",\"origin\":\"usa\"}");
 
         Tariff t1 = buildTariff("100630", "rice", 5.0, "japan");
-        Tariff t2 = buildTariff("100630", "rice", 7.0, "japan");
         when(tariffRepo.findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(eq("japan"), eq("rice"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(t1, t2)));
+                .thenReturn(new PageImpl<>(List.of(t1)));
 
-        try (MockedConstruction<OpenAiService> mc = mockConstruction(OpenAiService.class, (mock, ctx) -> {
-            when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes);
-        })) {
-            // Act
-            Map<String, String> resp = svc.processChat("What is the tariff for rice to Japan?");
+        when(calculationService.calculateSensitivityTier(anyString())).thenReturn("LOW");
 
-            // Assert
+        try (MockedConstruction<OpenAiService> mc =
+                     mockConstruction(OpenAiService.class, (mock, ctx) ->
+                             when(mock.createChatCompletion(any())).thenReturn(classifyRes, extractRes))) {
+
+            Map<String, String> resp = svc.processChat("What is tariff for rice from USA to Japan?");
+
             assertNotNull(resp);
-            String ans = resp.get("answer").toLowerCase();
-            assertTrue(ans.contains("average tariff rate for rice imported to japan"));
-            assertTrue(ans.contains("hs") || ans.contains("hs"));
+            assertTrue(resp.get("answer").contains("tariff rate"));
         }
     }
 
     @Test
-    void private_ask_and_normalizeCountryName_behaviour() throws Exception {
-        // Arrange
-        OpenAiService mockedClient = mock(OpenAiService.class);
-        ChatCompletionResult res = completionResultWithContent("ok-response");
-        when(mockedClient.createChatCompletion(any())).thenReturn(res);
+    @DisplayName("Should test private methods ask and normalizeCountryName")
+    void private_ask_and_normalizeCountryName() throws Exception {
+        OpenAiService mockClient = mock(OpenAiService.class);
+        when(mockClient.createChatCompletion(any())).thenReturn(completionResultWithContent("ok"));
 
-        // Act
         Method ask = OpenAIService.class.getDeclaredMethod("ask", OpenAiService.class, String.class, String.class);
         ask.setAccessible(true);
-        String out = (String) ask.invoke(svc, mockedClient, "system prompt", "user prompt");
+        assertEquals("ok", ask.invoke(svc, mockClient, "sys", "user"));
 
-        // Assert
-        assertEquals("ok-response", out);
-
-        // Arrange (normalize)
-        Method norm = OpenAIService.class.getDeclaredMethod("normalizeCountryName", String.class);
-        norm.setAccessible(true);
-
-        // Act & Assert
-        String us = (String) norm.invoke(svc, "us");
-        assertEquals("united states of america", us);
-        String passthrough = (String) norm.invoke(svc, "somecountry");
-        assertEquals("somecountry", passthrough);
+        Method normalize = OpenAIService.class.getDeclaredMethod("normalizeCountryName", String.class);
+        normalize.setAccessible(true);
+        assertEquals("united states of america", normalize.invoke(svc, "US"));
+        assertEquals("somecountry", normalize.invoke(svc, "somecountry"));
     }
 }

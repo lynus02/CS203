@@ -46,14 +46,14 @@ export default function MySavedProductsButton({ onLoadProduct, className }: Prop
 
       {/* Simple login prompt for unauthenticated users */}
       <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md text-primary">
           <DialogHeader>
             <DialogTitle>Login required</DialogTitle>
           </DialogHeader>
           <div className="py-2">
             <p className="text-sm text-muted-foreground">Login to view your saved products</p>
             <div className="mt-4 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
+              <Button className="bg-white text-black" variant="outline" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
               <Button onClick={() => { setShowLoginPrompt(false); window.dispatchEvent(new CustomEvent('openLogin')); }}>Login</Button>
             </div>
           </div>

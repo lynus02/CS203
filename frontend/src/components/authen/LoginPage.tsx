@@ -143,16 +143,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp, onForg
                         {/* Header with logo and theme toggle */}
                         <div className="px-8 py-8 flex items-center gap-4">
                             <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                <Globe className="h-6 w-6 text-white" />
-                                <span className="text-xl font-medium text-white">FoodTariff Pro</span>
+                                <Globe className="h-6 w-6 text-foreground" />
+                                <span className="text-xl font-medium text-foreground">FoodTariff Pro</span>
                             </a>
                             <ThemeToggle />
                         </div>
                     </div>
                 </div>
                 {/* Centered Login Box */}
-                <div className="flex flex-1 items-center justify-center py-8">
-                    <Card className="w-full max-w-2xl shadow-xl">
+                <div className="flex flex-1 items-center justify-center py-8 bg-foreground">
+                    <Card className="w-full max-w-2xl shadow-xl bg-foreground">
                         <CardHeader className="pb-4">
                             <div className="flex items-center gap-3 mb-4">
                                 {onBack && (
@@ -257,10 +257,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp, onForg
 
                                 <Button
                                     type="submit"
-                                    className="w-full h-12 text-base font-medium mt-6"
+                                    className="w-full h-12 text-base font-medium mt-6 text-foreground"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? 'Signing In...' : 'Log In'}
+                                    {isLoading ? 'Signing In...' : 'Login'}
                                 </Button>
                             </form>
 

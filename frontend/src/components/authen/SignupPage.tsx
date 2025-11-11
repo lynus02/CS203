@@ -191,15 +191,13 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         return (
             <div className="flex justify-start min-h-screen bg-background">
                 <div className="min-h-screen bg-background flex flex-col w-full">
-                    {/* Header with logo */}
-                    <div className="w-full border-b border-gray-300 px-8 py-4 bg-primary">
-                        <div className="flex items-center gap-4">
-                            <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                <Globe className="h-6 w-6 text-white" />
-                                <span className="text-xl font-medium text-white">FoodTariff Pro</span>
-                            </a>
-                            <ThemeToggle />
-                        </div>
+                    {/* Header with logo and theme toggle */}
+                    <div className="px-8 py-8 flex items-center gap-4">
+                        <a href="/" className="flex items-center gap-2 hover:opacity-80">
+                            <Globe className="h-6 w-6 text-foreground" />
+                            <span className="text-xl font-medium text-foreground">FoodTariff Pro</span>
+                        </a>
+                        <ThemeToggle />
                     </div>
 
                     {/* Success Message */}
@@ -235,8 +233,8 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
                         {/* Header with logo and theme toggle */}
                         <div className="px-8 py-8 flex items-center gap-4">
                             <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                <Globe className="h-6 w-6 text-white" />
-                                <span className="text-xl font-medium text-white">FoodTariff Pro</span>
+                                <Globe className="h-6 w-6 text-foreground" />
+                                <span className="text-xl font-medium text-foreground">FoodTariff Pro</span>
                             </a>
                             <ThemeToggle />
                         </div>

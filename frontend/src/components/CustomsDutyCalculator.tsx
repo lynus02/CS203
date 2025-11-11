@@ -355,7 +355,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={productOpen}
-                                className="w-full justify-between"
+                                className="w-full justify-between text-primary"
                             >
                                 {selectedProduct
                                     ? `${selectedProduct.name} (${selectedProduct.hsCode})`
@@ -431,9 +431,9 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
-                                    className="w-full justify-start text-left font-normal"
+                                    className="w-full justify-start text-left font-normal text-primary"
                                 >
-                                    <CalendarIcon className="mr-2 h-4 w-4"/>
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-primary"/>
                                     {importDate.toLocaleDateString()}
                                 </Button>
                             </PopoverTrigger>
@@ -452,10 +452,10 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
-                    <Button onClick={handleCalculate} className="flex-1">
+                    <Button onClick={handleCalculate} className="flex-1 text-foreground">
                         Calculate Tariff
                     </Button>
-                    <Button variant="outline" onClick={clearState}>
+                    <Button variant="outline" className="text-primary" onClick={clearState}>
                         Clear
                     </Button>
                 </div>
