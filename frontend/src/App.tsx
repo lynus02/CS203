@@ -260,10 +260,10 @@ export default function App() {
                     <div className="border-b border-gray-250 px-6 py-8 bg-primary">
                         <div className="flex items-center justify-between gap-4">
                             {/* Header with logo and theme toggle */}
-                            <div className="px-8 py-8 flex items-center gap-4">
+                            <div className="px-8 py-8 flex items-center gap-4 text-foreground">
                                 <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                    <Globe className="h-6 w-6 text-white"/>
-                                    <span className="text-xl font-medium text-white">FoodTariff Pro</span>
+                                    <Globe className="h-6 w-6 text-background"/>
+                                    <span className="text-xl font-medium">FoodTariff Pro</span>
                                 </a>
                                 <ThemeToggle/>
                             </div>
@@ -271,25 +271,25 @@ export default function App() {
                             {/* Right side */}
                             <div className="flex items-center gap-4">
                                 {/* My Saved Products button (left of login) */}
-                                <MySavedProductsButton onLoadProduct={handleLoadProduct}/>
+                                <MySavedProductsButton className="text-primary" onLoadProduct={handleLoadProduct}/>
 
                                 {/* Login/User Button */}
                                 {user ? (
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 text-primary">
                                         <span
                                             className="text-sm text-muted-foreground">Welcome, {user.name || user.email}</span>
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             onClick={handleShowProfile}
-                                            className="bg-background text-foreground flex items-center gap-2"
+                                            className="bg-primary text-foreground flex items-center gap-2"
                                         >
                                             <User className="h-9 w-9"/>
                                         </Button>
                                     </div>
                                 ) : (
                                     <Button variant="outline" onClick={handleShowLogin}
-                                            className="bg-background text-foreground flex items-center gap-2">
+                                            className="bg-primary text-foreground flex items-center gap-2">
                                         <LogIn className="h-4 w-4"/>
                                         Login
                                     </Button>
@@ -303,7 +303,7 @@ export default function App() {
                         <div className="text-center mb-8">
                             <div className="flex items-center justify-center gap-2 mb-4">
                                 <Globe className="h-8 w-8 text-primary"/>
-                                <h1 className="text-3xl">FoodTariff Pro</h1>
+                                <h1 className="text-3xl text-primary">FoodTariff Pro</h1>
                             </div>
                             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                                 Specialized tariff and shipping cost calculator for food imports and exports.
@@ -350,9 +350,9 @@ export default function App() {
                                                 <Calculator className="h-5 w-5"/>
                                                 Food Duty Calculator
                                             </CardTitle>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 text-primary">
                                                 <Button size="sm" variant="outline" onClick={() => setSplitView(!splitView)}>
-                                                    {splitView ? "Single View" : "Compare with another product"}
+                                                    {splitView ? "Single Product View" : "Compare with another product"}
                                                 </Button>
                                             </div>
                                         </CardHeader>
@@ -461,10 +461,10 @@ export default function App() {
                 <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
                     <DialogContent>
                         <div className="p-4">
-                            <h3 className="text-lg font-medium mb-2">Login required</h3>
+                            <h3 className="text-lg text-primary font-medium mb-2">Login required</h3>
                             <p className="text-sm text-muted-foreground mb-4">Login to view your saved products</p>
                             <div className="flex justify-end gap-2">
-                                <Button variant="outline" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
+                                <Button variant="outline" className="text-primary" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
                                 <Button onClick={() => {
                                     setShowLoginPrompt(false);
                                     setShowLogin(true);

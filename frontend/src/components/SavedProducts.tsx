@@ -326,7 +326,7 @@ export function SaveProductDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => setOpen(false)}>
+                    <Button variant="outline" className="text-primary"onClick={() => setOpen(false)}>
                         Cancel
                     </Button>
                     <Button onClick={handleSave}>
