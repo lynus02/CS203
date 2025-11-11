@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class OpenAIService {
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByProductDescriptionOrProductCodeContaining(product, product, limit)
-                .getContent(); // executes sql query from TariffRepository, limit to 10 results only
+                .getContent(); // executes sql query from tariffrepo, limit to 10 results
 
         // if no matches, fallback to gpt reasoning to give likely HS code
         if (tariffs.isEmpty()) {
@@ -147,7 +148,8 @@ public class OpenAIService {
         // ask openai to extract the two countries being compared
         String extractPrompt = """
         Extract the two countries being compared in the question.
-        Return JSON: {"country1": "<name>", "country2": "<name>"}.
+        Return JSON: {"country1": "<name>", "country2": "<name>", "date": "<time>"}.
+        If the date is not specified, leave it blank.
     """;
 
         // get ChatCompletionResult object (more than one) --> return the first choice --> extract the message --> extract the content to JSON string
@@ -163,8 +165,14 @@ public class OpenAIService {
             return Map.of("answer", "Could you specify both countries?");
         }
 
+        String dateText = extraction.path("date").asText("").trim();
+        LocalDate date = parseDateText(dateText);
+        if (date == null) {
+            date = LocalDate.now(); // default to today
+        }
+
         // find all list of matching trade agreements from db
-        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(country1, country2);
+        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountriesOnDate(country1, country2, date);
 
         if (agreementIds.isEmpty()) {
             return Map.of("answer", String.format("No trade agreement found between %s and %s.", country1, country2));
@@ -188,19 +196,12 @@ public class OpenAIService {
         // summarize results
         String joinedAgreements = String.join("; ", agreements);
         String dateOfEntry = String.join("; ", effectiveDates);
+
         String endOfImplementation = String.join("; ", expirationDates);
         String answer = String.format(
                 "The trade agreement between %s and %s is %s. The date of entry into force is %s and the end of implementation period is %s.",
                 country1, country2, joinedAgreements, dateOfEntry, endOfImplementation
         );
-
-        // if user also asked about tariff rates, combine results w tariff calculation
-        if (userPrompt.toLowerCase().contains("tariff")) {
-            String product = extractProductFromPrompt(service, userPrompt);
-            if (!product.isBlank()) {
-                return calculateEffectiveTariff(product, country1, country2);
-            }
-        }
 
         return Map.of("answer", answer, "agreements", joinedAgreements);
     }
@@ -208,16 +209,13 @@ public class OpenAIService {
     // -----------------------------------------------
     // TARIFF RATE QUERIES
     // -----------------------------------------------
-// -----------------------------------------------
-// TARIFF RATE QUERIES (fixed version)
-// -----------------------------------------------
     private Map<String, String> handleTariffRateQuery(OpenAiService service, String userPrompt) throws Exception {
         // extract relevant product and destination country
         String extractPrompt = """
-    Extract the product, origin and destination country mentioned in the question.
-    Return JSON: {"product": "<word>", "origin": "<country>", "destination": "<country>"}.
-    If the country is not specified, leave it blank.
-    """;
+        Extract the product, origin and destination country mentioned in the question.
+        Return JSON: {"product": "<word>", "origin": "<country>", "destination": "<country>"}.
+        If the country is not specified, leave it blank.
+        """;
 
         String extractJson = ask(service, extractPrompt, userPrompt);
         JsonNode extraction = mapper.readTree(extractJson);
@@ -232,7 +230,7 @@ public class OpenAIService {
             destination = "singapore"; // default fallback
         }
 
-        // 🗂 Get all possible tariffs for the destination + product
+        // get all possible tariffs for the destination + product
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destination, product, limit)
@@ -240,16 +238,16 @@ public class OpenAIService {
 
         if (tariffs.isEmpty()) {
             String fallbackPrompt = String.format("""
-        The product is "%s".
-        The database has no match for tariffs to %s.
-        Based on global customs data, estimate a likely tariff range (in percent)
-        and explain the reasoning briefly (1–2 sentences).
-        """, product, destination);
+            The product is "%s".
+            The database has no match for tariffs to %s.
+            Based on global customs data, estimate a likely tariff range (in percent)
+            and explain the reasoning briefly (1–2 sentences).
+            """, product, destination);
             String gptAnswer = ask(service, "You are a customs tariff expert.", fallbackPrompt, 0.2);
             return Map.of("answer", gptAnswer);
         }
 
-        // 🧮 Use the highest tariff as the base (e.g. MFN)
+        // use highest tariff as the base (EIA)
         Tariff representativeTariff = tariffs.stream()
                 .max(Comparator.comparingDouble(Tariff::getTariffRate))
                 .orElse(tariffs.get(0));
@@ -258,13 +256,12 @@ public class OpenAIService {
         String hsCode = representativeTariff.getProduct().getProductCode();
         String sensitivityTier = calculationService.calculateSensitivityTier(hsCode);
 
-        // ⚖️ Find trade agreements between origin and destination
+        // find trade agreements between the two countries
         List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(origin, destination);
 
         double finalRate = baseRate;
         String appliedAgreement = "MFN"; // default
 
-        // java
         if (!agreementIds.isEmpty()) {
             for (Long id : agreementIds) {
                 TradeAgreement agreement = tradeRepo.findByAgreementId(id).orElse(null);
@@ -273,9 +270,7 @@ public class OpenAIService {
                 String[] types = agreement.getAgreementType().split("&");
                 for (String type : types) {
                     double multiplier = calculationService.getDiscountMultiplier(sensitivityTier, type.trim());
-                    // multiplier is a fraction (e.g. 0.7 for 30% reduction). Apply multiplicatively.
                     double discountedRate = baseRate * multiplier;
-                    discountedRate = Math.max(discountedRate, 0); // guard against negative (defensive)
 
                     if (discountedRate < finalRate) {
                         finalRate = discountedRate;
@@ -298,47 +293,47 @@ public class OpenAIService {
     // -----------------------------------------------
     // TARIFF RATE CALCULATION WITH AGREEMENTS
     // -----------------------------------------------
-    private Map<String, String> calculateEffectiveTariff(String product, String originCountry, String destinationCountry) {
-        var limit = PageRequest.of(0, 5);
-        List<Tariff> tariffs = tariffRepo
-                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destinationCountry, product, limit)
-                .getContent();
-
-        if (tariffs.isEmpty()) {
-            return Map.of("answer",
-                    String.format("No tariff data found for %s imported to %s.", product, destinationCountry));
-        }
-
-        double avgTariff = tariffs.stream()
-                .mapToDouble(Tariff::getTariffRate)
-                .average()
-                .orElse(0);
-
-        List<Long> agreements = agreementCountryRepo.findAgreementsBetweenCountries(originCountry, destinationCountry);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                "For %s imported to %s (HS %s), the base tariff is around %.2f%%.",
-                product,
-                destinationCountry,
-                tariffs.get(0).getProduct().getProductCode(),
-                avgTariff
-        ));
-
-        if (!agreements.isEmpty()) {
-            List<String> agreementNames = tradeRepo.findAllByIds(agreements).stream()
-                    .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
-                    .toList();
-            sb.append(String.format(
-                    " However, since %s and %s are covered by %s, preferential or zero-tariff rates may apply.",
-                    originCountry, destinationCountry, String.join("; ", agreementNames)
-            ));
-        } else {
-            sb.append(String.format(" There are no active trade agreements between %s and %s.", originCountry, destinationCountry));
-        }
-
-        return Map.of("answer", sb.toString());
-    }
+//    private Map<String, String> calculateEffectiveTariff(String product, String originCountry, String destinationCountry) {
+//        var limit = PageRequest.of(0, 5);
+//        List<Tariff> tariffs = tariffRepo
+//                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destinationCountry, product, limit)
+//                .getContent();
+//
+//        if (tariffs.isEmpty()) {
+//            return Map.of("answer",
+//                    String.format("No tariff data found for %s imported to %s.", product, destinationCountry));
+//        }
+//
+//        double avgTariff = tariffs.stream()
+//                .mapToDouble(Tariff::getTariffRate)
+//                .average()
+//                .orElse(0);
+//
+//        List<Long> agreements = agreementCountryRepo.findAgreementsBetweenCountries(originCountry, destinationCountry);
+//
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(String.format(
+//                "For %s imported to %s (HS %s), the base tariff is around %.2f%%.",
+//                product,
+//                destinationCountry,
+//                tariffs.get(0).getProduct().getProductCode(),
+//                avgTariff
+//        ));
+//
+//        if (!agreements.isEmpty()) {
+//            List<String> agreementNames = tradeRepo.findAllByIds(agreements).stream()
+//                    .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
+//                    .toList();
+//            sb.append(String.format(
+//                    " However, since %s and %s are covered by %s, preferential or zero-tariff rates may apply.",
+//                    originCountry, destinationCountry, String.join("; ", agreementNames)
+//            ));
+//        } else {
+//            sb.append(String.format(" There are no active trade agreements between %s and %s.", originCountry, destinationCountry));
+//        }
+//
+//        return Map.of("answer", sb.toString());
+//    }
 
     // -----------------------------------------------
     // HELPER METHODS
@@ -380,6 +375,19 @@ public class OpenAIService {
         );
         String lower = input.toLowerCase().trim();
         return aliases.getOrDefault(lower, lower);
+    }
+
+    private LocalDate parseDateText(String dateText) {
+        if (dateText == null || !dateText.isEmpty()) return null;
+        try {
+            return LocalDate.parse(dateText);
+        } catch (java.time.format.DateTimeParseException e) {
+            try {
+                return LocalDate.parse(dateText, java.time.format.DateTimeFormatter.ofPattern("d/M/yyyy"));
+            } catch (java.time.format.DateTimeParseException ex) {
+                return null;
+            }
+        }
     }
 }
 
