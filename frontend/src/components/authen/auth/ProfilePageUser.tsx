@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader } from "../../ui/card";
 import ThemeToggle from "../../togglethemebutton/ThemeToggle";
 import api from "../../../services/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
-import MySavedProductsButton from "../../MySavedProductsButton";
 
 interface ProfilePageProps {
     onBack?: () => void;
@@ -31,12 +30,12 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
 
     // Edit profile modal state
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [editFirstName, setEditFirstName] = useState('');
-    const [editLastName, setEditLastName] = useState('');
-    const [editEmail, setEditEmail] = useState('');
+    const [editFirstName, setEditFirstName] = useState("");
+    const [editLastName, setEditLastName] = useState("");
+    const [editEmail, setEditEmail] = useState("");
     const [editLoading, setEditLoading] = useState(false);
 
-    // Delete account confirmation dialog state
+    // Delete confirmation dialog
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -48,14 +47,14 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
         setLoading(true);
         setError(null);
         try {
-            const res = await api.get('/users/profile');
+            const res = await api.get("/users/profile");
             setProfile(res.data);
-            setEditFirstName(res.data.firstName || '');
-            setEditLastName(res.data.lastName || '');
-            setEditEmail(res.data.email || '');
+            setEditFirstName(res.data.firstName || "");
+            setEditLastName(res.data.lastName || "");
+            setEditEmail(res.data.email || "");
         } catch (err: any) {
-            console.error('Failed to load profile', err);
-            setError(err.response?.data?.message || 'Failed to load profile');
+            console.error("Failed to load profile", err);
+            setError(err.response?.data?.message || "Failed to load profile");
         } finally {
             setLoading(false);
         }
@@ -67,14 +66,14 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
             const payload = {
                 firstName: editFirstName,
                 lastName: editLastName,
-                email: editEmail
+                email: editEmail,
             };
-            const res = await api.put('/users/profile', payload);
+            const res = await api.put("/users/profile", payload);
             setProfile(res.data);
             setIsEditOpen(false);
         } catch (err: any) {
-            console.error('Failed to update profile', err);
-            alert(err.response?.data?.message || 'Failed to update profile');
+            console.error("Failed to update profile", err);
+            alert(err.response?.data?.message || "Failed to update profile");
         } finally {
             setEditLoading(false);
         }
@@ -88,74 +87,34 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
     const performDeleteAccount = async () => {
         setDeleteLoading(true);
         try {
-            await api.delete('/users/profile');
-            // after deletion, call onLogout to clear client state and redirect
+            await api.delete("/users/profile");
             setShowDeleteConfirm(false);
             onLogout();
         } catch (err: any) {
-            console.error('Failed to delete account', err);
-            alert(err.response?.data?.message || 'Failed to delete account');
+            console.error("Failed to delete account", err);
+            alert(err.response?.data?.message || "Failed to delete account");
         } finally {
             setDeleteLoading(false);
         }
     };
 
     const handleLogoutClick = () => {
-        try {
-            // call parent logout to clear app state
-            onLogout();
-        } catch (e) {
-            console.warn('onLogout threw', e);
-        }
-
-        // ensure token is removed locally
-        try {
-            localStorage.removeItem('token');
-        } catch (e) {
-            console.warn('Failed to remove token from localStorage', e);
-        }
-
-        // navigate to homepage
-        try {
-            window.location.href = '/';
-        } catch (e) {
-            console.error('Navigation to homepage failed', e);
-        }
+        onLogout();
+        localStorage.removeItem("token");
+        window.location.href = "/";
     };
 
-    // Handle reset password click: prefer parent navigation (onReset), else fallback to location change
     const handleResetClick = () => {
-        console.log('Reset password clicked - onReset present?', typeof onReset === 'function');
-        if (typeof onReset === 'function') {
-            try {
-                onReset();
-                // continue and dispatch global event to ensure parent opens reset page
-            } catch (e) {
-                console.error('onReset threw error', e);
-            }
+        if (typeof onReset === "function") {
+            onReset();
         }
-        // Dispatch a global event so the App listener opens the ResetPasswordPage as a fallback/backup
-        try {
-            const evt = new Event('openResetPassword');
-            document.dispatchEvent(evt);
-            console.log('Dispatched openResetPassword event');
-            return;
-        } catch (e) {
-            console.error('Dispatching openResetPassword event failed', e);
-        }
-        // Fallback: navigate to a path that should be handled by the SPA (or server)
-        try {
-            window.location.href = '/reset-password';
-        } catch (e) {
-            console.error('Fallback navigation failed', e);
-        }
+        document.dispatchEvent(new Event("openResetPassword"));
     };
 
     const formattedDate = (iso?: string) => {
-        if (!iso) return '—';
+        if (!iso) return "—";
         try {
-            const d = new Date(iso);
-            return d.toLocaleDateString();
+            return new Date(iso).toLocaleDateString();
         } catch {
             return iso;
         }
@@ -178,9 +137,9 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
                 </div>
             </div>
 
+            {/* Profile Section */}
             <div className="flex flex-1 items-start justify-center px-4 py-12">
                 <div className="w-full max-w-4xl">
-                    {/* Profile card */}
                     <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between gap-4">
@@ -190,24 +149,28 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
                                             <ArrowLeft className="h-6 w-6" />
                                         </Button>
                                     )}
+
                                     <div className="flex items-center gap-4">
-                                        {/* Avatar with initials */}
                                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white text-xl font-semibold">
-                                            {profile ? ((profile.firstName || profile.email || 'U')[0] + (profile.lastName ? profile.lastName[0] : '')).toUpperCase() : 'U'}
+                                            {profile
+                                                ? ((profile.firstName || profile.email || "U")[0] +
+                                                    (profile.lastName ? profile.lastName[0] : "")
+                                                ).toUpperCase()
+                                                : "U"}
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-semibold">{profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() : '—'}</h2>
-                                            <div className="text-sm text-muted-foreground">{profile?.email || '—'}</div>
+                                            <h2 className="text-2xl font-semibold">
+                                                {profile ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim() : "—"}
+                                            </h2>
+                                            <div className="text-sm text-muted-foreground">{profile?.email || "—"}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <Button variant="ghost" onClick={() => setIsEditOpen(true)} title="Edit Profile" className="flex items-center gap-2">
-                                        <Edit2 className="h-4 w-4" />
-                                        <span className="hidden sm:inline">Edit Profile</span>
-                                    </Button>
-                                </div>
+                                <Button variant="ghost" onClick={() => setIsEditOpen(true)} className="flex items-center gap-2">
+                                    <Edit2 className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Edit Profile</span>
+                                </Button>
                             </div>
                         </CardHeader>
 
@@ -220,15 +183,15 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <div className="text-sm text-muted-foreground">First Name</div>
-                                        <div className="font-medium text-lg">{profile.firstName}</div>
+                                        <div className="font-medium text-lg">{profile?.firstName || "—"}</div>
                                     </div>
                                     <div className="space-y-2">
                                         <div className="text-sm text-muted-foreground">Last Name</div>
-                                        <div className="font-medium text-lg">{profile.lastName}</div>
+                                        <div className="font-medium text-lg">{profile?.lastName || "—"}</div>
                                     </div>
                                     <div className="space-y-2">
                                         <div className="text-sm text-muted-foreground">Email</div>
-                                        <div className="font-medium text-lg">{profile?.email || '—'}</div>
+                                        <div className="font-medium text-lg">{profile?.email || "—"}</div>
                                     </div>
                                     <div className="space-y-2">
                                         <div className="text-sm text-muted-foreground">Date joined</div>
@@ -239,94 +202,79 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
                         </CardContent>
                     </Card>
 
-                    {/* Actions */}
+                    {/* Action buttons (AFTER removing Saved Products) */}
                     <div className="mt-6 flex items-center gap-3 whitespace-nowrap overflow-auto">
-                        {/* My Saved Products button (shared component) */}
-                        <MySavedProductsButton />
-
-                        <Button
-                            id="reset-password-btn"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleResetClick}
-                            className="bg-background text-foreground flex items-center gap-2"
-                        >
+                        <Button variant="outline" size="sm" onClick={handleResetClick} className="bg-background text-foreground flex items-center gap-2">
                             <RefreshCcw className="h-4 w-4" />
                             <span>Reset Password</span>
                         </Button>
 
-                        <Button
-                            id="logout-btn"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleLogoutClick}
-                            className="bg-background text-foreground flex items-center gap-2"
-                        >
+                        <Button variant="outline" size="sm" onClick={handleLogoutClick} className="bg-background text-foreground flex items-center gap-2">
                             <LogOut className="h-4 w-4" />
                             <span>Logout</span>
                         </Button>
 
                         <Button
-                            id="delete-account-btn"
-                            aria-label="Delete account"
                             variant="destructive"
                             onClick={handleDeleteAccount}
                             className="flex items-center gap-3 px-4 py-2"
-                            style={{ display: 'inline-flex', backgroundColor: '#dc2626', color: '#ffffff', border: '1px solid #991b1b' }}
                         >
                             <Trash2 className="h-5 w-5" />
                             <span>Delete Account</span>
                         </Button>
-                     </div>
-                 </div>
-             </div>
+                    </div>
+                </div>
+            </div>
 
-             {/* Edit Profile Modal (Dialog) */}
-             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                 <DialogContent className="max-w-md">
-                     <DialogHeader>
-                         <DialogTitle>Edit Profile</DialogTitle>
-                     </DialogHeader>
-                     <div className="space-y-3 py-2">
-                         <label className="block text-sm text-muted-foreground">First Name</label>
-                         <Input value={editFirstName} onChange={e => setEditFirstName(e.target.value)} />
-                         <label className="block text-sm text-muted-foreground">Last Name</label>
-                         <Input value={editLastName} onChange={e => setEditLastName(e.target.value)} />
-                         <label className="block text-sm text-muted-foreground">Email</label>
-                         <Input value={editEmail} onChange={e => setEditEmail(e.target.value)} />
-                     </div>
-                     <div className="mt-4 flex justify-end gap-2">
-                         <Button variant="ghost" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-                         <Button onClick={handleSaveEdit} disabled={editLoading}>{editLoading ? 'Saving...' : 'Save'}</Button>
-                     </div>
-                 </DialogContent>
-             </Dialog>
+            {/* Edit Profile Dialog */}
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Edit Profile</DialogTitle>
+                    </DialogHeader>
 
-             {/* Delete account confirmation dialog */}
-             <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-                 <DialogContent className="max-w-md">
-                     <DialogHeader>
-                         <DialogTitle>Confirm Account Deletion</DialogTitle>
-                     </DialogHeader>
-                     <div className="py-2">
-                         <p className="text-sm text-muted-foreground">Are you sure want to delete your account?</p>
-                         <div className="mt-4 flex justify-end gap-2">
-                             <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleteLoading}>Cancel</Button>
-                             <Button variant="destructive" onClick={performDeleteAccount} disabled={deleteLoading}>{deleteLoading ? 'Deleting...' : 'Confirm'}</Button>
-                         </div>
-                     </div>
-                 </DialogContent>
-             </Dialog>
+                    <div className="space-y-3 py-2">
+                        <label className="block text-sm text-muted-foreground">First Name</label>
+                        <Input value={editFirstName} onChange={(e) => setEditFirstName(e.target.value)} />
 
-             {/* subtle footer separator */}
-             <footer className="w-full border-t border-gray-200 mt-12 pt-6 px-8">
-                 <div className="max-w-7xl mx-auto text-sm text-muted-foreground">
-                     <div className="flex items-center justify-between">
-                         <span>© {new Date().getFullYear()} FoodTariff Pro</span>
-                         <span className="text-xs">Small estimates only — consult official customs authorities for definitive rates.</span>
-                     </div>
-                 </div>
-             </footer>
+                        <label className="block text-sm text-muted-foreground">Last Name</label>
+                        <Input value={editLastName} onChange={(e) => setEditLastName(e.target.value)} />
+
+                        <label className="block text-sm text-muted-foreground">Email</label>
+                        <Input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
+                    </div>
+
+                    <div className="mt-4 flex justify-end gap-2">
+                        <Button variant="ghost" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+                        <Button onClick={handleSaveEdit} disabled={editLoading}>{editLoading ? "Saving..." : "Save"}</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete confirmation */}
+            <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Confirm Account Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p className="text-sm text-muted-foreground">Are you sure you want to delete your account?</p>
+                    <div className="mt-4 flex justify-end gap-2">
+                        <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleteLoading}>
+                            Cancel
+                        </Button>
+                        <Button variant="destructive" onClick={performDeleteAccount} disabled={deleteLoading}>
+                            {deleteLoading ? "Deleting..." : "Confirm"}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <footer className="w-full border-t border-gray-200 mt-12 pt-6 px-8">
+                <div className="max-w-7xl mx-auto text-sm text-muted-foreground flex justify-between">
+                    <span>© {new Date().getFullYear()} FoodTariff Pro</span>
+                    <span className="text-xs">Estimates only — consult official customs authorities.</span>
+                </div>
+            </footer>
         </div>
     );
 };

@@ -198,7 +198,7 @@ export function AIChat() {
                                         <div
                                             className={`text-xs mt-1 ${
                                                 message.sender === "user"
-                                                    ? "text-primary-foreground/70"
+                                                    ? "text-muted-foreground"   // always accessible
                                                     : "text-muted-foreground"
                                             }`}
                                         >

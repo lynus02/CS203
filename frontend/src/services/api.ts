@@ -21,7 +21,6 @@ api.interceptors.request.use(
         const publicEndpoints = [
             "/auth/login",
             "/auth/refresh",
-            "/users",
             "/tariffs",
             "/products",
             "/", // just in case
@@ -47,6 +46,11 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
     (response) => {
+        // Check if this is a login/signup response and save the token
+        if (response.config.url?.includes('/auth/') && response.data?.token) {
+            localStorage.setItem('token', response.data.token);
+            console.log('Token automatically saved from auth response');
+        }
         return response;
     },
     (error) => {

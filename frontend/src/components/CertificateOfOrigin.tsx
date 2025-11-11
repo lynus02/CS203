@@ -189,10 +189,10 @@ export function CertificateOfOrigin() {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* File Upload Area */}
-        <div
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
-          }`}
+          <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  dragActive ? "border-primary bg-primary/5" : "border-border"
+              }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}

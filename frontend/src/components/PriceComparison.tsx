@@ -133,7 +133,7 @@ export function PriceComparison() {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Add New Scenario */}
-        <div className="p-4 border rounded-lg space-y-4">
+          <div className="p-4 border border-border rounded-lg space-y-4">
           <h3 className="font-medium">Add Comparison Scenario</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -287,7 +287,7 @@ export function PriceComparison() {
                         {scenario.originCountry} → {scenario.destinationCountry}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-xs">
+                          <Badge variant="secondary" className="text-xs">
                           {shippingMethods.find(m => m.value === scenario.shippingMethod)?.label || scenario.shippingMethod}
                         </Badge>
                       </TableCell>

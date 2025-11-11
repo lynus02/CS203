@@ -1,19 +1,17 @@
-import {useState, useEffect} from "react";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
-import {Input} from "./ui/input";
-import {Label} from "./ui/label";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
-import {Button} from "./ui/button";
-import {Badge} from "./ui/badge";
-import {Calendar} from "./ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "./ui/command";
-import {CalendarIcon, Search, CheckCircle, AlertTriangle, Info} from "lucide-react";
-import {CountryFlag} from "./ui/country-flags";
-import {SaveProductDialog, SavedProductConfig} from "./SavedProducts";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
+import { CalendarIcon, Search, CheckCircle, AlertTriangle, Info } from "lucide-react";
+import { CountryFlag } from "./ui/country-flags";
 import tariffApi from "../services/tariffApi";
 
-// Get constants from tariffApi
+// API helpers
 const { runAudit: runAuditApi, suggestProducts, getTariffRatesBySize, calculateTariff, getCountries } = tariffApi;
 
 interface CountryDto {
@@ -33,7 +31,7 @@ interface Product {
 interface TradeAgreement {
     countries: string[];
     name: string;
-    reduction: number; // percentage reduction
+    reduction: number;
     conditions?: string;
 }
 
@@ -53,10 +51,9 @@ interface TariffResult {
 
 interface CustomsDutyCalculatorProps {
     onResultsChange?: (results: TariffResult | null) => void;
-    savedConfig?: SavedProductConfig;
 }
 
-export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDutyCalculatorProps) {
+export function CustomsDutyCalculator({ onResultsChange }: CustomsDutyCalculatorProps) {
     const [productValue, setProductValue] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [productSearch, setProductSearch] = useState("");
@@ -73,25 +70,27 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
         status: "ok" | "modified" | "error";
         message: string;
         localHash?: string;
-        onChainHash?: string
+        onChainHash?: string;
     } | null>(null);
+
+    const MAX_SUGGESTION_SIZE = 20;
 
     const runAudit = async () => {
         setAuditRunning(true);
         setAuditResult(null);
         try {
-            const data = await runAuditApi(); // ✅ correctly calls backend audit API
+            const data = await runAuditApi();
             if (data.integrityOk) {
                 setAuditResult({
                     status: "ok",
                     message: data.message || "Database integrity verified",
                     localHash: data.localHash ?? undefined,
-                    onChainHash: data.onChainHash ?? undefined
+                    onChainHash: data.onChainHash ?? undefined,
                 });
             } else if (data.error) {
                 setAuditResult({
                     status: "error",
-                    message: data.message || "Audit failed"
+                    message: data.message || "Audit failed",
                 });
             } else {
                 setAuditResult({
@@ -99,24 +98,20 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                     message: data.message || "Database hash mismatch",
                 });
             }
-        } catch (e: any) {
-            setAuditResult({ status: "error", message: e?.payload?.message || e?.message || "Audit failed" });
+        } catch (err: any) {
+            setAuditResult({ status: "error", message: err?.message || "Audit failed" });
         } finally {
             setAuditRunning(false);
         }
     };
 
-
-    const MAX_SUGGESTION_SIZE = 20;
-
     // Load countries from backend
     useEffect(() => {
         getCountries()
             .then((data: CountryDto[]) => {
-                const sorted = [...data].sort((a, b) =>
-                    a.name.localeCompare(b.name, "en", {sensitivity: "base"})
+                setCountries(
+                    [...data].sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }))
                 );
-                setCountries(sorted);
             })
             .catch((err) => console.error("Failed to fetch countries:", err));
     }, []);
@@ -127,7 +122,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
         setLoadingSuggestions(true);
 
         getTariffRatesBySize(MAX_SUGGESTION_SIZE, destinationCountry)
-            .then((data) => {
+            .then((data) =>
                 setSuggestedProducts(
                     data.map((item: any) => ({
                         id: item.trade_id?.toString(),
@@ -137,8 +132,8 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                         baseTariffRate: item.value,
                         reporterName: item.reporterName,
                     }))
-                );
-            })
+                )
+            )
             .finally(() => setLoadingSuggestions(false));
     }, [productOpen, destinationCountry]);
 
@@ -166,19 +161,16 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
 
     // ========== BACKEND TARIFF CALCULATION ========== //
     const handleCalculate = async () => {
-        if (!selectedProduct || !productValue || !originCountry || !destinationCountry) {
-            return;
-        }
+        if (!selectedProduct || !productValue || !originCountry || !destinationCountry) return;
 
         try {
-            // Find country code from names
-            const originCountryCode = countries.find(c => c.name === originCountry)?.code || originCountry;
-            const destCountryCode = countries.find(c => c.name === destinationCountry)?.code || destinationCountry;
+            const originCode = countries.find((c) => c.name === originCountry)?.code || originCountry;
+            const destCode = countries.find((c) => c.name === destinationCountry)?.code || destinationCountry;
 
             const data = await calculateTariff(
                 selectedProduct.hsCode,
-                originCountryCode,
-                destCountryCode,
+                originCode,
+                destCode,
                 parseFloat(productValue)
             );
 
@@ -207,26 +199,10 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
 
             setResult(tariffResult);
             onResultsChange?.(tariffResult);
-        } catch (error: any) {
+        } catch (error) {
             console.error("Tariff calculation failed:", error);
         }
-    }
-
-    // Saved config auto-load
-    useEffect(() => {
-        if (!savedConfig) return;
-
-        setSelectedProduct(savedConfig.product);
-        setProductValue(savedConfig.productValue.toString());
-        setOriginCountry(savedConfig.originCountry);
-        setDestinationCountry(savedConfig.destinationCountry);
-        setImportDate(new Date(savedConfig.importDate));
-
-        setTimeout(handleCalculate, 200);
-    }, [savedConfig]);
-
-    const canSaveProduct =
-        selectedProduct && productValue && originCountry && destinationCountry;
+    };
 
     // Reset UI and states
     const clearState = () => {
@@ -234,58 +210,54 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
         setSelectedProduct(null);
         setProductSearch("");
         setOriginCountry("");
-        setDestinationCountry("Singapore"); // Singapore default
+        setDestinationCountry("Singapore");
         setImportDate(new Date());
         setResult(null);
         onResultsChange?.(null);
     };
 
-
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-start justify-between w-full">
+                <div className="flex justify-between w-full items-start">
                     <div>
                         <CardTitle>Food Tariff Calculator</CardTitle>
                         <CardDescription>
-                            Calculate food import duties with trade agreement adjustments and comprehensive food product selection
+                            Calculate import duties with trade agreements + food HS code lookup
                         </CardDescription>
                     </div>
-                    <div className="ml-4">
-                        <Button onClick={runAudit} disabled={auditRunning} variant="outline">
-                            {auditRunning ? "Running audit…" : "Run DB Audit"}
-                        </Button>
-                    </div>
+
+                    <Button
+                        onClick={runAudit}
+                        disabled={auditRunning}
+                        variant="outline"
+                        className="text-primary border-primary hover:bg-primary/10"
+                    >
+                        {auditRunning ? "Running audit…" : "Run DB Audit"}
+                    </Button>
                 </div>
 
-                {/* Audit feedback banner */}
+                {/* ✅ Audit status banner */}
                 {auditResult && (
                     <div className="mt-3">
                         {auditResult.status === "ok" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-green-50 border border-green-200 text-green-700">
+                            <div className="flex gap-2 p-2 bg-green-600/20 border border-green-600 text-green-300 rounded">
                                 <CheckCircle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Verified</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
+                                <span>{auditResult.message}</span>
                             </div>
                         )}
+
                         {auditResult.status === "modified" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-yellow-50 border border-yellow-200 text-yellow-800">
+                            <div className="flex gap-2 p-2 bg-yellow-600/20 border border-yellow-600 text-yellow-300 rounded">
                                 <AlertTriangle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Potential modification detected</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
+                                <span>{auditResult.message}</span>
                             </div>
                         )}
+
                         {auditResult.status === "error" && (
-                            <div className="flex items-center gap-2 p-2 rounded bg-red-50 border border-red-200 text-red-700">
+                            <div className="flex gap-2 p-2 bg-red-600/20 border border-red-600 text-red-300 rounded">
                                 <AlertTriangle className="h-4 w-4" />
-                                <div>
-                                    <div className="font-medium">Audit error</div>
-                                    <div className="text-sm">{auditResult.message}</div>
-                                </div>
+                                <span>{auditResult.message}</span>
                             </div>
                         )}
                     </div>
@@ -293,26 +265,19 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
             </CardHeader>
 
             <CardContent className="space-y-6">
-
+                {/* Country selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Country of Origin */}
                     <div className="space-y-2">
                         <Label>Country of Origin</Label>
                         <Select value={originCountry} onValueChange={setOriginCountry}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select origin country">
-                                    {originCountry && (
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={originCountry}/> {originCountry}
-                                        </div>
-                                    )}
-                                </SelectValue>
+                                <SelectValue placeholder="Select origin" />
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((c) => (
                                     <SelectItem key={c.code} value={c.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={c.name}/> {c.name}
+                                            <CountryFlag country={c.name} /> {c.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -320,24 +285,17 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                         </Select>
                     </div>
 
-                    {/* Destination Country */}
                     <div className="space-y-2">
                         <Label>Destination Country</Label>
                         <Select value={destinationCountry} onValueChange={setDestinationCountry}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select destination">
-                                    {destinationCountry && (
-                                        <div className="flex items-center gap-2">
-                                            <CountryFlag country={destinationCountry}/> {destinationCountry}
-                                        </div>
-                                    )}
-                                </SelectValue>
+                                <SelectValue placeholder="Select destination" />
                             </SelectTrigger>
                             <SelectContent>
                                 {countries.map((c) => (
                                     <SelectItem key={c.code} value={c.name}>
                                         <div className="flex items-center gap-2">
-                                            <CountryFlag country={c.name}/> {c.name}
+                                            <CountryFlag country={c.name} /> {c.name}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -346,60 +304,40 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                     </div>
                 </div>
 
-                {/* Product Selection */}
+                {/* Product Search */}
                 <div className="space-y-2">
                     <Label>Product Selection</Label>
+
                     <Popover open={productOpen} onOpenChange={setProductOpen}>
                         <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={productOpen}
-                                className="w-full justify-between text-primary"
-                            >
-                                {selectedProduct
-                                    ? `${selectedProduct.name} (${selectedProduct.hsCode})`
-                                    : "Search products by name or HS code..."}
-                                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                            <Button variant="outline" role="combobox" className="w-full justify-between text-foreground">
+                                {selectedProduct ? `${selectedProduct.name} (${selectedProduct.hsCode})` : "Search products..."}
+                                <Search className="ml-2 h-4 w-4 text-primary opacity-70" />
                             </Button>
                         </PopoverTrigger>
 
                         <PopoverContent className="w-full p-0">
                             <Command>
-                                <CommandInput
-                                    placeholder="Search products..."
-                                    value={productSearch}
-                                    onValueChange={setProductSearch}
-                                />
+                                <CommandInput placeholder="Search products..." value={productSearch} onValueChange={setProductSearch} />
                                 <CommandList>
                                     <CommandEmpty>
-                                        {loadingSuggestions ? (
-                                            <div className="py-4 text-center text-muted-foreground">
-                                                Loading products...
-                                            </div>
-                                        ) : (
-                                            "No products found."
-                                        )}
+                                        {loadingSuggestions ? "Loading..." : "No products found."}
                                     </CommandEmpty>
                                     <CommandGroup>
-                                        {suggestedProducts.map((product) => (
+                                        {suggestedProducts.map((p) => (
                                             <CommandItem
-                                                key={product.id}
-                                                value={`${product.name} ${product.hsCode}`}
+                                                key={p.id}
                                                 onSelect={() => {
-                                                    setSelectedProduct(product);
-                                                    if (product.reporterName) {
-                                                        setDestinationCountry(product.reporterName);
-                                                    }
+                                                    setSelectedProduct(p);
+                                                    if (p.reporterName) setDestinationCountry(p.reporterName);
                                                     setProductOpen(false);
                                                     setProductSearch("");
                                                 }}
                                             >
-                                                <div className="flex flex-col">
-                                                    <div className="font-medium">{product.name}</div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        HS: {product.hsCode} • {product.category} • Base
-                                                        Rate: {product.baseTariffRate}%
+                                                <div>
+                                                    <div className="font-medium">{p.name}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        HS: {p.hsCode} • {p.category} • Rate: {p.baseTariffRate}%
                                                     </div>
                                                 </div>
                                             </CommandItem>
@@ -411,165 +349,116 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                     </Popover>
                 </div>
 
+                {/* Product value + date */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Product Value */}
                     <div className="space-y-2">
-                        <Label htmlFor="product-value">Product Value (USD)</Label>
-                        <Input
-                            id="product-value"
-                            type="number"
-                            placeholder="Enter product value"
-                            value={productValue}
-                            onChange={(e) => setProductValue(e.target.value)}
-                        />
+                        <Label>Product Value (USD)</Label>
+                        <Input type="number" value={productValue} onChange={(e) => setProductValue(e.target.value)} />
                     </div>
 
-                    {/* Import Date */}
                     <div className="space-y-2">
                         <Label>Import Date</Label>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="w-full justify-start text-left font-normal text-primary"
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4 text-primary"/>
+                                <Button variant="outline" className="w-full justify-start text-foreground">
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
                                     {importDate.toLocaleDateString()}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={importDate}
-                                    onSelect={(date) => date && setImportDate(date)}
-                                    initialFocus
-                                />
+                            <PopoverContent className="p-0">
+                                <Calendar mode="single" selected={importDate} onSelect={(d) => d && setImportDate(d)} />
                             </PopoverContent>
                         </Popover>
                     </div>
                 </div>
-
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                     <Button onClick={handleCalculate} className="flex-1 text-foreground">
                         Calculate Tariff
                     </Button>
-                    <Button variant="outline" className="text-primary" onClick={clearState}>
+                    <Button variant="outline" className="text-primary border-primary hover:bg-primary/10" onClick={clearState}>
                         Clear
                     </Button>
                 </div>
 
-                {/* Results Display */}
+                {/* Result Display */}
                 {result && (
-                    <div className="space-y-4 p-6 bg-muted rounded-lg">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                                <CheckCircle className="h-5 w-5 text-green-600"/>
-                                <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
-                            </div>
-                            {canSaveProduct && selectedProduct && (
-                                <SaveProductDialog
-                                    product={selectedProduct}
-                                    productValue={parseFloat(productValue)}
-                                    originCountry={originCountry}
-                                    destinationCountry={destinationCountry}
-                                    importDate={importDate}
-                                />
-                            )}
+                    <div className="space-y-4 p-6 bg-card border rounded-lg">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <h3 className="text-lg font-medium">Tariff Calculation Results</h3>
                         </div>
 
-                        {/* Product Information */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        {/* Product info */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <h4 className="font-medium mb-2">Product Details</h4>
-                                <div className="space-y-1 text-sm">
+                                <div className="text-sm space-y-1">
                                     <div><strong>Product:</strong> {result.product.name}</div>
                                     <div><strong>HS Code:</strong> {result.product.hsCode}</div>
                                     <div><strong>Category:</strong> {result.product.category}</div>
-                                    <div><strong>Value:</strong> ${parseFloat(productValue).toLocaleString()}</div>
+                                    <div><strong>Value:</strong> ${result.productValue.toLocaleString()}</div>
                                 </div>
                             </div>
                             <div>
                                 <h4 className="font-medium mb-2">Trade Information</h4>
-                                <div className="space-y-1 text-sm">
+                                <div className="text-sm space-y-1">
                                     <div><strong>Origin:</strong> {result.originCountry}</div>
                                     <div><strong>Destination:</strong> {result.destinationCountry}</div>
-                                    <div><strong>Import Date:</strong> {result.importDate.toLocaleDateString()}</div>
+                                    <div><strong>Date:</strong> {result.importDate.toLocaleDateString()}</div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Tariff Breakdown */}
-                        <div className="space-y-3">
-                            <h4 className="font-medium">Tariff Breakdown</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="p-3 bg-background rounded border">
-                                    <div className="text-sm text-muted-foreground">Base Tariff Rate</div>
-                                    <div className="text-xl font-medium">{result.baseTariffRate}%</div>
+                        {/* Tariff breakdown */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="p-3 bg-background rounded border">
+                                <div className="text-sm text-muted-foreground">Base Tariff Rate</div>
+                                <div className="text-xl font-medium">{result.baseTariffRate}%</div>
+                            </div>
+
+                            <div className="p-3 bg-background rounded border">
+                                <div className="text-sm text-muted-foreground">Trade Agreement Reduction</div>
+                                <div className="text-xl font-medium text-green-600">
+                                    -{result.tradeAgreementReduction.toFixed(2)}%
                                 </div>
-                                <div className="p-3 bg-background rounded border">
-                                    <div className="text-sm text-muted-foreground">Trade Agreement Reduction</div>
-                                    <div className="text-xl font-medium text-green-600">
-                                        -{result.tradeAgreementReduction.toFixed(2)}%
-                                    </div>
-                                </div>
-                                <div className="p-3 bg-background rounded border">
-                                    <div className="text-sm text-muted-foreground">Final Tariff Rate</div>
-                                    <div className="text-xl font-medium text-primary">
-                                        {result.finalTariffRate.toFixed(2)}%
-                                    </div>
+                            </div>
+
+                            <div className="p-3 bg-background rounded border">
+                                <div className="text-sm text-muted-foreground">Final Tariff Rate</div>
+                                <div className="text-xl font-medium text-primary">
+                                    {result.finalTariffRate.toFixed(2)}%
                                 </div>
                             </div>
                         </div>
 
-                        {/* Trade Agreement Information */}
                         {result.tradeAgreement && (
-                            <div
-                                className="p-4 bg-green-50 dark:bg-green-950/20 rounded border border-green-200 dark:border-green-800">
+                            <div className="p-4 bg-green-50 rounded border border-green-200">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <Info className="h-4 w-4 text-green-600"/>
-                                    <h4 className="font-medium text-green-800 dark:text-green-200">
-                                        Trade Agreement Applied
-                                    </h4>
+                                    <Info className="h-4 w-4 text-green-600" />
+                                    <h4 className="font-medium text-green-700">Trade Agreement Applied</h4>
                                 </div>
-                                <div className="text-sm text-green-700 dark:text-green-300">
-                                    <div><strong>{result.tradeAgreement.name}</strong></div>
-                                    <div>Reduction: {result.tradeAgreement.reduction}%</div>
-                                    {result.tradeAgreement.conditions && (
-                                        <div>Conditions: {result.tradeAgreement.conditions}</div>
-                                    )}
+                                <div className="text-sm">
+                                    <strong>{result.tradeAgreement.name}</strong>
+                                    <br />
+                                    Reduction: {result.tradeAgreement.reduction}%
                                 </div>
                             </div>
                         )}
 
-                        {/* Final Results */}
+                        {/* Totals */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                             <div className="text-center p-4 bg-background rounded">
-                                <div className="text-2xl font-bold text-primary">
-                                    ${result.dutyAmount.toFixed(2)}
-                                </div>
+                                <div className="text-2xl font-bold text-primary">${result.dutyAmount.toFixed(2)}</div>
                                 <div className="text-sm text-muted-foreground">Total Customs Duty</div>
                             </div>
+
                             <div className="text-center p-4 bg-background rounded">
-                                <div className="text-2xl font-bold text-primary">
-                                    ${result.totalCost.toFixed(2)}
-                                </div>
+                                <div className="text-2xl font-bold text-primary">${result.totalCost.toFixed(2)}</div>
                                 <div className="text-sm text-muted-foreground">Total Cost (Product + Duty)</div>
                             </div>
                         </div>
-
-                        {/* Savings Information */}
-                        {result.tradeAgreement && result.tradeAgreementReduction > 0 && (
-                            <div
-                                className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-                                <div className="text-sm text-blue-700 dark:text-blue-300">
-                                    <strong>You saved
-                                        ${((parseFloat(productValue) * result.tradeAgreementReduction) / 100).toFixed(2)}</strong> in
-                                    customs duties thanks to the {result.tradeAgreement.name} trade agreement.
-                                </div>
-                            </div>
-                        )}
                     </div>
                 )}
             </CardContent>

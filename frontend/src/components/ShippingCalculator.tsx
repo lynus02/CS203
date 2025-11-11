@@ -190,12 +190,12 @@ export function ShippingCalculator({ onResultsChange }: ShippingCalculatorProps)
         </div>
         
         <div className="flex gap-2">
-          <Button onClick={calculateShipping} className="flex-1 bg-primary text-foreground">
-            Calculate Shipping
-          </Button>
-          <Button variant="outline" className="text-primary" onClick={clearCalculation}>
-            Clear
-          </Button>
+            <Button onClick={calculateShipping} className="flex-1">
+                Calculate Shipping
+            </Button>
+            <Button variant="secondary" onClick={clearCalculation}>
+                Clear
+            </Button>
         </div>
         
         {result && (
