@@ -3,16 +3,19 @@ package com.lynus.cs203.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lynus.cs203.entities.Tariff;
+import com.lynus.cs203.entities.TradeAgreement;
 import com.lynus.cs203.repositories.TariffRepository;
 import com.lynus.cs203.repositories.AgreementCountryRepository;
 import com.lynus.cs203.repositories.TradeAgreementRepository;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.lynus.cs203.services.TariffCalculationService;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,15 +25,17 @@ public class OpenAIService {
     private final TariffRepository tariffRepo;
     private final TradeAgreementRepository tradeRepo;
     private final AgreementCountryRepository agreementCountryRepo;
+    private final TariffCalculationService calculationService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${open.api.key}")
     private String apiKey;
 
-    public OpenAIService(TariffRepository tariffRepo, TradeAgreementRepository tradeRepo, AgreementCountryRepository agreementCountryRepo) {
+    public OpenAIService(TariffRepository tariffRepo, TradeAgreementRepository tradeRepo, AgreementCountryRepository agreementCountryRepo, TariffCalculationService calculationService) {
         this.tariffRepo = tariffRepo;
         this.tradeRepo = tradeRepo;
         this.agreementCountryRepo = agreementCountryRepo;
+        this.calculationService = calculationService;
     }
 
     public Map<String, String> processChat(String userPrompt) throws Exception {
@@ -96,7 +101,7 @@ public class OpenAIService {
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByProductDescriptionOrProductCodeContaining(product, product, limit)
-                .getContent(); // executes sql query from TariffRepository, limit to 10 results only
+                .getContent(); // executes sql query from tariffrepo, limit to 10 results
 
         // if no matches, fallback to gpt reasoning to give likely HS code
         if (tariffs.isEmpty()) {
@@ -143,7 +148,8 @@ public class OpenAIService {
         // ask openai to extract the two countries being compared
         String extractPrompt = """
         Extract the two countries being compared in the question.
-        Return JSON: {"country1": "<name>", "country2": "<name>"}.
+        Return JSON: {"country1": "<name>", "country2": "<name>", "date": "<time>"}.
+        If the date is not specified, leave it blank.
     """;
 
         // get ChatCompletionResult object (more than one) --> return the first choice --> extract the message --> extract the content to JSON string
@@ -159,32 +165,43 @@ public class OpenAIService {
             return Map.of("answer", "Could you specify both countries?");
         }
 
+        String dateText = extraction.path("date").asText("").trim();
+        LocalDate date = parseDateText(dateText);
+        if (date == null) {
+            date = LocalDate.now(); // default to today
+        }
+
         // find all list of matching trade agreements from db
-        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(country1, country2);
+        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountriesOnDate(country1, country2, date);
 
         if (agreementIds.isEmpty()) {
             return Map.of("answer", String.format("No trade agreement found between %s and %s.", country1, country2));
         }
 
         // fetch agreement details (Name + Type)
-        List<String> agreements = tradeRepo.findAllByIds(agreementIds).stream()
+        List<TradeAgreement> agreementsList = tradeRepo.findAllByIds(agreementIds);
+
+        List<String> agreements = agreementsList.stream()
                 .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
+                .toList();
+
+        List<String> effectiveDates = agreementsList.stream()
+                .map(a -> a.getEffectiveDate() != null ? a.getEffectiveDate().toString() : "N/A")
+                .toList();
+
+        List<String> expirationDates = agreementsList.stream()
+                .map(a -> a.getExpirationDate() != null ? a.getExpirationDate().toString() : "N/A")
                 .toList();
 
         // summarize results
         String joinedAgreements = String.join("; ", agreements);
-        String answer = String.format(
-                "Yes, there is at least one trade agreement between %s and %s: %s.",
-                country1, country2, joinedAgreements
-        );
+        String dateOfEntry = String.join("; ", effectiveDates);
 
-        // if user also asked about tariff rates, combine results w tariff calculation
-        if (userPrompt.toLowerCase().contains("tariff")) {
-            String product = extractProductFromPrompt(service, userPrompt);
-            if (!product.isBlank()) {
-                return calculateEffectiveTariff(product, country1, country2);
-            }
-        }
+        String endOfImplementation = String.join("; ", expirationDates);
+        String answer = String.format(
+                "The trade agreement between %s and %s is %s. The date of entry into force is %s and the end of implementation period is %s.",
+                country1, country2, joinedAgreements, dateOfEntry, endOfImplementation
+        );
 
         return Map.of("answer", answer, "agreements", joinedAgreements);
     }
@@ -195,105 +212,82 @@ public class OpenAIService {
     private Map<String, String> handleTariffRateQuery(OpenAiService service, String userPrompt) throws Exception {
         // extract relevant product and destination country
         String extractPrompt = """
-        Extract the product and destination country mentioned in the question.
-        Return JSON: {"product": "<word>", "destination": "<country>"}.
+        Extract the product, origin and destination country mentioned in the question.
+        Return JSON: {"product": "<word>", "origin": "<country>", "destination": "<country>"}.
         If the country is not specified, leave it blank.
         """;
 
         String extractJson = ask(service, extractPrompt, userPrompt);
         JsonNode extraction = mapper.readTree(extractJson);
         String product = extraction.path("product").asText("").trim();
-        String destination = extraction.path("destination").asText("").trim();
-
-        destination = normalizeCountryName(destination);
+        String origin = normalizeCountryName(extraction.path("origin").asText("").trim());
+        String destination = normalizeCountryName(extraction.path("destination").asText("").trim());
 
         if (product.isBlank()) {
             return Map.of("answer", "Could you rephrase that? I couldn’t detect a product name.");
         }
-
         if (destination.isBlank()) {
-            destination = "singapore"; // default fallback if user omits country
+            destination = "singapore"; // default fallback
         }
 
-        // search db for matching tariffs on destination + product
+        // get all possible tariffs for the destination + product
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destination, product, limit)
                 .getContent();
 
-        // fallback if no matches found
         if (tariffs.isEmpty()) {
             String fallbackPrompt = String.format("""
             The product is "%s".
             The database has no match for tariffs to %s.
             Based on global customs data, estimate a likely tariff range (in percent)
             and explain the reasoning briefly (1–2 sentences).
-        """, product, destination);
-
+            """, product, destination);
             String gptAnswer = ask(service, "You are a customs tariff expert.", fallbackPrompt, 0.2);
             return Map.of("answer", gptAnswer);
         }
 
-        // summarize result
-        double avgTariff = tariffs.stream()
-                .mapToDouble(Tariff::getTariffRate)
-                .average()
-                .orElse(0);
+        // use highest tariff as the base (EIA)
+        Tariff representativeTariff = tariffs.stream()
+                .max(Comparator.comparingDouble(Tariff::getTariffRate))
+                .orElse(tariffs.get(0));
 
-        String summary = tariffs.stream()
-                .map(t -> String.format("HS %s — %.2f%% tariff", t.getProduct().getProductCode(), t.getTariffRate()))
-                .collect(Collectors.joining(", "));
+        double baseRate = representativeTariff.getTariffRate();
+        String hsCode = representativeTariff.getProduct().getProductCode();
+        String sensitivityTier = calculationService.calculateSensitivityTier(hsCode);
+
+        // find trade agreements between the two countries
+        List<Long> agreementIds = agreementCountryRepo.findAgreementsBetweenCountries(origin, destination);
+
+        double finalRate = baseRate;
+        String appliedAgreement = "MFN"; // default
+
+        if (!agreementIds.isEmpty()) {
+            for (Long id : agreementIds) {
+                TradeAgreement agreement = tradeRepo.findByAgreementId(id).orElse(null);
+                if (agreement == null) continue;
+
+                String[] types = agreement.getAgreementType().split("&");
+                for (String type : types) {
+                    double multiplier = calculationService.getDiscountMultiplier(sensitivityTier, type.trim());
+                    double discountedRate = baseRate * multiplier;
+
+                    if (discountedRate < finalRate) {
+                        finalRate = discountedRate;
+                        appliedAgreement = type.trim();
+                    }
+                }
+            }
+        }
+
+        double reductionValue = baseRate - finalRate;
 
         String answer = String.format(
-                "The average tariff rate for %s imported to %s is approximately %.2f%% based on available records (%s).",
-                product, destination, avgTariff, summary);
+                "The tariff rate for %s imported from %s to %s is %.2f%% (base %.2f%%, Trade Agreement Reduction %.2f%%, applied: %s).",
+                product, origin, destination, finalRate, baseRate, reductionValue, appliedAgreement
+        );
 
         return Map.of("answer", answer);
-    }
-
-    // -----------------------------------------------
-    // TARIFF RATE CALCULATION WITH AGREEMENTS
-    // -----------------------------------------------
-    private Map<String, String> calculateEffectiveTariff(String product, String originCountry, String destinationCountry) {
-        var limit = PageRequest.of(0, 5);
-        List<Tariff> tariffs = tariffRepo
-                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destinationCountry, product, limit)
-                .getContent();
-
-        if (tariffs.isEmpty()) {
-            return Map.of("answer",
-                    String.format("No tariff data found for %s imported to %s.", product, destinationCountry));
-        }
-
-        double avgTariff = tariffs.stream()
-                .mapToDouble(Tariff::getTariffRate)
-                .average()
-                .orElse(0);
-
-        List<Long> agreements = agreementCountryRepo.findAgreementsBetweenCountries(originCountry, destinationCountry);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                "For %s imported to %s (HS %s), the base tariff is around %.2f%%.",
-                product,
-                destinationCountry,
-                tariffs.get(0).getProduct().getProductCode(),
-                avgTariff
-        ));
-
-        if (!agreements.isEmpty()) {
-            List<String> agreementNames = tradeRepo.findAllByIds(agreements).stream()
-                    .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
-                    .toList();
-            sb.append(String.format(
-                    " However, since %s and %s are covered by %s, preferential or zero-tariff rates may apply.",
-                    originCountry, destinationCountry, String.join("; ", agreementNames)
-            ));
-        } else {
-            sb.append(String.format(" There are no active trade agreements between %s and %s.", originCountry, destinationCountry));
-        }
-
-        return Map.of("answer", sb.toString());
     }
 
     // -----------------------------------------------
@@ -336,6 +330,19 @@ public class OpenAIService {
         );
         String lower = input.toLowerCase().trim();
         return aliases.getOrDefault(lower, lower);
+    }
+
+    private LocalDate parseDateText(String dateText) {
+        if (dateText == null || !dateText.isEmpty()) return null;
+        try {
+            return LocalDate.parse(dateText);
+        } catch (java.time.format.DateTimeParseException e) {
+            try {
+                return LocalDate.parse(dateText, java.time.format.DateTimeFormatter.ofPattern("d/M/yyyy"));
+            } catch (java.time.format.DateTimeParseException ex) {
+                return null;
+            }
+        }
     }
 }
 

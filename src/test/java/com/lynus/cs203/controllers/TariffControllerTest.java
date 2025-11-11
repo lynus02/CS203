@@ -45,14 +45,14 @@ class TariffControllerTest {
     void setUp() {
         // Setup test data
         validRequest = TariffCalculationRequest.builder()
-                .productCode(1)
+                .productCode("1")
                 .exportCountryCode("US")
                 .desCountryCode("CA")
                 .customsValue(1000.0)
                 .build();
 
         mockResponse = TariffCalculationResponse.builder()
-                .productCode(1)
+                .productCode("1")
                 .exportCountryCode("US")
                 .desCountryCode("CA")
                 .customsValue(1000.0)

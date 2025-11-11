@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @Getter
 @Setter
@@ -27,5 +29,11 @@ public class Tariff {
 
     @Column(name = "tariff_rate")
     private double tariffRate; // original "value" column
+
+//    @Column(name = "effective_date")
+//    private LocalDate effectiveDate;
+//
+//    @Column(name = "expiry_date")
+//    private LocalDate expiryDate;
 
 }
