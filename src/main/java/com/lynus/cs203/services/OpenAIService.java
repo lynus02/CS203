@@ -291,51 +291,6 @@ public class OpenAIService {
     }
 
     // -----------------------------------------------
-    // TARIFF RATE CALCULATION WITH AGREEMENTS
-    // -----------------------------------------------
-//    private Map<String, String> calculateEffectiveTariff(String product, String originCountry, String destinationCountry) {
-//        var limit = PageRequest.of(0, 5);
-//        List<Tariff> tariffs = tariffRepo
-//                .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destinationCountry, product, limit)
-//                .getContent();
-//
-//        if (tariffs.isEmpty()) {
-//            return Map.of("answer",
-//                    String.format("No tariff data found for %s imported to %s.", product, destinationCountry));
-//        }
-//
-//        double avgTariff = tariffs.stream()
-//                .mapToDouble(Tariff::getTariffRate)
-//                .average()
-//                .orElse(0);
-//
-//        List<Long> agreements = agreementCountryRepo.findAgreementsBetweenCountries(originCountry, destinationCountry);
-//
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(String.format(
-//                "For %s imported to %s (HS %s), the base tariff is around %.2f%%.",
-//                product,
-//                destinationCountry,
-//                tariffs.get(0).getProduct().getProductCode(),
-//                avgTariff
-//        ));
-//
-//        if (!agreements.isEmpty()) {
-//            List<String> agreementNames = tradeRepo.findAllByIds(agreements).stream()
-//                    .map(a -> String.format("%s (%s)", a.getAgreementName(), a.getAgreementType()))
-//                    .toList();
-//            sb.append(String.format(
-//                    " However, since %s and %s are covered by %s, preferential or zero-tariff rates may apply.",
-//                    originCountry, destinationCountry, String.join("; ", agreementNames)
-//            ));
-//        } else {
-//            sb.append(String.format(" There are no active trade agreements between %s and %s.", originCountry, destinationCountry));
-//        }
-//
-//        return Map.of("answer", sb.toString());
-//    }
-
-    // -----------------------------------------------
     // HELPER METHODS
     // -----------------------------------------------
     private String extractProductFromPrompt(OpenAiService service, String prompt) throws Exception {
