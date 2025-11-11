@@ -42,9 +42,14 @@ public class TariffController {
     public ResponseEntity<TariffCalculationResponse> calculate(
             @Valid @RequestBody TariffCalculationRequest request
     ) {
-        log.info("Calculating tariff - Product: {}, Export: {}, Destination: {}, Value: {}",
-                request.getProductCode(), request.getExportCountryCode(),
-                request.getDesCountryCode(), request.getCustomsValue());
+        log.info(
+                "Calculating tariff - Product: {}, Export: {}, Destination: {}, Value: {}, Date: {}",
+                request.getProductCode(),
+                request.getExportCountryCode(),
+                request.getDesCountryCode(),
+                request.getCustomsValue(),
+                request.getDate() != null ? request.getDate() : "Using today's date"
+        );
 
         TariffCalculationResponse response = tariffCalculationService.calculateTariff(request);
 

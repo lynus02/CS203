@@ -55,7 +55,7 @@ class TariffSuggestionServiceTest {
         testCountry2.setCountryName("Canada");
 
         testProduct = new Product();
-        testProduct.setProductCode(1001);
+        testProduct.setProductCode("1001");
         testProduct.setProductDescription("Test Product Description");
 
         testTariff1 = new Tariff();

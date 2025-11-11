@@ -59,12 +59,12 @@ class TariffControllerIntegrationTest {
         // Arrange
         Country exportCountry = createUniqueCountry("EXP01", "ExportCountry");
         Country desCountry = createUniqueCountry("DES01", "DestinationCountry");
-        Product product = createUniqueProduct(12345, "Test Product");
+        Product product = createUniqueProduct("12345", "Test Product");
 
         createTariff(product, desCountry, 8.5);
 
         TariffCalculationRequest request = TariffCalculationRequest.builder()
-                .productCode(12345)
+                .productCode("12345")
                 .exportCountryCode("EXP01")
                 .desCountryCode("DES01")
                 .customsValue(100.0)
@@ -83,7 +83,7 @@ class TariffControllerIntegrationTest {
     void suggestProducts_WithQueryAndCountry_ShouldReturnSuggestions() throws Exception {
         // Arrange
         Country country = createUniqueCountry("TC001", "TestCountry1");
-        Product product = createUniqueProduct(10001, "Test Product");
+        Product product = createUniqueProduct("10001", "Test Product");
         createTariff(product, country, 5.0);
 
         // Act & Assert
@@ -102,7 +102,7 @@ class TariffControllerIntegrationTest {
     void suggestProducts_WithNumericQuery_ShouldReturnSuggestions() throws Exception {
         // Arrange
         Country country = createUniqueCountry("TC002", "TestCountry2");
-        Product product = createUniqueProduct(20002, "Another Product");
+        Product product = createUniqueProduct("20002", "Another Product");
         createTariff(product, country, 7.5);
 
         // Act & Assert
@@ -121,8 +121,8 @@ class TariffControllerIntegrationTest {
     void getTariffRatesBySize_WithSizeAndCountry_ShouldReturnRates() throws Exception {
         // Arrange
         Country country = createUniqueCountry("TC003", "TestCountry3");
-        Product p1 = createUniqueProduct(30001, "Test Product");
-        Product p2 = createUniqueProduct(30002, "Another Product");
+        Product p1 = createUniqueProduct("30001", "Test Product");
+        Product p2 = createUniqueProduct("30002", "Another Product");
         createTariff(p1, country, 5.0);
         createTariff(p2, country, 10.0);
 
@@ -147,7 +147,7 @@ class TariffControllerIntegrationTest {
     @DisplayName("Should return 400 for missing required fields")
     void calculateTariff_WithMissingFields_ShouldReturnBadRequest() throws Exception {
         TariffCalculationRequest request = TariffCalculationRequest.builder()
-                .productCode(5005)
+                .productCode("5005")
                 .exportCountryCode("C840")
                 .desCountryCode(null)
                 .customsValue(200.0)
@@ -165,7 +165,7 @@ class TariffControllerIntegrationTest {
     void suggestProducts_WithoutCountry_ShouldReturnSuggestions() throws Exception {
         // Arrange
         Country country = createUniqueCountry("TC004", "TestCountry4");
-        Product product = createUniqueProduct(40001, "Sample Product");
+        Product product = createUniqueProduct("40001", "Sample Product");
         createTariff(product, country, 3.5);
 
         // Act & Assert
@@ -188,7 +188,7 @@ class TariffControllerIntegrationTest {
                 });
     }
 
-    private Product createUniqueProduct(int productCode, String productDescription) {
+    private Product createUniqueProduct(String productCode, String productDescription) {
         return productRepository.findByProductCode(productCode)
                 .orElseGet(() -> {
                     Product product = new Product();
