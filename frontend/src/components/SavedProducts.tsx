@@ -231,6 +231,7 @@ interface SaveProductDialogProps {
     originCountry: string;
     destinationCountry: string;
     importDate: Date;
+    userId: string;
     onSave?: () => void;
 }
 
@@ -240,6 +241,7 @@ export function SaveProductDialog({
                                       originCountry,
                                       destinationCountry,
                                       importDate,
+                                      userId,
                                       onSave
                                   }: SaveProductDialogProps) {
     const [open, setOpen] = useState(false);
@@ -267,12 +269,17 @@ export function SaveProductDialog({
         // Load existing saved products
         try {
             setLoading(true);
-            const saved = await savedProductsService.saveProduct(productData);
+
+            // call backend with userId
+            const saved = await savedProductsService.saveProduct(userId, productData);
             toast.success("Product configuration saved to your account!");
             setConfigName("");
             setOpen(false);
             onSave?.();
             console.log('SaveProductDialog: saved to backend', saved);
+            window.dispatchEvent(
+                new CustomEvent('savedProductsChanged', {detail: saved})
+            );
         } catch (error: any) {
             console.error('Error saving product configuration', error);
             toast.error(`Failed to save product: ${error.message || 'Unknown error'}`);

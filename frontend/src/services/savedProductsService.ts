@@ -1,8 +1,6 @@
 // services/savedProductsService.ts
 import api from './api';
 
-import api from './api';
-
 // Interfaces
 export interface SavedProductConfig {
     id: string;
@@ -17,7 +15,6 @@ export interface SavedProductConfig {
     productValue: number;
     originCountry: string;
     destinationCountry: string;
-    importDate: string;
     savedAt: string;
     _syncStatus?: 'local' | 'synced' | 'pending';
 }
@@ -37,40 +34,47 @@ export interface SaveProductRequest {
     importDate: string;
 }
 
-// ✅ Declare constants OUTSIDE the object
-const LOCAL_STORAGE_KEY = "foodTariffSavedProducts";
+const LOCAL_STORAGE_KEY = 'foodTariffSavedProducts';
 
 const savedProductsService = {
+    // Helper: get JWT token
+    getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    },
     // API METHODS
-    async saveProduct(productData: SaveProductRequest): Promise<SavedProductConfig> {
+    async saveProduct(userId: string, productData: SaveProductRequest): Promise<SavedProductConfig> {
         try {
-            const response = await api.post('/api/saved-products', productData);
+            const response = await api.post(`/api/users/${userId}/saved-products`, productData, {
+                headers: this.getAuthHeaders()
+            });
             return response.data;
         } catch (err: any) {
-            const payload = err?.response?.data;
-            const message = payload?.message || err?.message || 'Save product failed';
-            throw { message, status: err?.response?.status, payload };
+            const message = err?.response?.data?.message || err.message || 'Failed to save product';
+            throw { message, status: err?.response?.status };
         }
     },
 
-    async getSavedProducts(): Promise<SavedProductConfig[]> {
+    async getSavedProducts(userId: String): Promise<SavedProductConfig[]> {
         try {
-            const response = await api.get('/api/saved-products');
+            const response = await api.get(`/api/users/${userId}/saved-products`, {
+                headers: this.getAuthHeaders()
+            });
             return response.data;
         } catch (err: any) {
-            const payload = err?.response?.data;
-            const message = payload?.message || err?.message || 'Get saved products failed';
-            throw { message, status: err?.response?.status, payload };
+            const message = err?.response?.data?.message || err.message || 'Failed to get saved products';
+            throw { message, status: err?.response?.status };
         }
     },
 
-    async deleteSavedProduct(productId: string): Promise<void> {
+    async deleteSavedProduct(userId: string, productId: string): Promise<void> {
         try {
-            await api.delete(`/api/saved-products/${productId}`);
+            await api.delete(`/api/users/${userId}/saved-products/${productId}`, {
+                headers: this.getAuthHeaders()
+            });
         } catch (err: any) {
-            const payload = err?.response?.data;
-            const message = payload?.message || err?.message || 'Delete product failed';
-            throw { message, status: err?.response?.status, payload };
+            const message = err?.response?.data?.message || err.message || 'Failed to delete product';
+            throw { message, status: err?.response?.status };
         }
     },
 
@@ -84,14 +88,14 @@ const savedProductsService = {
     },
 
     // SMART SAVE
-    async smartSave(productData: SaveProductRequest): Promise<SavedProductConfig> {
+    async smartSave(UserId: string, productData: SaveProductRequest): Promise<SavedProductConfig> {
         const newConfig: SavedProductConfig = {
             ...productData,
             id: this.generateId(),
             savedAt: new Date().toISOString(),
             _syncStatus: 'local'
         };
-
+        // save to localstorage
         this.saveToLocalStorage(newConfig);
 
         if (this.isAuthenticated()) {
@@ -101,7 +105,6 @@ const savedProductsService = {
                 return syncedConfig;
             } catch (error) {
                 console.warn('Backend save failed, keeping local only:', error);
-                newConfig._syncStatus = 'local';
                 this.updateLocalStorageWithSyncStatus(newConfig.id, 'local');
             }
         }
@@ -109,13 +112,11 @@ const savedProductsService = {
         return newConfig;
     },
 
-    async smartGet(): Promise<SavedProductConfig[]> {
-        if (!this.isAuthenticated()) {
-            return this.getFromLocalStorage();
-        }
+    async smartGet(userId: string, productData: SaveProductRequest): Promise<SavedProductConfig[]> {
+        if (!this.isAuthenticated()) return this.getFromLocalStorage();
 
         try {
-            const backendProducts = await this.getSavedProducts();
+            const backendProducts = await this.getSavedProducts(userId);
             const localProducts = this.getFromLocalStorage();
             return this.mergeProducts(localProducts, backendProducts);
         } catch (error) {
@@ -124,19 +125,19 @@ const savedProductsService = {
         }
     },
 
-    async smartDelete(productId: string): Promise<void> {
+    async smartDelete(userId: string, productId: string): Promise<void> {
         this.deleteFromLocalStorage(productId);
 
         if (this.isAuthenticated()) {
             try {
-                await this.deleteSavedProduct(productId);
+                await this.deleteSavedProduct(userId, productId);
             } catch (error) {
                 console.warn('Backend delete failed, but local delete succeeded:', error);
             }
         }
     },
 
-    async syncLocalToBackend(): Promise<void> {
+    async syncLocalToBackend(userId: string): Promise<void> {
         if (!this.isAuthenticated()) return;
 
         const localProducts = this.getFromLocalStorage();
@@ -145,8 +146,8 @@ const savedProductsService = {
         for (const product of unsyncedProducts) {
             try {
                 const { name, product: prod, productValue, originCountry, destinationCountry, importDate } = product;
-                const synced = await this.saveProduct({
-                    name, product: prod, productValue, originCountry, destinationCountry, importDate
+                const synced = await this.saveProduct(userId,{
+                    name, product: prod, productValue, originCountry, destinationCountry, importDate: importDate ||''
                 });
                 this.updateLocalStorageWithSynced(synced);
             } catch (error) {
