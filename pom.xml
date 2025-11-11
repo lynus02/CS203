@@ -42,7 +42,7 @@
         <!-- Database Configuration -->
         <DB_URL>jdbc:mysql://localhost:3306/tariff</DB_URL>
         <DB_USERNAME>root</DB_USERNAME>
-        <DB_PASSWORD>password123</DB_PASSWORD>
+        <DB_PASSWORD>CSisTOUGH2025!</DB_PASSWORD>
     </properties>
 
     <!-- ========== DEPENDENCY MANAGEMENT ========== -->

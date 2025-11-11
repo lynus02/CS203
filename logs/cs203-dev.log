@@ -8003,3 +8003,680 @@ Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (usi
 2025-11-11T01:02:22.758+08:00  INFO 32012 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-11T01:02:22.766+08:00  INFO 32012 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-11T01:02:22.806+08:00  INFO 32012 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-11T13:36:36.645+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 21492 (C:\Users\ZY\Downloads\CS203\proj\target\classes started by Zhaoyun in C:\Users\ZY\Downloads\CS203\proj)
+2025-11-11T13:36:36.645+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-11T13:36:36.645+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-11T13:36:38.521+08:00  INFO 21492 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-11T13:36:38.711+08:00  INFO 21492 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 163 ms. Found 9 JPA repository interfaces.
+2025-11-11T13:36:40.089+08:00  INFO 21492 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-11T13:36:40.124+08:00  INFO 21492 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11T13:36:40.131+08:00  INFO 21492 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-11T13:36:40.294+08:00  INFO 21492 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11T13:36:40.294+08:00  INFO 21492 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3562 ms
+2025-11-11T13:36:40.858+08:00  INFO 21492 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-11T13:36:41.526+08:00  INFO 21492 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1cc93da4
+2025-11-11T13:36:41.539+08:00  INFO 21492 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-11T13:36:41.634+08:00  INFO 21492 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 8.0)
+2025-11-11T13:36:41.822+08:00  INFO 21492 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.117s)
+2025-11-11T13:36:41.859+08:00  INFO 21492 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-11T13:36:41.876+08:00  INFO 21492 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-11T13:36:42.150+08:00  INFO 21492 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-11T13:36:42.303+08:00  INFO 21492 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-11T13:36:42.416+08:00  INFO 21492 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-11T13:36:43.122+08:00  INFO 21492 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-11T13:36:43.262+08:00  WARN 21492 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-11T13:36:43.262+08:00  WARN 21492 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-11T13:36:43.303+08:00  INFO 21492 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-11T13:36:45.690+08:00  INFO 21492 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-11T13:36:45.897+08:00  INFO 21492 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-11T13:36:46.618+08:00 DEBUG 21492 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-11T13:36:46.679+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-11T13:36:46.701+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-11T13:36:46.703+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-11T13:36:46.705+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-11T13:36:46.807+08:00  INFO 21492 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-11T13:36:47.746+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-11T13:36:47.844+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-11T13:36:49.686+08:00  WARN 21492 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-11T13:36:49.745+08:00  INFO 21492 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-11T13:36:50.247+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-11T13:36:50.247+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-11T13:36:50.247+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-11T13:36:50.247+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-11T13:36:50.259+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-11T13:36:50.311+08:00  WARN 21492 --- [cs203] [main] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/audit/**] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-11-11T13:36:50.336+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-11T13:36:50.340+08:00 DEBUG 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-11T13:36:50.345+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-11T13:36:51.109+08:00  INFO 21492 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-11T13:36:51.136+08:00  INFO 21492 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 15.598 seconds (process running for 16.62)
+2025-11-11T13:36:51.143+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-11T13:36:51.143+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-11T13:36:51.155+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-11T13:36:51.155+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-11T13:36:51.157+08:00  INFO 21492 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-11T00:45:26, skipping
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 143ms
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-11T00:45:28, skipping
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 0ms
+2025-11-11T13:36:51.300+08:00  INFO 21492 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 145ms ===
+2025-11-11T13:37:51.471+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11T13:37:51.471+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11T13:37:51.475+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2025-11-11T13:37:51.587+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-11T13:37:51.590+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:37:51.637+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-11T13:38:06.066+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T13:38:06.067+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:38:06.104+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-11T13:38:18.025+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T13:38:18.028+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:38:18.032+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Mexico
+2025-11-11T13:38:24.353+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:38:24.353+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:38:24.480+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C158, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T13:38:24.480+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:38:24.480+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:38:24.498+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:38:24.498+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C158
+2025-11-11T13:38:24.514+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found export country with code: C158)
+2025-11-11T13:38:24.514+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:38:24.528+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:38:24.528+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:38:24.544+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:38:24.544+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:38:24.592+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Chinese Taipei and Destination Country: Mexico
+2025-11-11T13:38:24.592+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 2000.0
+2025-11-11T13:38:24.608+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 2000.0
+2025-11-11T13:39:43.894+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:39:43.896+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:39:43.905+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T13:39:43.905+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:39:43.905+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:39:43.917+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:39:43.919+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:39:43.926+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:39:43.928+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:39:43.938+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:39:43.938+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:39:43.950+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:39:43.950+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:39:43.961+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:39:43.964+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 2000.0
+2025-11-11T13:39:43.968+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 2000.0
+2025-11-11T13:40:20.110+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/index.html
+2025-11-11T13:40:20.110+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.231+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/swagger-ui.css
+2025-11-11T13:40:20.231+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.234+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/index.css
+2025-11-11T13:40:20.236+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.239+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/swagger-ui-bundle.js
+2025-11-11T13:40:20.239+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.243+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/swagger-ui-standalone-preset.js
+2025-11-11T13:40:20.244+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.246+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /swagger-ui/swagger-initializer.js
+2025-11-11T13:40:20.247+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.543+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /v3/api-docs/swagger-config
+2025-11-11T13:40:20.543+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:20.584+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /v3/api-docs
+2025-11-11T13:40:20.586+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:40:21.894+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 1299 ms
+2025-11-11T13:42:04.774+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:42:04.776+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:42:04.783+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 1000.0, Date: 2025-01-01
+2025-11-11T13:42:04.784+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:42:04.785+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:42:04.797+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:42:04.798+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:42:04.806+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:42:04.808+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:42:04.818+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:42:04.819+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:42:04.827+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:42:04.828+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:42:04.835+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:42:04.836+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 200.0
+2025-11-11T13:42:04.836+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 200.0
+2025-11-11T13:42:43.468+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T13:42:43.468+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:42:43.472+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Mexico
+2025-11-11T13:43:23.804+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:43:23.805+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:43:23.809+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 1000.0, Date: 2000-01-01
+2025-11-11T13:43:23.811+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:43:23.812+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:43:23.817+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:43:23.819+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:43:23.826+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:43:23.827+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:43:23.835+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:43:23.835+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:43:23.844+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:43:23.845+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:43:23.849+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:43:23.863+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 180.0
+2025-11-11T13:43:23.864+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 180.0
+2025-11-11T13:43:34.263+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:43:34.264+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:43:34.274+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 1000.0, Date: 2003-01-01
+2025-11-11T13:43:34.276+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:43:34.276+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:43:34.289+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:43:34.290+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:43:34.298+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:43:34.299+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:43:34.304+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:43:34.305+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:43:34.311+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:43:34.312+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:43:34.316+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:43:34.322+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 180.0
+2025-11-11T13:43:34.323+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 180.0
+2025-11-11T13:43:44.777+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:43:44.778+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:43:44.783+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 1000.0, Date: 2003-12-31
+2025-11-11T13:43:44.785+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:43:44.785+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:43:44.795+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:43:44.796+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:43:44.804+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:43:44.806+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:43:44.812+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:43:44.813+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:43:44.820+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:43:44.821+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:43:44.825+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:43:44.832+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 180.0
+2025-11-11T13:43:44.834+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 180.0
+2025-11-11T13:43:53.912+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:43:53.913+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:43:53.917+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C218, Destination: C484, Value: 1000.0, Date: 2004-01-31
+2025-11-11T13:43:53.918+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:43:53.919+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T13:43:53.927+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T13:43:53.929+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C218
+2025-11-11T13:43:53.935+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found export country with code: C218)
+2025-11-11T13:43:53.936+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:43:53.940+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:43:53.941+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T13:43:53.949+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T13:43:53.950+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T13:43:53.955+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Ecuador and Destination Country: Mexico
+2025-11-11T13:43:53.955+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 200.0
+2025-11-11T13:43:53.956+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 200.0
+2025-11-11T13:48:25.816+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T13:48:25.822+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T13:48:25.827+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 2004-01-31
+2025-11-11T13:48:25.828+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T13:48:25.828+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T13:48:25.838+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T13:48:25.840+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T13:48:25.851+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T13:48:25.852+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T13:48:25.858+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T13:48:25.860+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T13:48:25.867+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T13:48:25.868+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T13:48:25.873+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T13:48:25.878+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T13:48:25.879+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:00:21.160+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:00:21.167+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:00:21.173+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 2025-01-01
+2025-11-11T14:00:21.174+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:00:21.175+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:00:21.184+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:00:21.186+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:00:21.193+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:00:21.194+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:00:21.207+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:00:21.208+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:00:21.218+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:00:21.219+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:00:21.225+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found 3 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:00:21.242+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T14:00:21.242+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:01:22.673+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:01:22.674+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:01:22.682+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 2024-01-01
+2025-11-11T14:01:22.683+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:01:22.684+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:01:22.699+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:01:22.701+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:01:22.711+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:01:22.712+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:01:22.719+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:01:22.722+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:01:22.736+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:01:22.737+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:01:22.752+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found 2 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:01:22.764+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T14:01:22.765+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:01:49.943+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:01:49.945+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:01:49.964+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 2008-01-01
+2025-11-11T14:01:49.967+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:01:49.968+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:01:49.976+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:01:49.977+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:01:49.984+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:01:49.985+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:01:49.992+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:01:49.994+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:01:50.004+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:01:50.005+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:01:50.013+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:01:50.022+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T14:01:50.024+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:03:11.865+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:03:11.870+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:03:11.881+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 2008-01-01
+2025-11-11T14:03:11.883+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:03:11.884+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:03:11.896+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:03:11.897+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:03:11.904+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:03:11.905+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:03:11.913+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:03:11.914+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:03:11.923+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:03:11.923+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:03:11.931+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:03:11.940+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T14:03:11.940+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:03:27.496+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:03:27.508+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:03:27.513+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 1994-01-01
+2025-11-11T14:03:27.521+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:03:27.521+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:03:27.529+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:03:27.530+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:03:27.535+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:03:27.535+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:03:27.544+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:03:27.549+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:03:27.556+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:03:27.558+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:03:27.566+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:03:27.573+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 30.0
+2025-11-11T14:03:27.574+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 30.0
+2025-11-11T14:03:33.475+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:03:33.477+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:03:33.481+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 1000.0, Date: 1990-01-01
+2025-11-11T14:03:33.485+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:03:33.486+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:03:33.494+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:03:33.496+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:03:33.500+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:03:33.501+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:03:33.509+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:03:33.510+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:03:33.517+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:03:33.518+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:03:33.527+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:03:33.528+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 100.0
+2025-11-11T14:03:33.528+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 100.0
+2025-11-11T14:05:16.661+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:05:16.661+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:05:16.681+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C124, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:05:16.683+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:05:16.685+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T14:05:16.698+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T14:05:16.698+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:05:16.709+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:05:16.710+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:05:16.718+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:05:16.718+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C484
+2025-11-11T14:05:16.730+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found tariff rate: 20.0% for Product: 10130 and Country: C484
+2025-11-11T14:05:16.730+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T14:05:16.733+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found 3 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:05:16.749+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 600.0
+2025-11-11T14:05:16.749+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 600.0
+2025-11-11T14:13:06.276+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:13:06.281+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:13:06.296+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10130, Export: C156, Destination: C702, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:13:06.296+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:13:06.308+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up product with code: 10130
+2025-11-11T14:13:06.324+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found product with code: 10130)
+2025-11-11T14:13:06.326+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:13:06.341+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:13:06.343+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up export country with code: C702
+2025-11-11T14:13:06.356+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found destination country with code: C702)
+2025-11-11T14:13:06.356+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10130 and Country: C702
+2025-11-11T14:13:06.366+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10130 and Country: C702
+2025-11-11T14:13:06.368+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10130
+2025-11-11T14:13:06.378+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Singapore
+2025-11-11T14:13:06.378+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:13:06.378+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:16:10.892+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T14:16:10.894+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:16:10.897+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-11T14:16:46.373+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:16:46.377+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:16:46.392+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:16:46.495+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:16:46.495+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:16:46.499+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '11', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:16:46.526+08:00  WARN 21492 --- [cs203] [http-nio-8080-exec-8] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-11-11T14:16:50.611+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:16:50.611+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:16:50.617+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '110', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:06.869+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:06.872+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:06.872+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '11', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:06.975+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:06.978+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:06.978+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:15.832+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:15.834+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:15.839+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:15.992+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:15.996+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:16.001+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '11', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:16.584+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:16.584+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:16.596+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '110', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:17.135+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:17.135+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:17.139+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1101', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:17.376+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:17.378+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:17.388+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '11012', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:17.593+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:17.593+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:17.598+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '110121', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:19.902+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:19.902+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:19.902+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '11012', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:17:20.673+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/suggest
+2025-11-11T14:17:20.673+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:17:20.679+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Suggesting products - Query: '1101', Country: Singapore, Page: 0, Size: 20
+2025-11-11T14:18:09.918+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T14:18:09.919+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:09.921+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Singapore
+2025-11-11T14:18:13.481+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:18:13.520+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:13.541+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C156, Destination: C702, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:18:13.541+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:18:13.541+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:18:13.541+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:18:13.541+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:18:13.553+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:18:13.553+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C702
+2025-11-11T14:18:13.569+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found destination country with code: C702)
+2025-11-11T14:18:13.569+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C702
+2025-11-11T14:18:13.569+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10121 and Country: C702
+2025-11-11T14:18:13.569+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:18:13.569+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Singapore
+2025-11-11T14:18:13.569+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:18:13.569+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:18:15.352+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:18:15.354+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:15.356+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C156, Destination: C702, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:18:15.356+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:18:15.356+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:18:15.381+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:18:15.381+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:18:15.381+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:18:15.381+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C702
+2025-11-11T14:18:15.399+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found destination country with code: C702)
+2025-11-11T14:18:15.399+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C702
+2025-11-11T14:18:15.403+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10121 and Country: C702
+2025-11-11T14:18:15.403+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:18:15.413+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Singapore
+2025-11-11T14:18:15.415+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:18:15.415+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:18:31.170+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T14:18:31.170+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:31.175+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Namibia
+2025-11-11T14:18:40.099+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T14:18:40.102+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:40.106+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: United States of America
+2025-11-11T14:18:45.243+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:18:45.246+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:18:45.246+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10190, Export: C156, Destination: C840, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:18:45.246+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:18:45.246+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up product with code: 10190
+2025-11-11T14:18:45.278+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found product with code: 10190)
+2025-11-11T14:18:45.278+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:18:45.292+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:18:45.294+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up export country with code: C840
+2025-11-11T14:18:45.298+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found destination country with code: C840)
+2025-11-11T14:18:45.298+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10190 and Country: C840
+2025-11-11T14:18:45.310+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found tariff rate: 2.0% for Product: 10190 and Country: C840
+2025-11-11T14:18:45.312+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10190
+2025-11-11T14:18:45.317+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: United States of America
+2025-11-11T14:18:45.317+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 200.0
+2025-11-11T14:18:45.318+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-6] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 200.0
+2025-11-11T14:23:27.549+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/rates/20
+2025-11-11T14:23:27.555+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-7] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:23:27.564+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-7] c.l.cs203.controllers.TariffController   : Retrieving tariff rates for size: 20, country: Mexico
+2025-11-11T14:23:30.871+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:23:30.871+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:23:30.871+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C156, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:23:30.871+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:23:30.871+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:23:30.892+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:23:30.892+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:23:30.903+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:23:30.903+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:23:30.910+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:23:30.912+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:23:30.920+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:23:30.924+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:23:30.930+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Mexico
+2025-11-11T14:23:30.930+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 1000.0
+2025-11-11T14:23:30.930+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 1000.0
+2025-11-11T14:24:22.243+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:24:22.244+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:24:22.249+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C032, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:24:22.250+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:24:22.250+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:24:22.262+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:24:22.263+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:24:22.271+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found export country with code: C032)
+2025-11-11T14:24:22.271+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:24:22.280+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:24:22.281+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:24:22.290+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:24:22.291+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:24:22.295+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Argentina and Destination Country: Mexico
+2025-11-11T14:24:22.300+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 1000.0
+2025-11-11T14:24:22.301+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-9] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 1000.0
+2025-11-11T14:28:17.281+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:28:17.281+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:28:17.285+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C156, Destination: C032, Value: 1000.0, Date: 1990-01-01
+2025-11-11T14:28:17.288+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:28:17.288+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:28:17.297+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:28:17.297+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:28:17.301+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:28:17.301+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:28:17.309+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found destination country with code: C032)
+2025-11-11T14:28:17.312+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C032
+2025-11-11T14:28:17.320+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10121 and Country: C032
+2025-11-11T14:28:17.320+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:28:17.320+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Argentina
+2025-11-11T14:28:17.327+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:28:17.327+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:28:52.216+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:28:52.217+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:28:52.220+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C156, Destination: C032, Value: 1000.0, Date: 2014-01-01
+2025-11-11T14:28:52.223+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:28:52.223+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:28:52.230+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:28:52.232+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:28:52.239+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found export country with code: C156)
+2025-11-11T14:28:52.239+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:28:52.243+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found destination country with code: C032)
+2025-11-11T14:28:52.244+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C032
+2025-11-11T14:28:52.248+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10121 and Country: C032
+2025-11-11T14:28:52.249+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:28:52.255+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: China and Destination Country: Argentina
+2025-11-11T14:28:52.256+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:28:52.256+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:29:12.209+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:29:12.209+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:29:12.209+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C032, Destination: C156, Value: 1000.0, Date: 2014-01-01
+2025-11-11T14:29:12.209+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:29:12.209+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:29:12.226+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:29:12.228+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:29:12.265+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found export country with code: C032)
+2025-11-11T14:29:12.269+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up export country with code: C156
+2025-11-11T14:29:12.274+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found destination country with code: C156)
+2025-11-11T14:29:12.284+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C156
+2025-11-11T14:29:12.289+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found tariff rate: 0.0% for Product: 10121 and Country: C156
+2025-11-11T14:29:12.289+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:29:12.297+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Found 0 trade agreements between Export Country: Argentina and Destination Country: China
+2025-11-11T14:29:12.301+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 0.0
+2025-11-11T14:29:12.301+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-4] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 0.0
+2025-11-11T14:30:04.431+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:30:04.434+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:30:04.441+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C032, Destination: C484, Value: 1000.0, Date: 2014-01-01
+2025-11-11T14:30:04.441+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:30:04.441+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:30:04.457+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:30:04.457+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:30:04.465+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found export country with code: C032)
+2025-11-11T14:30:04.466+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:30:04.467+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:30:04.467+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:30:04.467+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:30:04.467+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:30:04.486+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Argentina and Destination Country: Mexico
+2025-11-11T14:30:04.493+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 90.0
+2025-11-11T14:30:04.493+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-5] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 90.0
+2025-11-11T14:33:28.540+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:33:28.541+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:33:28.546+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C124, Destination: C484, Value: 10000.0, Date: 2025-11-11
+2025-11-11T14:33:28.546+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:33:28.546+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:33:28.546+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:33:28.546+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up export country with code: C124
+2025-11-11T14:33:28.562+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found export country with code: C124)
+2025-11-11T14:33:28.562+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:33:28.570+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:33:28.570+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:33:28.580+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:33:28.587+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:33:28.595+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Found 3 trade agreements between Export Country: Canada and Destination Country: Mexico
+2025-11-11T14:33:28.613+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 300.0
+2025-11-11T14:33:28.613+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-8] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 300.0
+2025-11-11T14:45:29.955+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-11T14:45:29.955+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-10] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:45:29.958+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-10] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-11T14:47:37.874+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-11T14:47:37.876+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-2] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:47:37.880+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-2] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-11T14:47:40.941+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: GET /tariffs/countries
+2025-11-11T14:47:40.943+08:00 DEBUG 21492 --- [cs203] [http-nio-8080-exec-3] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:47:40.945+08:00  INFO 21492 --- [cs203] [http-nio-8080-exec-3] c.l.cs203.controllers.TariffController   : Retrieving all available countries for tariff calculations
+2025-11-11T14:51:59.664+08:00  INFO 21492 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-11T14:51:59.699+08:00  INFO 21492 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-11T14:51:59.712+08:00  INFO 21492 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-11T14:51:59.717+08:00  INFO 21492 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-11T14:51:59.737+08:00  INFO 21492 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-11T14:52:42.018+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Starting Cs203Application using Java 21.0.5 with PID 23240 (C:\Users\ZY\Downloads\CS203\proj\target\classes started by Zhaoyun in C:\Users\ZY\Downloads\CS203\proj)
+2025-11-11T14:52:42.021+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Running with Spring Boot v3.5.5, Spring v6.2.10
+2025-11-11T14:52:42.023+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.Cs203Application         : The following 1 profile is active: "dev"
+2025-11-11T14:52:44.143+08:00  INFO 23240 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-11T14:52:44.330+08:00  INFO 23240 --- [cs203] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 160 ms. Found 9 JPA repository interfaces.
+2025-11-11T14:52:45.486+08:00  INFO 23240 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-11-11T14:52:45.519+08:00  INFO 23240 --- [cs203] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-11T14:52:45.528+08:00  INFO 23240 --- [cs203] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-11-11T14:52:45.692+08:00  INFO 23240 --- [cs203] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-11T14:52:45.703+08:00  INFO 23240 --- [cs203] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3575 ms
+2025-11-11T14:52:46.158+08:00  INFO 23240 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-11T14:52:46.786+08:00  INFO 23240 --- [cs203] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6b091a92
+2025-11-11T14:52:46.791+08:00  INFO 23240 --- [cs203] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-11T14:52:46.883+08:00  INFO 23240 --- [cs203] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/tariff (MySQL 8.0)
+2025-11-11T14:52:47.058+08:00  INFO 23240 --- [cs203] [main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.117s)
+2025-11-11T14:52:47.113+08:00  INFO 23240 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Current version of schema `tariff`: 5
+2025-11-11T14:52:47.128+08:00  INFO 23240 --- [cs203] [main] o.f.core.internal.command.DbMigrate      : Schema `tariff` is up to date. No migration necessary.
+2025-11-11T14:52:47.329+08:00  INFO 23240 --- [cs203] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-11T14:52:47.417+08:00  INFO 23240 --- [cs203] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-11-11T14:52:47.500+08:00  INFO 23240 --- [cs203] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-11T14:52:48.286+08:00  INFO 23240 --- [cs203] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-11T14:52:48.459+08:00  WARN 23240 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-11T14:52:48.459+08:00  WARN 23240 --- [cs203] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-11-11T14:52:48.523+08:00  INFO 23240 --- [cs203] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-11T14:52:51.911+08:00  INFO 23240 --- [cs203] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-11T14:52:52.218+08:00  INFO 23240 --- [cs203] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-11T14:52:53.131+08:00 DEBUG 23240 --- [cs203] [main] c.l.c.filters.JwtAuthenticationFilter    : Filter 'jwtAuthenticationFilter' configured for use
+2025-11-11T14:52:53.205+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : Registering CorsConfigurationSource bean for Spring Security
+2025-11-11T14:52:53.238+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS allowed origins: null
+2025-11-11T14:52:53.238+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS methods: [GET, POST, PUT, DELETE, OPTIONS]
+2025-11-11T14:52:53.238+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.CorsConfig        : CORS credentials allowed: true
+2025-11-11T14:52:53.372+08:00  INFO 23240 --- [cs203] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-11T14:52:54.620+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating BCryptPasswordEncoder bean
+2025-11-11T14:52:54.789+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating AuthenticationManager bean
+2025-11-11T14:52:57.296+08:00  WARN 23240 --- [cs203] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-11T14:52:57.366+08:00  INFO 23240 --- [cs203] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page template: index
+2025-11-11T14:52:57.790+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Creating SecurityFilterChain bean
+2025-11-11T14:52:57.791+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring stateless session management
+2025-11-11T14:52:57.792+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring CORS
+2025-11-11T14:52:57.793+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Disabling CSRF protection for stateless API
+2025-11-11T14:52:57.805+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring authorization rules
+2025-11-11T14:52:57.843+08:00  WARN 23240 --- [cs203] [main] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/audit/**] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-11-11T14:52:57.874+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Authorization rules configured successfully
+2025-11-11T14:52:57.875+08:00 DEBUG 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : Configuring exception handling
+2025-11-11T14:52:57.878+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.config.SecurityConfig    : SecurityFilterChain configured successfully
+2025-11-11T14:52:58.554+08:00  INFO 23240 --- [cs203] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-11-11T14:52:58.572+08:00  INFO 23240 --- [cs203] [main] com.lynus.cs203.Cs203Application         : Started Cs203Application in 17.677 seconds (process running for 19.114)
+2025-11-11T14:52:58.587+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === Starting CSV Data Migration Process ===
+2025-11-11T14:52:58.588+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Active profiles: [dev]
+2025-11-11T14:52:58.589+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : This may take several minutes for large datasets...
+2025-11-11T14:52:58.589+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 1: Migrating tariff data...
+2025-11-11T14:52:58.590+08:00  INFO 23240 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : Starting CSV data migration process
+2025-11-11T14:52:58.709+08:00  INFO 23240 --- [cs203] [main] c.l.cs203.services.DataMigrationService  : CSV migration already completed at 2025-11-11T00:45:26, skipping
+2025-11-11T14:52:58.710+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Tariff data migration completed successfully in 120ms
+2025-11-11T14:52:58.710+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Step 2: Migrating trade agreement data...
+2025-11-11T14:52:58.710+08:00  INFO 23240 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Starting trade agreement migration process
+2025-11-11T14:52:58.726+08:00  INFO 23240 --- [cs203] [main] c.l.c.s.TradeAgreementMigrationService   : Trade agreement migration already completed at 2025-11-11T00:45:28, skipping
+2025-11-11T14:52:58.730+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : Trade agreement migration completed successfully in 20ms
+2025-11-11T14:52:58.730+08:00  INFO 23240 --- [cs203] [main] c.lynus.cs203.runners.DataImportRunner   : === CSV Data Migration Process Completed Successfully in 141ms ===
+2025-11-11T14:53:12.748+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-11T14:53:12.748+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-11T14:53:12.755+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+2025-11-11T14:53:12.867+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : Processing authentication for request: POST /tariffs/calculate
+2025-11-11T14:53:12.869+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.filters.JwtAuthenticationFilter    : No Bearer token found, skipping JWT authentication
+2025-11-11T14:53:13.100+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Calculating tariff - Product: 10121, Export: C032, Destination: C484, Value: 1000.0, Date: 2014-01-01
+2025-11-11T14:53:13.100+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculating tariff
+2025-11-11T14:53:13.100+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up product with code: 10121
+2025-11-11T14:53:13.259+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found product with code: 10121)
+2025-11-11T14:53:13.259+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C032
+2025-11-11T14:53:13.301+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found export country with code: C032)
+2025-11-11T14:53:13.301+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up export country with code: C484
+2025-11-11T14:53:13.314+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found destination country with code: C484)
+2025-11-11T14:53:13.314+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Looking up tariff for Product: 10121 and Country: C484
+2025-11-11T14:53:13.347+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found tariff rate: 10.0% for Product: 10121 and Country: C484
+2025-11-11T14:53:13.349+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Calculated sensitivity tier: HIGH for HS Code: 10121
+2025-11-11T14:53:13.414+08:00 DEBUG 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Found 1 trade agreements between Export Country: Argentina and Destination Country: Mexico
+2025-11-11T14:53:13.434+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Tariff calculation trade name: Argentina - Mexico
+2025-11-11T14:53:13.436+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] c.l.c.services.TariffCalculationService  : Tariff calculation completed. Tariff Amount: 90.0
+2025-11-11T14:53:13.436+08:00  INFO 23240 --- [cs203] [http-nio-8080-exec-1] c.l.cs203.controllers.TariffController   : Tariff calculation completed - Amount: 90.0
+2025-11-11T14:55:27.331+08:00  INFO 23240 --- [cs203] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-11T14:55:27.352+08:00  INFO 23240 --- [cs203] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-11T14:55:27.368+08:00  INFO 23240 --- [cs203] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-11T14:55:27.375+08:00  INFO 23240 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-11T14:55:27.409+08:00  INFO 23240 --- [cs203] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
