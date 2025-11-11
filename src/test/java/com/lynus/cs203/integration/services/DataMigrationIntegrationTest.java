@@ -95,12 +95,12 @@ public class DataMigrationIntegrationTest {
 
     private void createTestTradeAgreementCsv() {
         String csvContent = """
-                    agreement_name,agreement_type,signatories
-                    "USMCA","Free Trade Agreement","United States;Canada;Mexico"
-                    "ASEAN FTA","Regional Agreement","Singapore;Malaysia;Thailand"
-                    """;
+            agreement_name,agreement_type,effective_date,expiration_date,signatories
+            "USMCA","Free Trade Agreement","1/1/2020","31/12/2030","United States;Canada;Mexico"
+            "ASEAN FTA","Regional Agreement","1/1/2015","31/12/2035","Singapore;Malaysia;Thailand"
+            """;
 
-        File testFile = new File("src/test/resources/data/trade_agreement.csv");
+        File testFile = new File("src/test/resources/data/Cleaned_Trade_Agreements1.csv");
         testFile.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(testFile)) {
             writer.write(csvContent);
@@ -236,8 +236,8 @@ public class DataMigrationIntegrationTest {
     @Test
     @DisplayName("Should run full data import process without errors")
     void testDataImportRunner_ShouldRunFullImportProcess() throws Exception {
-        // Run the data import runner
-        dataImportRunner.runMigrations();
+        dataMigrationService.migrateData();
+        tradeAgreementMigrationService.migrateTradeAgreements();
 
         // Debug: Check what migration statuses exist
         List<MigrationStatus> allStatuses = migrationStatusRepository.findAll();

@@ -116,6 +116,7 @@ public class OpenAIService {
             return Map.of("answer", gptAnswer, "product", product);
         }
 
+
         // summarize matching tariffs
         String summary = tariffs.stream()
                 .map(t -> String.format(
@@ -203,23 +204,12 @@ public class OpenAIService {
                 country1, country2, joinedAgreements, dateOfEntry, endOfImplementation
         );
 
-        // if user also asked about tariff rates, combine results w tariff calculation
-        if (userPrompt.toLowerCase().contains("tariff")) {
-            String product = extractProductFromPrompt(service, userPrompt);
-            if (!product.isBlank()) {
-                return calculateEffectiveTariff(product, country1, country2);
-            }
-        }
-
         return Map.of("answer", answer, "agreements", joinedAgreements);
     }
 
     // -----------------------------------------------
     // TARIFF RATE QUERIES
     // -----------------------------------------------
-// -----------------------------------------------
-// TARIFF RATE QUERIES (fixed version)
-// -----------------------------------------------
     private Map<String, String> handleTariffRateQuery(OpenAiService service, String userPrompt) throws Exception {
         // extract relevant product and destination country
         String extractPrompt = """
@@ -241,7 +231,7 @@ public class OpenAIService {
             destination = "singapore"; // default fallback
         }
 
-        // Get all possible tariffs for the destination + product
+        // get all possible tariffs for the destination + product
         var limit = PageRequest.of(0, 10);
         List<Tariff> tariffs = tariffRepo
                 .findByCountry_CountryNameAndProduct_ProductDescriptionContainingIgnoreCase(destination, product, limit)
@@ -249,11 +239,11 @@ public class OpenAIService {
 
         if (tariffs.isEmpty()) {
             String fallbackPrompt = String.format("""
-        The product is "%s".
-        The database has no match for tariffs to %s.
-        Based on global customs data, estimate a likely tariff range (in percent)
-        and explain the reasoning briefly (1–2 sentences).
-        """, product, destination);
+            The product is "%s".
+            The database has no match for tariffs to %s.
+            Based on global customs data, estimate a likely tariff range (in percent)
+            and explain the reasoning briefly (1–2 sentences).
+            """, product, destination);
             String gptAnswer = ask(service, "You are a customs tariff expert.", fallbackPrompt, 0.2);
             return Map.of("answer", gptAnswer);
         }
