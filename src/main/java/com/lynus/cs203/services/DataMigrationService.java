@@ -50,7 +50,7 @@ public class DataMigrationService {
 
         // Pre-load existing data to avoid repeated queries
         Map<String, Country> existingCountries = loadExistingCountries();
-        Map<Integer, Product> existingProducts = loadExistingProducts();
+        Map<String, Product> existingProducts = loadExistingProducts();
 
         // Process CSV in batches
         List<String[]> csvBatch = new ArrayList<>();
@@ -117,7 +117,7 @@ public class DataMigrationService {
         }
     }
 
-    public int processBatchWithRetry(List<String[]> csvBatch, Map<String, Country> existingCountries, Map<Integer, Product> existingProducts) {
+    public int processBatchWithRetry(List<String[]> csvBatch, Map<String, Country> existingCountries, Map<String, Product> existingProducts) {
         int attempt = 0;
         DataAccessException lastException = null;
 
@@ -150,7 +150,7 @@ public class DataMigrationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 300)
-    public int processBatch(List<String[]> csvBatch, Map<String, Country> existingCountries, Map<Integer, Product> existingProducts) {
+    public int processBatch(List<String[]> csvBatch, Map<String, Country> existingCountries, Map<String, Product> existingProducts) {
         log.debug("Processing batch of {} records", csvBatch.size());
 
         List<Country> newCountries = new ArrayList<>();
@@ -162,7 +162,7 @@ public class DataMigrationService {
             try {
                 String countryCode = columns[1].trim();
                 String countryName = removeQuotes(columns[2].trim());
-                Integer productCode = Integer.parseInt(columns[3].trim());
+                String productCode = columns[3].trim();
                 String hsDescription = removeQuotes(columns[4].trim());
                 String hsUom = columns[5].trim();
                 String foodCategory = removeQuotes(columns[6].trim());
@@ -182,7 +182,7 @@ public class DataMigrationService {
                 Product product = existingProducts.get(productCode);
                 if (product == null) {
                     product = new Product();
-                    product.setProductCode(productCode);
+                    product.setProductCode(Integer.valueOf(productCode));
                     product.setProductDescription(hsDescription);
                     product.setUomCode(hsUom);
                     product.setFoodCategory(foodCategory);
@@ -234,10 +234,10 @@ public class DataMigrationService {
         return countries;
     }
 
-    private Map<Integer, Product> loadExistingProducts() {
+    private Map<String, Product> loadExistingProducts() {
         log.info("Loading existing products...");
-        Map<Integer, Product> products = new HashMap<>();
-        productRepository.findAll().forEach(p -> products.put(p.getProductCode(), p));
+        Map<String, Product> products = new HashMap<>();
+        productRepository.findAll().forEach(p -> products.put(String.valueOf(p.getProductCode()), p));
         log.info("Loaded {} products total", products.size());
         return products;
     }

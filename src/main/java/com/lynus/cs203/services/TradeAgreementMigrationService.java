@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -57,7 +59,7 @@ public class TradeAgreementMigrationService {
         long startTime = System.currentTimeMillis();
 
         try {
-            ClassPathResource resource = new ClassPathResource("data/trade_agreement.csv");
+            ClassPathResource resource = new ClassPathResource("data/Cleaned_Trade_Agreements1.csv");
             log.debug("Loading trade agreement CSV file: {}", resource.getPath());
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
@@ -75,7 +77,7 @@ public class TradeAgreementMigrationService {
 
                     // Parse CSV line
                     String[] columns = parseCSVLine(line);
-                    if (columns.length >= 3) {
+                    if (columns.length >= 5) {
                         csvBatch.add(columns);
                     } else {
                         log.warn("Line {}: Invalid format, skipping", lineCount);
@@ -156,7 +158,11 @@ public class TradeAgreementMigrationService {
             try {
                 String agreementName = removeQuotes(columns[0].trim());
                 String agreementType = removeQuotes(columns[1].trim());
-                String signatories = removeQuotes(columns[2].trim());
+                String effectiveDateStr = removeQuotes(columns[2].trim());
+                String expirationDateStr = removeQuotes(columns[3].trim());
+                String signatories = removeQuotes(columns[4].trim());
+                System.out.println("Raw effective_date string: " + effectiveDateStr);
+                System.out.println("Raw expiration_date string: " + expirationDateStr);
 
                 // Get or create trade agreement
                 TradeAgreement agreement = existingAgreements.get(agreementName);
@@ -164,6 +170,9 @@ public class TradeAgreementMigrationService {
                     agreement = new TradeAgreement();
                     agreement.setAgreementName(agreementName);
                     agreement.setAgreementType(agreementType);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+                    agreement.setEffectiveDate(LocalDate.parse(effectiveDateStr, formatter));
+                    agreement.setExpirationDate(LocalDate.parse(expirationDateStr, formatter));
                     existingAgreements.put(agreementName, agreement);
                     newAgreements.add(agreement);
                 }
