@@ -27,3 +27,7 @@ logging:
     console: "%clr(%d{HH:mm:ss}){faint} %clr(%-5level) %clr(%-30logger{30}){cyan} %msg%n"
   file:
     name: logs/cs203-dev.log
+
+  open:
+    api:
+      key: ${OPEN_API_KEY}  # Development API key
