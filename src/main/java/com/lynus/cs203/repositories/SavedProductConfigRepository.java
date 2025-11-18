@@ -1,5 +1,6 @@
 package com.lynus.cs203.repositories;
 
+import com.lynus.cs203.entities.Country;
 import com.lynus.cs203.entities.Product;
 import com.lynus.cs203.entities.SavedProductConfig;
 import com.lynus.cs203.entities.User;
@@ -16,4 +17,14 @@ public interface SavedProductConfigRepository extends JpaRepository<SavedProduct
     Optional<SavedProductConfig> findByUserAndProduct(User user, Product product);
 
     void deleteByUserAndProduct(User user, Product product);
+
+    boolean existsByUserAndProductAndOriginCountryAndDestinationCountry(
+            User user,
+            Product product,
+            Country originCountry,
+            Country destinationCountry
+    );
+
+    boolean existsByUserAndConfigName(User user, String configName);
+
 }

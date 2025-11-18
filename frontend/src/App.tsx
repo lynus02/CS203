@@ -5,6 +5,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "./components/ui/card";
 import {Badge} from "./components/ui/badge";
 import {Button} from "./components/ui/button";
 import {Dialog, DialogContent} from "./components/ui/dialog";
+import { Toaster } from "sonner";
 
 // Icons
 import {Calculator, Ship, DollarSign, Database, Globe, TrendingUp, LogIn, User} from "lucide-react";
@@ -477,6 +478,9 @@ export default function App() {
 
             {/* AI Chat Assistant */}
             <AIChat/>
+
+            {/* REQUIRED FOR TOAST NOTIFICATIONS */}
+            <Toaster richColors position="top-right" closeButton />
         </>
     );
 }

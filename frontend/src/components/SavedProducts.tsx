@@ -44,6 +44,15 @@ export interface SavedProductConfig {
     product: Product;
 }
 
+function extractErrorMessage(e: any) {
+    return (
+        e?.payload?.message ||   // <-- works with tariffApi extractError()
+        e?.payload?.error ||
+        e?.message ||
+        "An unexpected error occurred"
+    );
+}
+
 export function SavedProducts({ onLoadProduct }: { onLoadProduct?: (config: SavedProductConfig) => void }) {
     const [savedProducts, setSavedProducts] = useState<SavedProductConfig[]>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -53,7 +62,10 @@ export function SavedProducts({ onLoadProduct }: { onLoadProduct?: (config: Save
     const loadSaved = () => {
         tariffApi.getSavedProducts()
             .then(data => setSavedProducts(data))
-            .catch(err => console.error("Failed to load saved products:", err));
+            .catch(err => {
+                toast.error(extractErrorMessage(err));
+                console.error("Failed to load saved products:", err);
+            });
     };
 
     useEffect(() => {
@@ -73,7 +85,9 @@ export function SavedProducts({ onLoadProduct }: { onLoadProduct?: (config: Save
                 toast.success("Saved product deleted");
                 setSavedProducts(prev => prev.filter(p => p.id !== productToDelete));
             })
-            .catch(() => toast.error("Failed to delete saved product"))
+            .catch((err) => {
+                toast.error(extractErrorMessage(err));
+            })
             .finally(() => {
                 setDeleteDialogOpen(false);
                 setProductToDelete(null);
@@ -236,8 +250,15 @@ export function SaveProductDialog({
             toast.success("Saved!");
             setOpen(false);
             setConfigName("");
-        } catch (e) {
-            toast.error("Failed to save");
+        } catch (e: any) {
+            const msg =
+                e?.payload?.message ||
+                e?.payload?.error ||
+                e?.message ||
+                "Failed to save configuration";
+
+            toast.error(msg);
+            console.error("Save failed:", e);
         }
     };
 

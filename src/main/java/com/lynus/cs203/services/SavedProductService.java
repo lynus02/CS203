@@ -8,6 +8,7 @@ import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class SavedProductService {
 
     /** Create saved config */
     public SavedProductResponse saveForUser(String userId, SavedProductRequest request) {
+
         log.info("Saving product config for user {}", userId);
 
         User user = userRepository.findById(userId)
@@ -41,20 +43,55 @@ public class SavedProductService {
         Country destination = countryRepository.findById(request.getDestinationCountryId())
                 .orElseThrow(() -> new IllegalArgumentException("Destination country not found"));
 
-        SavedProductConfig config = SavedProductConfig.builder()
-                .user(user)
-                .product(product)
-                .configName(request.getConfigName())
-                .productValue(request.getProductValue())
-                .originCountry(origin)
-                .destinationCountry(destination)
-                .importDate(request.getImportDate())
-                .savedAt(LocalDateTime.now())
-                .build();
+        // Validate config name
+        if (request.getConfigName() == null || request.getConfigName().isBlank()) {
+            throw new IllegalArgumentException("Config name cannot be empty.");
+        }
 
-        SavedProductConfig saved = savedRepo.save(config);
+        // Validate date
+        if (request.getImportDate() == null) {
+            throw new IllegalArgumentException("Import date is required.");
+        }
 
-        return toResponse(saved);
+        // Prevent same config name
+        boolean nameExists = savedRepo.existsByUserAndConfigName(user, request.getConfigName());
+        if (nameExists) {
+            throw new IllegalArgumentException("A configuration with this name already exists.");
+        }
+
+        // Prevent duplicate saved configurations
+        boolean exists = savedRepo.existsByUserAndProductAndOriginCountryAndDestinationCountry(
+                user, product, origin, destination
+        );
+
+        if (exists) {
+            throw new IllegalArgumentException(
+                    "You have already saved this configuration (same product & same countries)."
+            );
+        }
+
+        // Save config
+        try {
+            SavedProductConfig config = SavedProductConfig.builder()
+                    .user(user)
+                    .product(product)
+                    .configName(request.getConfigName())
+                    .productValue(request.getProductValue())
+                    .originCountry(origin)
+                    .destinationCountry(destination)
+                    .importDate(request.getImportDate())
+                    .savedAt(LocalDateTime.now())
+                    .build();
+
+            SavedProductConfig saved = savedRepo.save(config);
+            return toResponse(saved);
+
+        } catch (DataIntegrityViolationException e) {
+            // Additional safety for race conditions
+            throw new IllegalArgumentException(
+                    "This configuration already exists and cannot be saved again."
+            );
+        }
     }
 
     /** Get all saved configs for user */
@@ -98,6 +135,7 @@ public class SavedProductService {
                 .product(
                         ProductDto.builder()
                                 .id(product.getProductId())
+                                .name(product.getProductDescription())
                                 .hsCode(String.valueOf(product.getProductCode()))
                                 .category(product.getFoodCategory())
                                 .build()

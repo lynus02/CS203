@@ -23,6 +23,14 @@ CREATE TABLE saved_products (
                                 PRIMARY KEY (id),
 
     -- indexes
+
+                                UNIQUE KEY uq_saved_config (
+                                    user_id,
+                                    product_id,
+                                    origin_country_id,
+                                    destination_country_id
+                                    ),
+
                                 KEY idx_saved_user (user_id),
                                 KEY idx_saved_product (product_id),
                                 KEY idx_saved_origin_country (origin_country_id),
