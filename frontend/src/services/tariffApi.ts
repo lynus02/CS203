@@ -3,6 +3,7 @@ import api from './api';
 
 export interface TariffDto {
     trade_id: string;
+    productId: number;
     hsDescription: string;
     productCode6: string;
     food_category: string;
@@ -53,4 +54,28 @@ const tariffApi = {
     }
 }
 
-export default tariffApi;
+// ===============================
+// Saved Products API Integration
+// ===============================
+
+// GET /users/saved-products
+async function getSavedProducts() {
+    return api.get("/users/saved-products").then(res => res.data);
+}
+
+// POST /users/saved-products
+async function saveProductConfig(payload: any) {
+    return api.post("/users/saved-products", payload).then(res => res.data);
+}
+
+// DELETE /users/saved-products/{id}
+async function deleteSavedProduct(id: number | string) {
+    return api.delete(`/users/saved-products/${id}`).then(res => res.data);
+}
+
+export default {
+    ...tariffApi,
+    getSavedProducts,
+    saveProductConfig,
+    deleteSavedProduct
+};

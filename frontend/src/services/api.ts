@@ -21,7 +21,6 @@ api.interceptors.request.use(
         const publicEndpoints = [
             "/auth/login",
             "/auth/refresh",
-            "/users",
             "/tariffs",
             "/products",
             "/", // just in case

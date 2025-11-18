@@ -16,6 +16,12 @@ public class TariffDto {
     public Long trade_id;
 
     @Schema(
+            description = "Unique product identifier",
+            example = "67890"
+    )
+    public Long productId;
+
+    @Schema(
             description = "HS code description",
             example = "Wheat and meslin"
     )
@@ -48,6 +54,7 @@ public class TariffDto {
     public static TariffDto fromEntity(Tariff tariff) {
         return TariffDto.builder()
                 .trade_id(tariff.getTradeId())
+                .productId(tariff.getProduct().getProductId())
                 .hsDescription(tariff.getProduct().getProductDescription())
                 .productCode6(String.valueOf(tariff.getProduct().getProductCode()))
                 .food_category(tariff.getProduct().getFoodCategory())

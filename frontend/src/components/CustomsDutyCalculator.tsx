@@ -17,6 +17,7 @@ import tariffApi from "../services/tariffApi";
 const { runAudit: runAuditApi, suggestProducts, getTariffRatesBySize, calculateTariff, getCountries } = tariffApi;
 
 interface CountryDto {
+    id: number;
     code: string;
     name: string;
 }
@@ -130,7 +131,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
             .then((data) => {
                 setSuggestedProducts(
                     data.map((item: any) => ({
-                        id: item.trade_id?.toString(),
+                        id: item.productId?.toString(),
                         name: item.hsDescription,
                         hsCode: item.productCode6,
                         category: item.food_category,
@@ -152,7 +153,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                 const results = data.content || data;
                 setSuggestedProducts(
                     results.map((item: any) => ({
-                        id: item.trade_id?.toString(),
+                        id: item.productId?.toString(),
                         name: item.hsDescription,
                         hsCode: item.productCode6,
                         category: item.food_category,
@@ -475,6 +476,7 @@ export function CustomsDutyCalculator({onResultsChange, savedConfig}: CustomsDut
                                     originCountry={originCountry}
                                     destinationCountry={destinationCountry}
                                     importDate={importDate}
+                                    countries={countries}
                                 />
                             )}
                         </div>

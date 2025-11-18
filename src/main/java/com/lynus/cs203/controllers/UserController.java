@@ -2,9 +2,12 @@ package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
+import com.lynus.cs203.dtos.request.SavedProductRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
 import com.lynus.cs203.dtos.response.PasswordChangeResponse;
+import com.lynus.cs203.dtos.response.SavedProductResponse;
 import com.lynus.cs203.dtos.response.UserDto;
+import com.lynus.cs203.services.SavedProductService;
 import com.lynus.cs203.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @Tag(name = "User Management", description = "User management and profile operations")
 @SecurityRequirement(name = "bearerAuth")
 @Slf4j
@@ -27,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final SavedProductService savedProductService;
 
     // Helper method to get authenticated user ID
     private String getCurrentUserId() {
@@ -144,5 +150,29 @@ public class UserController {
         log.info("Successfully changed password for user: {}", userId);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Get saved products")
+    @GetMapping("/saved-products")
+    public ResponseEntity<List<SavedProductResponse>> getSavedProducts() {
+        String userId = getCurrentUserId();
+        return ResponseEntity.ok(savedProductService.getForUser(userId));
+    }
+
+    @Operation(summary = "Save a product configuration")
+    @PostMapping("/saved-products")
+    public ResponseEntity<SavedProductResponse> saveProduct(
+            @Valid @RequestBody SavedProductRequest request
+    ) {
+        String userId = getCurrentUserId();
+        return ResponseEntity.ok(savedProductService.saveForUser(userId, request));
+    }
+
+    @Operation(summary = "Delete a saved product by ID")
+    @DeleteMapping("/saved-products/{id}")
+    public ResponseEntity<Void> deleteSavedProduct(@PathVariable Long id) {
+        String userId = getCurrentUserId();
+        savedProductService.delete(userId, id);
+        return ResponseEntity.noContent().build();
     }
 }

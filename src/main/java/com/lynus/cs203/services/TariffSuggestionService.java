@@ -65,10 +65,12 @@ public class TariffSuggestionService {
     }
 
     public List<CountryDto> getAllCountries() {
-        // Implementation to fetch all countries
-        return countryRepository.findAll().stream().
-                map(c -> new CountryDto(c.getCountryCode(), c.getCountryName()))
+        return countryRepository.findAll().stream()
+                .map(c -> new CountryDto(
+                        c.getCountryId(),
+                        c.getCountryCode(),
+                        c.getCountryName()
+                ))
                 .toList();
     }
-
 }

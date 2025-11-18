@@ -18,86 +18,66 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "./ui/alert-dialog";
+import tariffApi from "../services/tariffApi";
 
-interface Product {
+interface CountryDto {
+    id: number;
+    code: string;
+    name: string;
+}
+
+export interface Product {
     id: string;
     name: string;
     hsCode: string;
     category: string;
-    baseTariffRate: number;
 }
 
 export interface SavedProductConfig {
-    id: string;
-    name: string; // User-defined name for this saved configuration
-    product: Product;
+    id: number;
+    configName: string;
     productValue: number;
     originCountry: string;
     destinationCountry: string;
     importDate: string;
     savedAt: string;
+    product: Product;
 }
 
-interface SavedProductsProps {
-    onLoadProduct?: (config: SavedProductConfig) => void;
-}
-
-export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
+export function SavedProducts({ onLoadProduct }: { onLoadProduct?: (config: SavedProductConfig) => void }) {
     const [savedProducts, setSavedProducts] = useState<SavedProductConfig[]>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [productToDelete, setProductToDelete] = useState<string | null>(null);
+    const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
-    // Reload saved products from localStorage into state
-    const reloadSaved = () => {
-        const stored = localStorage.getItem("foodTariffSavedProducts");
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored) as SavedProductConfig[];
-                setSavedProducts(parsed);
-                console.log('reloadSaved: loaded', parsed.length, 'saved products');
-                return;
-            } catch (e) {
-                console.error('Failed to parse saved products', e);
-            }
-        }
-        // If no stored items or parse failed, ensure empty list
-        setSavedProducts([]);
-        console.log('reloadSaved: no saved products found');
+    // Load from backend on mount
+    const loadSaved = () => {
+        tariffApi.getSavedProducts()
+            .then(data => setSavedProducts(data))
+            .catch(err => console.error("Failed to load saved products:", err));
     };
 
-    // Load saved products from localStorage on mount
     useEffect(() => {
-        reloadSaved();
-        console.log('SavedProducts component mounted');
+        loadSaved();
     }, []);
 
-    // Listen for global saved-products changes so external save actions (from other components)
-    // can notify this component to reload the list.
-    useEffect(() => {
-        const handler = () => reloadSaved();
-        window.addEventListener('savedProductsChanged', handler as EventListener);
-        return () => window.removeEventListener('savedProductsChanged', handler as EventListener);
-    }, []);
-
-    const handleDelete = (id: string) => {
+    const handleDelete = (id: number) => {
         setProductToDelete(id);
         setDeleteDialogOpen(true);
     };
 
     const confirmDelete = () => {
-        if (productToDelete) {
-            const updated = savedProducts.filter(p => p.id !== productToDelete);
-            setSavedProducts(updated);
-            localStorage.setItem("foodTariffSavedProducts", JSON.stringify(updated));
-            toast.success("Product configuration deleted");
-            setDeleteDialogOpen(false);
-            setProductToDelete(null);
-        }
-    };
+        if (!productToDelete) return;
 
-    const handleLoad = (config: SavedProductConfig) => {
-        onLoadProduct?.(config);
-        toast.success("Product configuration loaded");
+        tariffApi.deleteSavedProduct(productToDelete)
+            .then(() => {
+                toast.success("Saved product deleted");
+                setSavedProducts(prev => prev.filter(p => p.id !== productToDelete));
+            })
+            .catch(() => toast.error("Failed to delete saved product"))
+            .finally(() => {
+                setDeleteDialogOpen(false);
+                setProductToDelete(null);
+            });
     };
 
     return (
@@ -116,6 +96,7 @@ export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
                         </div>
                     </div>
                 </CardHeader>
+
                 <CardContent>
                     {savedProducts.length === 0 ? (
                         <div className="text-center py-8 text-muted-foreground">
@@ -136,7 +117,7 @@ export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
                                         <div className="flex-1 space-y-2">
                                             <div className="flex items-center gap-2">
                                                 <Package className="h-4 w-4 text-primary" />
-                                                <h4 className="font-medium">{config.name}</h4>
+                                                <h4 className="font-medium">{config.configName}</h4>
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
@@ -218,68 +199,45 @@ export function SavedProducts({ onLoadProduct }: SavedProductsProps) {
     );
 }
 
-interface SaveProductDialogProps {
-    product: {
-        id: string;
-        name: string;
-        hsCode: string;
-        category: string;
-        baseTariffRate: number;
-    };
-    productValue: number;
-    originCountry: string;
-    destinationCountry: string;
-    importDate: Date;
-    onSave?: () => void;
-}
-
 export function SaveProductDialog({
                                       product,
                                       productValue,
                                       originCountry,
                                       destinationCountry,
                                       importDate,
-                                      onSave
-                                  }: SaveProductDialogProps) {
+                                      countries
+                                  }: {
+    product: Product;
+    productValue: number;
+    originCountry: string;
+    destinationCountry: string;
+    importDate: Date;
+    countries: CountryDto[];
+}) {
     const [open, setOpen] = useState(false);
     const [configName, setConfigName] = useState("");
 
-    const handleSave = () => {
-        if (!configName.trim()) {
-            toast.error("Please enter a name for this configuration");
-            return;
-        }
+    const origin = countries.find(c => c.name === originCountry);
+    const destination = countries.find(c => c.name === destinationCountry);
 
-        const newConfig: SavedProductConfig = {
-            id: `saved-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            name: configName,
-            product,
-            productValue,
-            originCountry,
-            destinationCountry,
-            importDate: importDate.toISOString(),
-            savedAt: new Date().toISOString()
-        };
+    const handleSave = async () => {
+        if (!configName.trim()) return toast.error("Please enter a name");
 
-        // Load existing saved products
-        const stored = localStorage.getItem("foodTariffSavedProducts");
-        const existing = stored ? JSON.parse(stored) : [];
-
-        // Add new configuration
-        const updated = [...existing, newConfig];
-        localStorage.setItem("foodTariffSavedProducts", JSON.stringify(updated));
-
-        toast.success("Product configuration saved!");
-        setConfigName("");
-        setOpen(false);
-        onSave?.();
-        console.log('SaveProductDialog: saved newConfig', newConfig, 'totalSaved:', updated.length);
-        // Notify other components that saved products changed (useful when Save dialog is used elsewhere)
         try {
-            window.dispatchEvent(new CustomEvent('savedProductsChanged', { detail: newConfig }));
-            console.log('SaveProductDialog: dispatched savedProductsChanged event');
+            await tariffApi.saveProductConfig({
+                configName,
+                productId: Number(product.id),           // backend expects BIGINT
+                productValue,
+                originCountryId: origin?.id ?? null,     // must send ID
+                destinationCountryId: destination?.id ?? null,
+                importDate: importDate.toISOString(),
+            });
+
+            toast.success("Saved!");
+            setOpen(false);
+            setConfigName("");
         } catch (e) {
-            console.warn('Could not dispatch savedProductsChanged event', e);
+            toast.error("Failed to save");
         }
     };
 
