@@ -39,12 +39,12 @@ public interface AgreementCountryRepository extends JpaRepository<AgreementCount
 
     // Add to AgreementCountryRepository.java
     @Query("SELECT ac.agreement.agreementId FROM AgreementCountry ac " +
-           "JOIN ac.agreement ta " +
-           "WHERE ac.country.countryName IN (:exportCountry, :destCountry) " +
-           "AND (ta.effectiveDate IS NULL OR ta.effectiveDate <= :date) " +
-           "AND (ta.expirationDate IS NULL OR ta.expirationDate >= :date) " +
-           "GROUP BY ac.agreement.agreementId " +
-           "HAVING COUNT(DISTINCT ac.country.countryName) = 2")
+            "JOIN ac.agreement ta " +
+            "WHERE ac.country.countryName IN (:exportCountry, :destCountry) " +
+            "AND (ta.effectiveDate IS NULL OR ta.effectiveDate <= :date) " +
+            "AND (ta.expirationDate IS NULL OR ta.expirationDate >= :date) " +
+            "GROUP BY ac.agreement.agreementId " +
+            "HAVING COUNT(DISTINCT ac.country.countryName) = 2")
     List<Long> findAgreementsBetweenCountriesOnDate(
             @Param("exportCountry") String exportCountry,
             @Param("destCountry") String destCountry,

@@ -56,6 +56,8 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [signupSuccess, setSignupSuccess] = useState<boolean>(false);
 
+    const successDataRef = React.useRef<any>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -164,9 +166,12 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
             const userData = response.data;
             console.log('Signup successful:', userData);
 
+            // Save for the success screen auto-login
+            successDataRef.current = userData;
+
+            // Show success screen
             setSignupSuccess(true);
 
-            onSignup && onSignup(userData);
 
         } catch (error : any) {
             const errorMessage = error.response?.data?.message ||
@@ -186,8 +191,19 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSignup, onBack, onLogin }) =>
         }
     };
 
+    React.useEffect(() => {
+        if (!signupSuccess) return;
+
+        const timer = setTimeout(() => {
+            if (onSignup) onSignup(successDataRef.current);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [signupSuccess]);
+
     // If signup was successful, show success message
     if (signupSuccess) {
+
         return (
             <div className="flex justify-start min-h-screen bg-background">
                 <div className="min-h-screen bg-background flex flex-col w-full">

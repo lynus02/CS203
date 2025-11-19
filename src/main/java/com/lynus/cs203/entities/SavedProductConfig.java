@@ -5,14 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "saved_products",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})},
-        indexes = {
-                @Index(name = "idx_user_id", columnList = "user_id"),
-                @Index(name = "idx_saved_at", columnList = "saved_at")
-        }
-)
+@Table(name = "saved_products")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,41 +14,38 @@ import java.time.LocalDateTime;
 public class SavedProductConfig {
 
     @Id
-    private String id; // matches VARCHAR(255) primary key in your table
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    /** FK → users.user_id */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
 
-    @Column(nullable = false)
-    private String name;
+    /** FK → product.product_id */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false)
+    private Product product;
 
-    @Column(name = "product_id", nullable = false)
-    private String productId;
-
-    @Column(name = "product_name", nullable = false)
-    private String productName;
-
-    @Column(name = "hs_code", nullable = false)
-    private String hsCode;
-
-    @Column(nullable = false)
-    private String category;
-
-    @Column(name = "base_tariff_rate", nullable = false)
-    private double baseTariffRate;
+    @Column(name = "config_name", nullable = false)
+    private String configName;
 
     @Column(name = "product_value", nullable = false)
     private double productValue;
 
-    @Column(name = "origin_country", nullable = false)
-    private String originCountry;
+    /** FK → country.country_id */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origin_country_id", referencedColumnName = "country_id", nullable = false)
+    private Country originCountry;
 
-    @Column(name = "destination_country", nullable = false)
-    private String destinationCountry;
+    /** FK → country.country_id */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_country_id", referencedColumnName = "country_id", nullable = false)
+    private Country destinationCountry;
 
     @Column(name = "import_date", nullable = false)
     private LocalDateTime importDate;
 
-    @Column(name = "saved_at")
-    private LocalDateTime savedAt;
+    @Column(name = "saved_at", nullable = false)
+    private LocalDateTime savedAt = LocalDateTime.now();
 }

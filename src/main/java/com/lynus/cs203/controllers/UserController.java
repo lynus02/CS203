@@ -2,12 +2,14 @@ package com.lynus.cs203.controllers;
 
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
+import com.lynus.cs203.dtos.request.SavedProductRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.CreateUserResponse;
 import com.lynus.cs203.dtos.response.PasswordChangeResponse;
+import com.lynus.cs203.dtos.response.SavedProductResponse;
 import com.lynus.cs203.dtos.response.UserDto;
-import com.lynus.cs203.entities.SavedProductConfig;
+import com.lynus.cs203.services.SavedProductService;
 import com.lynus.cs203.services.UserService;
-import io.jsonwebtoken.security.Request;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @Tag(name = "User Management", description = "User management and profile operations")
-@SecurityRequirement(name = "bearerAuth")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final SavedProductService savedProductService;
 
     // Helper method to get authenticated user ID
     private String getCurrentUserId() {
@@ -55,6 +56,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User profile retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getCurrentUserProfile() {
         String userId = getCurrentUserId();
@@ -75,17 +77,17 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Email already exists")
     })
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
+    public ResponseEntity<CreateUserResponse> signUp(
             @Valid @RequestBody CreateUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
         log.info("Creating new user with email: {}", request.getEmail());
 
-        UserDto userDto = userService.createUserAsDto(request);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getUserId()).toUri();
+        CreateUserResponse response = userService.createUserAndReturnToken(request);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(response.getUserId()).toUri();
 
-        log.info("Successfully created user with ID: {} for email: {}", userDto.getUserId(), request.getEmail());
-        return ResponseEntity.created(uri).body(userDto);
+        log.info("Successfully created user with ID: {} for email: {}", response.getUserId(), request.getEmail());
+        return ResponseEntity.created(uri).body(response);
     }
 
     @Operation(
@@ -97,6 +99,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "409", description = "Email already exists")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/profile")
     public ResponseEntity<UserDto> updateCurrentUserProfile(
             @Valid @RequestBody UpdateUserRequest request
@@ -118,6 +121,7 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "User account deleted successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteCurrentUser() {
         String userId = getCurrentUserId();
@@ -138,6 +142,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Invalid current password"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/change-password")
     public ResponseEntity<PasswordChangeResponse> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
@@ -150,29 +155,31 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-    @Operation(summary = "Get saved products for current user")
+
+    @Operation(summary = "Get saved products")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/saved-products")
-    public ResponseEntity<List<SavedProductConfig>> getSavedProducts() {
+    public ResponseEntity<List<SavedProductResponse>> getSavedProducts() {
         String userId = getCurrentUserId();
-        List<SavedProductConfig> savedProducts = userService.getSavedProducts(userId);
-        log.info("Retrieving saved products for current user: {}", userId);
-        return ResponseEntity.ok(savedProducts);
+        return ResponseEntity.ok(savedProductService.getForUser(userId));
     }
 
-    @Operation(summary = "Save a product for current user")
+    @Operation(summary = "Save a product configuration")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/saved-products")
-    public ResponseEntity<SavedProductConfig> saveProduct(@RequestBody SavedProductConfig productData) {
+    public ResponseEntity<SavedProductResponse> saveProduct(
+            @Valid @RequestBody SavedProductRequest request
+    ) {
         String userId = getCurrentUserId();
-        SavedProductConfig savedProduct = userService.saveProduct(userId,productData);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.ok(savedProductService.saveForUser(userId, request));
     }
 
-    @Operation(summary = "Delete a saved product for current user")
-    @DeleteMapping("/saved-products/{productId}")
-    public ResponseEntity<Void> deleteSavedProduct(@PathVariable String productId) {
+    @Operation(summary = "Delete a saved product by ID")
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/saved-products/{id}")
+    public ResponseEntity<Void> deleteSavedProduct(@PathVariable Long id) {
         String userId = getCurrentUserId();
-        userService.deleteSavedProduct(userId, productId);
-        log.info("Deleted saved product {} for current user: {}", productId, userId);
+        savedProductService.delete(userId, id);
         return ResponseEntity.noContent().build();
     }
 }

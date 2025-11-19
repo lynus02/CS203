@@ -99,15 +99,15 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBack }) => {
         try {
             if (step === 'email') {
                 // Send verification code to email
-                await api.post('/auth/forgot-password', {
-                    email: formData.email
+                await api.post('/auth/reset-password', {
+                    email: formData.email,
+                    newPassword: formData.newPassword
                 });
                 setStep('verify');
             } else if (step === 'verify') {
                 // Verify code and reset password
                 await api.post('/auth/reset-password', {
                     email: formData.email,
-                    verificationCode: formData.verificationCode,
                     newPassword: formData.newPassword
                 });
                 setStep('success');

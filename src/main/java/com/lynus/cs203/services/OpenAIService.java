@@ -28,7 +28,7 @@ public class OpenAIService {
     private final TariffCalculationService calculationService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${openai.api.key:${OPENAI_API_KEY:}}")
+    @Value("${OPEN_API_KEY}")
     private String apiKey;
 
     public OpenAIService(TariffRepository tariffRepo, TradeAgreementRepository tradeRepo, AgreementCountryRepository agreementCountryRepo, TariffCalculationService calculationService) {
@@ -115,7 +115,6 @@ public class OpenAIService {
             String gptAnswer = ask(service, "You are an HS code expert.", fallbackPrompt, 0.2);
             return Map.of("answer", gptAnswer, "product", product);
         }
-
 
         // summarize matching tariffs
         String summary = tariffs.stream()
@@ -254,7 +253,7 @@ public class OpenAIService {
                 .orElse(tariffs.get(0));
 
         double baseRate = representativeTariff.getTariffRate();
-        String hsCode = representativeTariff.getProduct().getProductCode();
+        String hsCode = String.valueOf(representativeTariff.getProduct().getProductCode());
         String sensitivityTier = calculationService.calculateSensitivityTier(hsCode);
 
         // find trade agreements between the two countries

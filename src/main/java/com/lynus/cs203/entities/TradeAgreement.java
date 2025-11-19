@@ -8,13 +8,13 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name= "trade_agreement")
+@Data
 public class TradeAgreement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +33,10 @@ public class TradeAgreement {
     @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
-    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AgreementCountry> agreementCountries;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
 }

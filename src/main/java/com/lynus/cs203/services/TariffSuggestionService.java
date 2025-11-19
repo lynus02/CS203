@@ -27,30 +27,28 @@ public class TariffSuggestionService {
             tariffs = tariffRepository.findByCountry_CountryName(countryName, PageRequest.of(0, size));
         } else {
             tariffs = tariffRepository.findAll(PageRequest.of(0, size));
-        }
-        return tariffs.map(TariffDto::fromEntity).getContent();
+        }        return tariffs.map(TariffDto::fromEntity).getContent();
     }
 
     public Page<TariffDto> suggestProducts(String q, String country, int page, int size) {
         boolean isNumeric = q.matches("\\d+");
-
         if (country != null && !country.isEmpty()) {
             if (isNumeric) {
-                return suggestByCountryAndCodeContaining(country, q, page, size);
+                return suggestByCountryAndCodeContaining(country, Integer.valueOf(q), page, size);
             } else {
                 return suggestByCountryAndDescription(country, q, page, size);
             }
         } else {
-            return suggestByDescriptionOrCodeContaining(q, page, size);
+            return suggestByDescriptionOrCodeContaining(q, isNumeric ? Integer.valueOf(q) : -1, page, size);
         }
     }
 
-    private Page<TariffDto> suggestByCountryAndCodeContaining(String country, String code, int page, int size) {
+    private Page<TariffDto> suggestByCountryAndCodeContaining(String country, int code, int page, int size) {
+        String codeParam = "%" + code + "%";
         return tariffRepository
-                .findByCountry_CountryNameAndProduct_ProductCodeContaining(country, code, PageRequest.of(page, size))
+                .findByCountry_CountryNameAndProduct_ProductCodeContaining(country, codeParam, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
-
 
     private Page<TariffDto> suggestByCountryAndDescription(String country, String desc, int page, int size) {
         return tariffRepository
@@ -58,18 +56,21 @@ public class TariffSuggestionService {
                 .map(TariffDto::fromEntity);
     }
 
-
-    private Page<TariffDto> suggestByDescriptionOrCodeContaining(String desc, int page, int size) {
+    private Page<TariffDto> suggestByDescriptionOrCodeContaining(String desc, int code, int page, int size) {
+        String descParam = "%" + desc.toLowerCase() + "%";
+        String codeParam = "%" + code + "%";
         return tariffRepository
-                .findByProductDescriptionOrProductCodeContaining(desc, desc, PageRequest.of(page, size))
+                .findByProductDescriptionOrProductCodeContaining(descParam, codeParam, PageRequest.of(page, size))
                 .map(TariffDto::fromEntity);
     }
 
-
     public List<CountryDto> getAllCountries() {
         return countryRepository.findAll().stream()
-                .map(c -> new CountryDto(c.getCountryCode(), c.getCountryName()))
+                .map(c -> new CountryDto(
+                        c.getCountryId(),
+                        c.getCountryCode(),
+                        c.getCountryName()
+                ))
                 .toList();
     }
-
 }

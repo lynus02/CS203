@@ -21,19 +21,24 @@ api.interceptors.request.use(
         const publicEndpoints = [
             "/auth/login",
             "/auth/refresh",
+            "/auth/reset-password",
             "/tariffs",
             "/products",
-            "/", // just in case
+
         ];
 
         const isPublic = publicEndpoints.some((p) =>
             config.url === p || config.url?.startsWith(`${p}/`)
         );
 
-        if (!isPublic && token) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-        } else {
-            delete config.headers["Authorization"]; // ensures public endpoints are truly public
+        const isSignupRequest =
+            config.method === "post" &&
+            config.url === "/users"; // ONLY create-user is public
+
+        if (isPublic || isSignupRequest) {
+            delete config.headers.Authorization;
+        } else if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
 
         return config;
@@ -46,11 +51,6 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
     (response) => {
-        // Check if this is a login/signup response and save the token
-        if (response.config.url?.includes('/auth/') && response.data?.token) {
-            localStorage.setItem('token', response.data.token);
-            console.log('Token automatically saved from auth response');
-        }
         return response;
     },
     (error) => {

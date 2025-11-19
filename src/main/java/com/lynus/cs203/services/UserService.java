@@ -3,6 +3,7 @@ package com.lynus.cs203.services;
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.CreateUserResponse;
 import com.lynus.cs203.dtos.response.PasswordChangeResponse;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.entities.*;
@@ -10,7 +11,6 @@ import com.lynus.cs203.exceptions.EmailAlreadyExistsException;
 import com.lynus.cs203.exceptions.InvalidPasswordException;
 import com.lynus.cs203.exceptions.UserNotFoundException;
 import com.lynus.cs203.mappers.UserMapper;
-import com.lynus.cs203.repositories.SavedProductConfigRepository;
 import com.lynus.cs203.repositories.UserProfileRepository;
 import com.lynus.cs203.repositories.UserRepository;
 import com.lynus.cs203.repositories.UserRoleRepository;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserProfileRepository userProfileRepository;
     private final UserRoleRepository userRoleRepository;
-    private final SavedProductConfigRepository savedProductConfigRepository;
+    private final JwtService jwtService;
 
     /* DTO Methods */
     public List<UserDto> getAllUsersAsDto(String sort) {
@@ -106,6 +105,24 @@ public class UserService {
                 .message("Password changed successfully")
                 .userId(user.getUserId())
                 .build();
+    }
+
+    public void resetPasswordByEmail(String email, String newPassword) {
+        log.info("Resetting password for user with email: {}", email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("User not found for password reset: {}", email);
+                    return new UserNotFoundException("User not found with email: " + email);
+                });
+
+        log.debug("Encoding new password for user: {}", user.getUserId());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setUpdatedAt(java.time.Instant.now());
+
+        userRepository.save(user);
+
+        log.info("Successfully reset password for user: {} (ID: {})", email, user.getUserId());
     }
 
     /* Entity Methods */
@@ -180,6 +197,25 @@ public class UserService {
 
         log.info("Successfully created user - ID: {}, Email: {}", savedUser.getUserId(), request.getEmail());
         return savedUser;
+    }
+
+    public CreateUserResponse createUserAndReturnToken(CreateUserRequest request) {
+        User savedUser = createUser(request);
+
+        // Generate token AFTER saving the user
+        String token = jwtService.generateAccessToken(savedUser);
+
+        return new CreateUserResponse(
+                savedUser.getUserId(),
+                token,
+                savedUser.getEmail(),
+                savedUser.getUserProfile().getFirstName(),
+                savedUser.getUserProfile().getLastName(),
+                userRoleRepository.findByUserUserId(savedUser.getUserId())
+                        .stream()
+                        .map(ur -> ur.getRole().getName())
+                        .toList()
+        );
     }
 
     @Transactional
@@ -290,20 +326,4 @@ public class UserService {
         return exists;
     }
 
-    // Get all saved products for a user
-    public List<SavedProductConfig> getSavedProducts(String userId) {
-        return savedProductConfigRepository.findByUserId(userId);
-    }
-
-    public SavedProductConfig saveProduct(String userId, SavedProductConfig savedProduct) {
-        savedProduct.setUserId(userId);
-        if (savedProduct.getSavedAt() == null){
-            savedProduct.setSavedAt(LocalDateTime.now());
-        }
-        return savedProductConfigRepository.save(savedProduct);
-    }
-
-    public void deleteSavedProduct(String userId, String productId){
-        savedProductConfigRepository.deleteByUserIdAndProductId(userId, productId);
-    }
 }

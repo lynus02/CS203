@@ -182,7 +182,7 @@ public class DataMigrationService {
                 Product product = existingProducts.get(productCode);
                 if (product == null) {
                     product = new Product();
-                    product.setProductCode(productCode);
+                    product.setProductCode(Integer.valueOf(productCode));
                     product.setProductDescription(hsDescription);
                     product.setUomCode(hsUom);
                     product.setFoodCategory(foodCategory);
@@ -237,7 +237,7 @@ public class DataMigrationService {
     private Map<String, Product> loadExistingProducts() {
         log.info("Loading existing products...");
         Map<String, Product> products = new HashMap<>();
-        productRepository.findAll().forEach(p -> products.put(p.getProductCode(), p));
+        productRepository.findAll().forEach(p -> products.put(String.valueOf(p.getProductCode()), p));
         log.info("Loaded {} products total", products.size());
         return products;
     }

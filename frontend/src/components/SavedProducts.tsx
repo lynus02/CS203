@@ -1,0 +1,318 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { CountryFlag } from "./ui/country-flags";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Bookmark, Trash2, Download, Calendar, DollarSign, Package } from "lucide-react";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "./ui/alert-dialog";
+import tariffApi from "../services/tariffApi";
+
+interface CountryDto {
+    id: number;
+    code: string;
+    name: string;
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    hsCode: string;
+    category: string;
+}
+
+export interface SavedProductConfig {
+    id: number;
+    configName: string;
+    productValue: number;
+    originCountry: string;
+    destinationCountry: string;
+    importDate: string;
+    savedAt: string;
+    product: Product;
+}
+
+function extractErrorMessage(e: any) {
+    return (
+        e?.payload?.message ||   // <-- works with tariffApi extractError()
+        e?.payload?.error ||
+        e?.message ||
+        "An unexpected error occurred"
+    );
+}
+
+export function SavedProducts({ onLoadProduct }: { onLoadProduct?: (config: SavedProductConfig) => void }) {
+    const [savedProducts, setSavedProducts] = useState<SavedProductConfig[]>([]);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<number | null>(null);
+
+    // Load from backend on mount
+    const loadSaved = () => {
+        tariffApi.getSavedProducts()
+            .then(data => setSavedProducts(data))
+            .catch(err => {
+                toast.error(extractErrorMessage(err));
+                console.error("Failed to load saved products:", err);
+            });
+    };
+
+    useEffect(() => {
+        loadSaved();
+    }, []);
+
+    const handleDelete = (id: number) => {
+        setProductToDelete(id);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (!productToDelete) return;
+
+        tariffApi.deleteSavedProduct(productToDelete)
+            .then(() => {
+                toast.success("Saved product deleted");
+                setSavedProducts(prev => prev.filter(p => p.id !== productToDelete));
+            })
+            .catch((err) => {
+                toast.error(extractErrorMessage(err));
+            })
+            .finally(() => {
+                setDeleteDialogOpen(false);
+                setProductToDelete(null);
+            });
+    };
+
+    return (
+        <>
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <Bookmark className="h-5 w-5" />
+                                Saved Products
+                            </CardTitle>
+                            <CardDescription>
+                                Manage your saved product configurations for quick access
+                            </CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+
+                <CardContent>
+                    {savedProducts.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                            <Bookmark className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                            <p>No saved products yet</p>
+                            <p className="text-sm mt-1">
+                                Calculate a product and save it for quick access later
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {savedProducts.map((config) => (
+                                <div
+                                    key={config.id}
+                                    className="p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors"
+                                >
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1 space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <Package className="h-4 w-4 text-primary" />
+                                                <h4 className="font-medium">{config.configName}</h4>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                                <div>
+                                                    <span className="text-muted-foreground">Product:</span>{" "}
+                                                    <span className="font-medium">{config.product.name}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-muted-foreground">HS Code:</span>{" "}
+                                                    <span className="font-medium">{config.product.hsCode}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-muted-foreground">Value:</span>{" "}
+                                                    <DollarSign />
+                                                    <span className="font-xl">{config.productValue.toLocaleString()}</span>
+                                                </div>
+                                                <div>
+                                                    <Badge variant="secondary">{config.product.category}</Badge>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-3 text-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-muted-foreground">From: </span>
+                                                    <span className="font-medium ml-1">{config.originCountry}</span>
+                                                    <CountryFlag country={config.originCountry} />
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-muted-foreground">To: </span>
+                                                    <span className="font-medium ml-1">{config.destinationCountry}</span>
+                                                    <CountryFlag country={config.destinationCountry} />
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar className="h-3 w-3" />
+                                                    <span className="text-muted-foreground">Import:</span>
+                                                    <span className="ml-1">{new Date(config.importDate).toLocaleDateString()}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="text-xs text-muted-foreground">
+                                                Saved: {new Date(config.savedAt).toLocaleString()}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2">
+                                            {/* Load button removed per request - kept delete button only */}
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleDelete(config.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Saved Product?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete this saved product configuration.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setProductToDelete(null)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    );
+}
+
+export function SaveProductDialog({
+                                      product,
+                                      productValue,
+                                      originCountry,
+                                      destinationCountry,
+                                      importDate,
+                                      countries
+                                  }: {
+    product: Product;
+    productValue: number;
+    originCountry: string;
+    destinationCountry: string;
+    importDate: Date;
+    countries: CountryDto[];
+}) {
+    const [open, setOpen] = useState(false);
+    const [configName, setConfigName] = useState("");
+
+    const origin = countries.find(c => c.name === originCountry);
+    const destination = countries.find(c => c.name === destinationCountry);
+
+    const handleSave = async () => {
+        if (!configName.trim()) return toast.error("Please enter a name");
+
+        try {
+            await tariffApi.saveProductConfig({
+                configName,
+                productId: Number(product.id),           // backend expects BIGINT
+                productValue,
+                originCountryId: origin?.id ?? null,     // must send ID
+                destinationCountryId: destination?.id ?? null,
+                importDate: importDate.toISOString(),
+            });
+
+            toast.success("Saved!");
+            setOpen(false);
+            setConfigName("");
+        } catch (e: any) {
+            const msg =
+                e?.payload?.message ||
+                e?.payload?.error ||
+                e?.message ||
+                "Failed to save configuration";
+
+            toast.error(msg);
+            console.error("Save failed:", e);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline">
+                    <Bookmark className="h-4 w-4 mr-2" />
+                    Save Product
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Save Product</DialogTitle>
+                    <DialogDescription>
+                        Give this configuration a name to save it for quick access later
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="config-name">Product Name</Label>
+                        <Input
+                            id="config-name"
+                            placeholder="e.g., Weekly Beef Import to USA"
+                            value={configName}
+                            onChange={(e) => setConfigName(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="p-3 bg-muted rounded-lg space-y-2 text-sm">
+                        <div><strong>Product:</strong> {product.name}</div>
+                        <div><strong>HS Code:</strong> {product.hsCode}</div>
+                        <div><strong>Value:</strong> ${productValue.toLocaleString()}</div>
+                        <div className="flex items-center gap-2">
+                            <CountryFlag country={originCountry} />
+                            <strong>Origin:</strong> {originCountry}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <CountryFlag country={destinationCountry} />
+                            <strong>Destination:</strong> {destinationCountry}
+                        </div>
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSave}>
+                        Save Product
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}

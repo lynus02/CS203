@@ -69,7 +69,7 @@ class OpenAIServiceTest {
 
     private Tariff buildTariff(String hsCode, String desc, double rate, String countryName) {
         Product p = new Product();
-        p.setProductCode(hsCode);
+        p.setProductCode(Integer.valueOf(hsCode));
         p.setProductDescription(desc);
 
         Country c = new Country();

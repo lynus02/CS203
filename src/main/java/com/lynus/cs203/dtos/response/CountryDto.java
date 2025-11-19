@@ -7,12 +7,14 @@ import lombok.Getter;
 @Getter
 @Data
 public class CountryDto {
+    private Long id;
     private String code;
     private String name;
 
     public CountryDto() {}
 
-    public CountryDto(String code, String name) {
+    public CountryDto(Long id, String code, String name) {
+        this.id = id;
         this.code = code;
         this.name = name;
     }
