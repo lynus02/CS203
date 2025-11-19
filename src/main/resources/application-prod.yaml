@@ -47,3 +47,7 @@ logging:
     com.zaxxer.hikari: WARN                # Connection pool warnings only
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+open:
+  api:
+    key: ${OPEN_API_KEY:${open.api.key:}}
