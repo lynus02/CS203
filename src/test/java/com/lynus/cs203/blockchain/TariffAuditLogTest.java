@@ -22,7 +22,6 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.utils.Numeric;
-import org.web3j.abi.datatypes.Function;
 import org.web3j.tuples.generated.Tuple3;
 
 import java.lang.reflect.Field;
