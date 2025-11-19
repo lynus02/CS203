@@ -82,9 +82,36 @@ export default function App() {
         setShowSignup(true);   // Show signup page
     };
 
-    const handleSignupSuccess = (userData) => {
-        setUser(userData);
-        setShowSignup(false);
+    const handleSignupSuccess = async (userData) => {
+        try {
+            // 1. Store token
+            if (userData?.token) {
+                localStorage.setItem("token", userData.token);
+
+                // 2. Apply token to axios instance immediately
+                api.defaults.headers.common["Authorization"] = `Bearer ${userData.token}`;
+            }
+
+            // 3. Now profile request will succeed
+            const profileRes = await api.get("/users/profile");
+            const profile = profileRes.data;
+
+            const userObj = {
+                id: profile.userId,
+                name: `${profile.firstName} ${profile.lastName}`,
+                email: profile.email,
+                token: userData.token,
+                role: Array.isArray(profile.roles) ? profile.roles[0] : null
+            };
+
+            setUser(userObj);
+            setShowSignup(false);
+            setShowLogin(false);
+        } catch (e) {
+            console.error("Auto-login after signup failed:", e);
+            setShowSignup(false);
+            setShowLogin(true);
+        }
     };
 
     // ========= AUTH SPECIFIC EVENT HANDLERS ========= //
@@ -137,17 +164,15 @@ export default function App() {
             const token = localStorage.getItem("token");
             if (token && !user) {
                 try {
-                    const userProfile = await api.get("/auth/me");
+                    const userProfile = await api.get("/users/profile");
                     const userData = userProfile.data;
 
                     const userObj = {
-                        id: userData.id,
-                        name: userData.firstName + " " + userData.lastName,
+                        id: userData.userId,  // <-- FIXED
+                        name: `${userData.firstName} ${userData.lastName}`,
                         email: userData.email,
-                        token: token,
-                        role: Array.isArray(userData.roles)
-                            ? userData.roles[0]
-                            : userData.role
+                        token,
+                        role: Array.isArray(userData.roles) ? userData.roles[0] : null
                     };
 
                     setUser(userObj);

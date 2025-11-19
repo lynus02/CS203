@@ -4,6 +4,7 @@ import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.SavedProductRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.CreateUserResponse;
 import com.lynus.cs203.dtos.response.PasswordChangeResponse;
 import com.lynus.cs203.dtos.response.SavedProductResponse;
 import com.lynus.cs203.dtos.response.UserDto;
@@ -25,7 +26,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @Tag(name = "User Management", description = "User management and profile operations")
-@SecurityRequirement(name = "bearerAuth")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -56,6 +56,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User profile retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getCurrentUserProfile() {
         String userId = getCurrentUserId();
@@ -76,17 +77,17 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Email already exists")
     })
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
+    public ResponseEntity<CreateUserResponse> signUp(
             @Valid @RequestBody CreateUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
         log.info("Creating new user with email: {}", request.getEmail());
 
-        UserDto userDto = userService.createUserAsDto(request);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getUserId()).toUri();
+        CreateUserResponse response = userService.createUserAndReturnToken(request);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(response.getUserId()).toUri();
 
-        log.info("Successfully created user with ID: {} for email: {}", userDto.getUserId(), request.getEmail());
-        return ResponseEntity.created(uri).body(userDto);
+        log.info("Successfully created user with ID: {} for email: {}", response.getUserId(), request.getEmail());
+        return ResponseEntity.created(uri).body(response);
     }
 
     @Operation(
@@ -98,6 +99,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "409", description = "Email already exists")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/profile")
     public ResponseEntity<UserDto> updateCurrentUserProfile(
             @Valid @RequestBody UpdateUserRequest request
@@ -119,6 +121,7 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "User account deleted successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteCurrentUser() {
         String userId = getCurrentUserId();
@@ -139,6 +142,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Invalid current password"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/change-password")
     public ResponseEntity<PasswordChangeResponse> changePassword(
             @Valid @RequestBody ChangePasswordRequest request
@@ -153,6 +157,7 @@ public class UserController {
     }
 
     @Operation(summary = "Get saved products")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/saved-products")
     public ResponseEntity<List<SavedProductResponse>> getSavedProducts() {
         String userId = getCurrentUserId();
@@ -160,6 +165,7 @@ public class UserController {
     }
 
     @Operation(summary = "Save a product configuration")
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/saved-products")
     public ResponseEntity<SavedProductResponse> saveProduct(
             @Valid @RequestBody SavedProductRequest request
@@ -169,6 +175,7 @@ public class UserController {
     }
 
     @Operation(summary = "Delete a saved product by ID")
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/saved-products/{id}")
     public ResponseEntity<Void> deleteSavedProduct(@PathVariable Long id) {
         String userId = getCurrentUserId();

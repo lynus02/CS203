@@ -3,6 +3,7 @@ package com.lynus.cs203.controllers;
 import com.lynus.cs203.dtos.request.ChangePasswordRequest;
 import com.lynus.cs203.dtos.request.CreateUserRequest;
 import com.lynus.cs203.dtos.request.UpdateUserRequest;
+import com.lynus.cs203.dtos.response.CreateUserResponse;
 import com.lynus.cs203.dtos.response.PasswordChangeResponse;
 import com.lynus.cs203.dtos.response.UserDto;
 import com.lynus.cs203.services.UserService;
@@ -97,22 +98,30 @@ public class UserControllerTest {
     }
 
     @Test
-    void createUser_ShouldReturnCreatedUserDto() {
-        // Arrange
+    void createUser_ShouldReturnCreatedUserResponse() {
         CreateUserRequest request = createUserRequest();
-        UserDto mockUserDto = createUserDto();
-        when(userService.createUserAsDto(request)).thenReturn(mockUserDto);
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromPath("http://localhost:8080");
+        CreateUserResponse mockResponse = CreateUserResponse.builder()
+                .userId(testUserId)
+                .email(testEmail)
+                .token("mockToken")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
 
-        // Act
-        ResponseEntity<UserDto> response = userController.createUser(request, uriComponentsBuilder);
+        when(userService.createUserAndReturnToken(request)).thenReturn(mockResponse);
 
-        // Assert
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("http://localhost:8080");
+
+        ResponseEntity<CreateUserResponse> response =
+                userController.signUp(request, uriBuilder);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isEqualTo(mockUserDto);
-        verify(userService).createUserAsDto(request);
+        assertThat(response.getBody()).isEqualTo(mockResponse);
+
+        verify(userService).createUserAndReturnToken(request);
     }
+
 
     @Test
     void updateUser_ShouldReturnUpdatedUserDto() {

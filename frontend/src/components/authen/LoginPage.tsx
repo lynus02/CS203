@@ -100,15 +100,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack, onSignUp, onForg
             localStorage.setItem('token', token);
 
             // Fetch user profile after login
-            const userProfile = await api.get('/auth/me');
+            const userProfile = await api.get('/users/profile');
             const user = userProfile.data;
 
             const userData: UserData = {
-                id: user.id,
-                name: user.firstName + ' ' + user.lastName,
+                id: user.userId, // <-- FIXED
+                name: `${user.firstName} ${user.lastName}`,
                 email: user.email,
-                token: token,
-                role: Array.isArray(user.roles) ? user.roles[0] : user.role
+                token,
+                role: Array.isArray(user.roles) ? user.roles[0] : null
             };
 
             onLogin(userData);
