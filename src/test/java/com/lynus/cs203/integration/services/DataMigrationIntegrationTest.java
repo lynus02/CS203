@@ -95,12 +95,12 @@ public class DataMigrationIntegrationTest {
 
     private void createTestTradeAgreementCsv() {
         String csvContent = """
-                    agreement_name,agreement_type,signatories
-                    "USMCA","Free Trade Agreement","United States;Canada;Mexico"
-                    "ASEAN FTA","Regional Agreement","Singapore;Malaysia;Thailand"
-                    """;
+            agreement_name,agreement_type,effective_date,expiration_date,signatories
+            "USMCA","Free Trade Agreement","1/1/2020","1/1/2030","United States;Canada;Mexico"
+            "ASEAN FTA","Regional Agreement","1/1/2010","1/1/2030","Singapore;Malaysia;Thailand"
+            """;
 
-        File testFile = new File("src/test/resources/data/trade_agreement.csv");
+        File testFile = new File("src/test/resources/data/Cleaned_Trade_Agreements1.csv");
         testFile.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(testFile)) {
             writer.write(csvContent);
@@ -115,32 +115,21 @@ public class DataMigrationIntegrationTest {
         dataMigrationService.migrateData();
 
         // Verify countries
-        List<Country> countryList = countryRepository.findAll();
-        assertThat(countryList.size()).isGreaterThanOrEqualTo(3);
-
-        Optional<Country> usCountry = countryRepository.findByCountryCode("US");
-        Optional<Country> caCountry = countryRepository.findByCountryCode("CA");
-        Optional<Country> mxCountry = countryRepository.findByCountryCode("MX");
-
-        assertThat(usCountry).isPresent();
-        assertThat(caCountry).isPresent();
-        assertThat(mxCountry).isPresent();
+        assertThat(countryRepository.count()).isGreaterThanOrEqualTo(6);
+        assertThat(countryRepository.findByCountryCode("US")).isPresent();
+        assertThat(countryRepository.findByCountryCode("CA")).isPresent();
+        assertThat(countryRepository.findByCountryCode("MX")).isPresent();
+        assertThat(countryRepository.findByCountryCode("SG")).isPresent();
+        assertThat(countryRepository.findByCountryCode("MY")).isPresent();
+        assertThat(countryRepository.findByCountryCode("TH")).isPresent();
 
         // Verify products
-        List<Product> productList = productRepository.findAll();
-        assertThat(productList.size()).isGreaterThanOrEqualTo(3);
-
-        Optional<Product> wheatFlour = productRepository.findByProductCode(1001);
-        Optional<Product> cornMeal = productRepository.findByProductCode(1002);
-        Optional<Product> rice = productRepository.findByProductCode(1003);
-
-        assertThat(wheatFlour).isPresent();
-        assertThat(cornMeal).isPresent();
-        assertThat(rice).isPresent();
+        assertThat(productRepository.findByProductCode(1001)).isPresent();
+        assertThat(productRepository.findByProductCode(1002)).isPresent();
+        assertThat(productRepository.findByProductCode(1003)).isPresent();
 
         // Verify tariffs
-        List<Tariff> tariffList = tariffRepository.findAll();
-        assertThat(tariffList.size()).isGreaterThanOrEqualTo(4);
+        assertThat(tariffRepository.count()).isEqualTo(7);
 
         // Verify migration status
         Optional<MigrationStatus> statusOpt = migrationStatusRepository.findById("csv_data_migration");
@@ -239,37 +228,14 @@ public class DataMigrationIntegrationTest {
         // Run the data import runner
         dataImportRunner.runMigrations();
 
-        // Debug: Check what migration statuses exist
-        List<MigrationStatus> allStatuses = migrationStatusRepository.findAll();
-        System.out.println("Migration statuses found: " + allStatuses.size());
-        allStatuses.forEach(status ->
-                System.out.println("Status: " + status.getMigrationName() + " - Completed: " + status.isCompleted())
-        );
-
-        // Debug: Check countries and trade agreements
-        System.out.println("Countries in DB: " + countryRepository.count());
-        System.out.println("Trade agreements in DB: " + tradeAgreementRepository.count());
-
-        countryRepository.findAll().forEach(c ->
-                System.out.println("Country: " + c.getCountryName() + " (" + c.getCountryCode() + ")")
-        );
-
         // Verify countries migrated
-        assertThat(countryRepository.findByCountryCode("US")).isPresent();
-        assertThat(countryRepository.findByCountryCode("CA")).isPresent();
-        assertThat(countryRepository.findByCountryCode("MX")).isPresent();
-        assertThat(countryRepository.findByCountryCode("SG")).isPresent();
-        assertThat(countryRepository.findByCountryCode("MY")).isPresent();
-        assertThat(countryRepository.findByCountryCode("TH")).isPresent();
+        assertThat(countryRepository.count()).isGreaterThanOrEqualTo(6);
 
         // Verify products migrated
-        assertThat(productRepository.findByProductCode(1001)).isPresent();
-        assertThat(productRepository.findByProductCode(1002)).isPresent();
-        assertThat(productRepository.findByProductCode(1003)).isPresent();
+        assertThat(productRepository.count()).isGreaterThanOrEqualTo(3);
 
         // Verify tariffs migrated
-        assertThat(tariffRepository.count()).isGreaterThanOrEqualTo(7);
-
+        assertThat(tariffRepository.count()).isEqualTo(7);
 
         // Verify trade agreements migrated
         Optional<TradeAgreement> usmcaOpt = tradeAgreementRepository.findByAgreementName("USMCA");
