@@ -14,9 +14,11 @@ import org.web3j.tx.gas.ContractGasProvider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.sql.*;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -30,165 +32,17 @@ public class BlockchainAuditServiceTest {
     private static String computeExpectedHash(String... rows) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         for (String r : rows) {
-            digest.update(r.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            digest.update(r.getBytes(StandardCharsets.UTF_8));
         }
         byte[] finalHash = digest.digest();
         return "0x" + org.web3j.utils.Numeric.toHexStringNoPrefix(finalHash);
     }
 
-    @Test
-    public void hashTariffTable_handlesNullsAndValues() throws Exception {
-        Connection conn = mock(Connection.class);
-        PreparedStatement ps = mock(PreparedStatement.class);
-        ResultSet rs = mock(ResultSet.class);
-        DatabaseMetaData md = mock(DatabaseMetaData.class);
-
-        when(conn.getMetaData()).thenReturn(md);
-        when(md.getDatabaseProductName()).thenReturn("H2");
-        when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
-        when(ps.executeQuery()).thenReturn(rs);
-
-        // two rows
-        when(rs.next()).thenReturn(true, true, false);
-        when(rs.getLong("trade_id")).thenReturn(1L, 2L);
-        when(rs.getObject("product_id", Long.class)).thenReturn(10L, null);
-        when(rs.getObject("country_id", Long.class)).thenReturn(100L, null);
-        when(rs.getBigDecimal("tariff_rate")).thenReturn(new BigDecimal("1.50"), null);
-
-        String hash = BlockchainAuditService.hashTariffTable(conn);
-        assertNotNull(hash);
-        assertTrue(hash.startsWith("0x"));
-
-        String row1 = "1|10|100|" + new BigDecimal("1.50").stripTrailingZeros().toPlainString();
-        String row2 = "2|NULL|NULL|NULL";
-        String expected = computeExpectedHash(row1, row2);
-        assertEquals(expected, hash);
-    }
-
-    @Test
-    public void main_runsWithoutThrowing_whenHashesMatch() throws Exception {
-        Connection conn = mock(Connection.class);
-        doNothing().when(conn).setAutoCommit(false);
-        doNothing().when(conn).setAutoCommit(true);
-
-        PreparedStatement ps = mock(PreparedStatement.class);
-        ResultSet rs = mock(ResultSet.class);
-        DatabaseMetaData md = mock(DatabaseMetaData.class);
-        when(conn.getMetaData()).thenReturn(md);
-        when(md.getDatabaseProductName()).thenReturn("H2");
-        when(conn.prepareStatement(startsWith("SELECT trade_id"), anyInt(), anyInt())).thenReturn(ps);
-        when(ps.executeQuery()).thenReturn(rs);
-
-        when(rs.next()).thenReturn(true, false);
-        when(rs.getLong("trade_id")).thenReturn(1L);
-        when(rs.getObject("product_id", Long.class)).thenReturn(null);
-        when(rs.getObject("country_id", Long.class)).thenReturn(null);
-        when(rs.getBigDecimal("tariff_rate")).thenReturn(null);
-
-        String row1 = "1|NULL|NULL|NULL";
-        String expectedLocalHash = computeExpectedHash(row1);
-
-        try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-            dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null)).thenReturn(conn);
-
-            Web3j web3j = mock(Web3j.class);
-            doNothing().when(web3j).shutdown();
-            try (MockedStatic<Web3j> web3jStatic = mockStatic(Web3j.class)) {
-                web3jStatic.when(() -> Web3j.build(any(HttpService.class))).thenReturn(web3j);
-
-                TariffAuditLog contract = mock(TariffAuditLog.class);
-                @SuppressWarnings("unchecked")
-                RemoteFunctionCall<String> rfc = mock(RemoteFunctionCall.class);
-                when(rfc.send()).thenReturn(expectedLocalHash);
-                when(contract.getLatestHash()).thenReturn(rfc);
-
-                try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
-                    talStatic.when(() -> TariffAuditLog.load(eq((String) null), eq(web3j), any(TransactionManager.class), any(ContractGasProvider.class)))
-                            .thenReturn(contract);
-
-                    BlockchainAuditService.main(new String[0]);
-                }
-            }
-        }
-    }
-
-    @Test
-    public void hashTariffTable_usesMySQLStreaming_fetchSizeMinValue() throws Exception {
-        Connection conn = mock(Connection.class);
-        PreparedStatement ps = mock(PreparedStatement.class);
-        ResultSet rs = mock(ResultSet.class);
-        DatabaseMetaData md = mock(DatabaseMetaData.class);
-
-        when(conn.getMetaData()).thenReturn(md);
-        when(md.getDatabaseProductName()).thenReturn("MySQL");
-        when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
-        when(ps.executeQuery()).thenReturn(rs);
-
-        // no rows required; we only want to verify fetch-size selection
-        when(rs.next()).thenReturn(false);
-
-        BlockchainAuditService.hashTariffTable(conn);
-
-        // verify the MySQL streaming sentinel was used
-        verify(ps).setFetchSize(Integer.MIN_VALUE);
-    }
-
-    @Test
-    public void main_printsMismatch_whenHashesDiffer() throws Exception {
-        // capture stdout
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(baos));
-
-        try {
-            Connection conn = mock(Connection.class);
-            // main() calls setAutoCommit(false)
-            doNothing().when(conn).setAutoCommit(false);
-
-            PreparedStatement ps = mock(PreparedStatement.class);
-            ResultSet rs = mock(ResultSet.class);
-            DatabaseMetaData md = mock(DatabaseMetaData.class);
-            when(conn.getMetaData()).thenReturn(md);
-            when(md.getDatabaseProductName()).thenReturn("H2");
-            when(conn.prepareStatement(startsWith("SELECT trade_id"), anyInt(), anyInt())).thenReturn(ps);
-            when(ps.executeQuery()).thenReturn(rs);
-
-            // one row producing canonical "1|NULL|NULL|NULL"
-            when(rs.next()).thenReturn(true, false);
-            when(rs.getLong("trade_id")).thenReturn(1L);
-            when(rs.getObject("product_id", Long.class)).thenReturn(null);
-            when(rs.getObject("country_id", Long.class)).thenReturn(null);
-            when(rs.getBigDecimal("tariff_rate")).thenReturn(null);
-
-            try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-                dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null)).thenReturn(conn);
-
-                Web3j web3j = mock(Web3j.class);
-                try (MockedStatic<Web3j> web3jStatic = mockStatic(Web3j.class)) {
-                    web3jStatic.when(() -> Web3j.build(any(HttpService.class))).thenReturn(web3j);
-
-                    TariffAuditLog contract = mock(TariffAuditLog.class);
-                    @SuppressWarnings("unchecked")
-                    RemoteFunctionCall<String> rfc = mock(RemoteFunctionCall.class);
-                    // return a different on-chain hash to force the mismatch branch in main()
-                    when(rfc.send()).thenReturn("0xdifferent");
-                    when(contract.getLatestHash()).thenReturn(rfc);
-
-                    try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
-                        talStatic.when(() -> TariffAuditLog.load(eq((String) null), eq(web3j), any(TransactionManager.class), any(ContractGasProvider.class)))
-                                .thenReturn(contract);
-
-                        BlockchainAuditService.main(new String[0]);
-                    }
-                }
-            }
-
-            System.out.flush();
-            String output = baos.toString("UTF-8");
-            assertTrue(output.contains("❌ Database hash mismatch!"));
-        } finally {
-            System.setOut(originalOut);
-        }
+    // Helper: read private static String field from BlockchainAuditService
+    private static String getServiceStaticString(String name) throws Exception {
+        Field f = BlockchainAuditService.class.getDeclaredField(name);
+        f.setAccessible(true);
+        return (String) f.get(null);
     }
 
     @Test
@@ -221,10 +75,51 @@ public class BlockchainAuditServiceTest {
 
         // verify the non-MySQL branch set the positive fetch size
         verify(ps).setFetchSize(1000);
-        }
+    }
 
-        @Test
-        public void audit_returnsIntegrityOk_whenHashesMatch() throws Exception {
+    @Test
+    public void hashTariffTable_usesMySQLStreaming_fetchSizeMinValue() throws Exception {
+        Connection conn = mock(Connection.class);
+        PreparedStatement ps = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+        DatabaseMetaData md = mock(DatabaseMetaData.class);
+
+        when(conn.getMetaData()).thenReturn(md);
+        when(md.getDatabaseProductName()).thenReturn("MySQL");
+        when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
+        when(ps.executeQuery()).thenReturn(rs);
+
+        // no rows required; we only want to verify fetch-size selection
+        when(rs.next()).thenReturn(false);
+
+        BlockchainAuditService.hashTariffTable(conn);
+
+        // verify the MySQL streaming sentinel was used
+        verify(ps).setFetchSize(Integer.MIN_VALUE);
+    }
+
+    @Test
+    public void hashTariffTable_usesMariaDBStreaming_fetchSizeMinValue() throws Exception {
+        Connection conn = mock(Connection.class);
+        PreparedStatement ps = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+        DatabaseMetaData md = mock(DatabaseMetaData.class);
+
+        when(conn.getMetaData()).thenReturn(md);
+        when(md.getDatabaseProductName()).thenReturn("MariaDB");
+        when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
+        when(ps.executeQuery()).thenReturn(rs);
+
+        when(rs.next()).thenReturn(false);
+
+        BlockchainAuditService.hashTariffTable(conn);
+
+        verify(ps).setFetchSize(Integer.MIN_VALUE);
+    }
+
+    @Test
+    public void audit_returnsIntegrityOk_whenHashesMatch() throws Exception {
+        // prepare mocked Connection and resultset (two rows)
         Connection conn = mock(Connection.class);
         when(conn.isValid(anyInt())).thenReturn(true);
 
@@ -251,36 +146,42 @@ public class BlockchainAuditServiceTest {
         String row2 = "2|NULL|NULL|NULL";
         String expectedLocalHash = computeExpectedHash(row1, row2);
 
-        try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-            dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null)).thenReturn(conn);
+        // stub DriverManager.getConnection using the exact args the service uses (read via reflection)
+        String url = getServiceStaticString("LIVE_DB_URL");
+        String user = getServiceStaticString("LIVE_DB_USERNAME");
+        String pass = getServiceStaticString("LIVE_DB_PASSWORD");
 
+        try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
+            dm.when(() -> DriverManager.getConnection(url, user, pass)).thenReturn(conn);
+
+            // mock Web3j.build to return a mock web3j
             Web3j web3j = mock(Web3j.class);
             try (MockedStatic<Web3j> web3jStatic = mockStatic(Web3j.class)) {
                 web3jStatic.when(() -> Web3j.build(any(HttpService.class))).thenReturn(web3j);
 
+                // mock contract and its remote function call
                 TariffAuditLog contract = mock(TariffAuditLog.class);
                 @SuppressWarnings("unchecked")
                 RemoteFunctionCall<String> rfc = mock(RemoteFunctionCall.class);
                 when(rfc.send()).thenReturn(expectedLocalHash);
                 when(contract.getLatestHash()).thenReturn(rfc);
 
+                // stub TariffAuditLog.load using the exact contract address the service uses
+                String contractAddr = getServiceStaticString("CONTRACT_ADDRESS");
                 try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
-                    talStatic.when(() -> TariffAuditLog.load(eq((String) null), eq(web3j), any(TransactionManager.class), any(ContractGasProvider.class)))
+                    talStatic.when(() -> TariffAuditLog.load(eq(contractAddr), any(Web3j.class), any(TransactionManager.class), any(ContractGasProvider.class)))
                             .thenReturn(contract);
 
                     BlockchainAuditService svc = new BlockchainAuditService();
                     var resp = svc.audit();
 
-                    assertTrue(resp.isIntegrityOk());
                     assertFalse(resp.isError());
+                    assertTrue(resp.isIntegrityOk());
                     assertEquals(expectedLocalHash, resp.getLocalHash());
                     assertEquals(expectedLocalHash, resp.getOnChainHash());
                 }
             }
         }
-
-        // also verify the non-mysql fetch-size was set during hash computation
-        verify(ps).setFetchSize(1000);
     }
 
     @Test
@@ -310,8 +211,12 @@ public class BlockchainAuditServiceTest {
         String row1 = "1|NULL|NULL|NULL";
         String expectedLocalHash = computeExpectedHash(row1);
 
+        String url = getServiceStaticString("LIVE_DB_URL");
+        String user = getServiceStaticString("LIVE_DB_USERNAME");
+        String pass = getServiceStaticString("LIVE_DB_PASSWORD");
+
         try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-            dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null)).thenReturn(conn);
+            dm.when(() -> DriverManager.getConnection(url, user, pass)).thenReturn(conn);
 
             Web3j web3j = mock(Web3j.class);
             try (MockedStatic<Web3j> web3jStatic = mockStatic(Web3j.class)) {
@@ -323,15 +228,16 @@ public class BlockchainAuditServiceTest {
                 when(rfc.send()).thenReturn("0xdifferent");
                 when(contract.getLatestHash()).thenReturn(rfc);
 
+                String contractAddr = getServiceStaticString("CONTRACT_ADDRESS");
                 try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
-                    talStatic.when(() -> TariffAuditLog.load(eq((String) null), eq(web3j), any(TransactionManager.class), any(ContractGasProvider.class)))
+                    talStatic.when(() -> TariffAuditLog.load(eq(contractAddr), any(Web3j.class), any(TransactionManager.class), any(ContractGasProvider.class)))
                             .thenReturn(contract);
 
                     BlockchainAuditService svc = new BlockchainAuditService();
                     var resp = svc.audit();
 
-                    assertFalse(resp.isIntegrityOk());
                     assertFalse(resp.isError());
+                    assertFalse(resp.isIntegrityOk());
                     assertEquals(expectedLocalHash, resp.getLocalHash());
                     assertEquals("0xdifferent", resp.getOnChainHash());
                 }
@@ -340,7 +246,29 @@ public class BlockchainAuditServiceTest {
     }
 
     @Test
+    public void audit_returnsError_whenConnectionValidationFails() throws Exception {
+        Connection conn = mock(Connection.class);
+        when(conn.isValid(anyInt())).thenReturn(false);
+
+        String url = getServiceStaticString("LIVE_DB_URL");
+        String user = getServiceStaticString("LIVE_DB_USERNAME");
+        String pass = getServiceStaticString("LIVE_DB_PASSWORD");
+
+        try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
+            dm.when(() -> DriverManager.getConnection(url, user, pass)).thenReturn(conn);
+
+            BlockchainAuditService svc = new BlockchainAuditService();
+            var resp = svc.audit();
+
+            assertTrue(resp.isError());
+            assertFalse(resp.isIntegrityOk());
+            assertTrue(resp.getMessage().contains("Connection validation failed"));
+        }
+    }
+
+    @Test
     public void main_runsAndPrintsVerified_whenHashesMatch() throws Exception {
+        // capture stdout
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(baos));
@@ -367,8 +295,12 @@ public class BlockchainAuditServiceTest {
             String row1 = "1|NULL|NULL|NULL";
             String expectedLocalHash = computeExpectedHash(row1);
 
+            String url = getServiceStaticString("LIVE_DB_URL");
+            String user = getServiceStaticString("LIVE_DB_USERNAME");
+            String pass = getServiceStaticString("LIVE_DB_PASSWORD");
+
             try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-                dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null)).thenReturn(conn);
+                dm.when(() -> DriverManager.getConnection(url, user, pass)).thenReturn(conn);
 
                 Web3j web3j = mock(Web3j.class);
                 doNothing().when(web3j).shutdown();
@@ -381,11 +313,13 @@ public class BlockchainAuditServiceTest {
                     when(rfc.send()).thenReturn(expectedLocalHash);
                     when(contract.getLatestHash()).thenReturn(rfc);
 
+                    String contractAddr = getServiceStaticString("CONTRACT_ADDRESS");
                     try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
-                        talStatic.when(() -> TariffAuditLog.load(eq((String) null), eq(web3j), any(TransactionManager.class), any(ContractGasProvider.class)))
+                        talStatic.when(() -> TariffAuditLog.load(eq(contractAddr), any(Web3j.class), any(TransactionManager.class), any(ContractGasProvider.class)))
                                 .thenReturn(contract);
 
-                        BlockchainAuditService.main(new String[0]);
+                        // call main - it prints to stdout which we captured
+                        BlockchainAuditService.main(new String[]{});
                     }
                 }
             }
@@ -399,61 +333,65 @@ public class BlockchainAuditServiceTest {
     }
 
     @Test
-    public void audit_returnsError_whenConnectionValidationFails() throws Exception {
-        Connection conn = mock(Connection.class);
-        when(conn.isValid(anyInt())).thenReturn(false);
+    public void main_printsMismatch_whenHashesDiffer() throws Exception {
+        // capture stdout
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(baos));
 
-        try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
-            // match the exact null-args usage in the service
-            dm.when(() -> DriverManager.getConnection((String) null, (String) null, (String) null))
-                    .thenReturn(conn);
-
-            BlockchainAuditService svc = new BlockchainAuditService();
-            var resp = svc.audit();
-
-            assertTrue(resp.isError());
-            assertFalse(resp.isIntegrityOk());
-            assertTrue(resp.getMessage().contains("Connection validation failed"));
-        }
-    }
-
-    @Test
-    public void hashTariffTable_usesMySQL_and_MariaDB_fetchSizeMinValue() throws Exception {
-        // MySQL
-        {
+        try {
             Connection conn = mock(Connection.class);
+            doNothing().when(conn).setAutoCommit(false);
+
             PreparedStatement ps = mock(PreparedStatement.class);
             ResultSet rs = mock(ResultSet.class);
             DatabaseMetaData md = mock(DatabaseMetaData.class);
-
             when(conn.getMetaData()).thenReturn(md);
-            when(md.getDatabaseProductName()).thenReturn("MySQL");
-            when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
+            when(md.getDatabaseProductName()).thenReturn("H2");
+            when(conn.prepareStatement(startsWith("SELECT trade_id"), anyInt(), anyInt())).thenReturn(ps);
             when(ps.executeQuery()).thenReturn(rs);
-            when(rs.next()).thenReturn(false);
 
-            BlockchainAuditService.hashTariffTable(conn);
-            verify(ps).setFetchSize(Integer.MIN_VALUE);
-            reset(ps, rs, md, conn);
-        }
+            // one row producing canonical "1|NULL|NULL|NULL"
+            when(rs.next()).thenReturn(true, false);
+            when(rs.getLong("trade_id")).thenReturn(1L);
+            when(rs.getObject("product_id", Long.class)).thenReturn(null);
+            when(rs.getObject("country_id", Long.class)).thenReturn(null);
+            when(rs.getBigDecimal("tariff_rate")).thenReturn(null);
 
-        // MariaDB
-        {
-            Connection conn = mock(Connection.class);
-            PreparedStatement ps = mock(PreparedStatement.class);
-            ResultSet rs = mock(ResultSet.class);
-            DatabaseMetaData md = mock(DatabaseMetaData.class);
+            String url = getServiceStaticString("LIVE_DB_URL");
+            String user = getServiceStaticString("LIVE_DB_USERNAME");
+            String pass = getServiceStaticString("LIVE_DB_PASSWORD");
 
-            when(conn.getMetaData()).thenReturn(md);
-            when(md.getDatabaseProductName()).thenReturn("MariaDB");
-            when(conn.prepareStatement(anyString(), anyInt(), anyInt())).thenReturn(ps);
-            when(ps.executeQuery()).thenReturn(rs);
-            when(rs.next()).thenReturn(false);
+            try (MockedStatic<java.sql.DriverManager> dm = mockStatic(java.sql.DriverManager.class)) {
+                dm.when(() -> DriverManager.getConnection(url, user, pass)).thenReturn(conn);
 
-            BlockchainAuditService.hashTariffTable(conn);
-            verify(ps).setFetchSize(Integer.MIN_VALUE);
+                Web3j web3j = mock(Web3j.class);
+                doNothing().when(web3j).shutdown();
+                try (MockedStatic<Web3j> web3jStatic = mockStatic(Web3j.class)) {
+                    web3jStatic.when(() -> Web3j.build(any(HttpService.class))).thenReturn(web3j);
+
+                    TariffAuditLog contract = mock(TariffAuditLog.class);
+                    @SuppressWarnings("unchecked")
+                    RemoteFunctionCall<String> rfc = mock(RemoteFunctionCall.class);
+                    when(rfc.send()).thenReturn("0xdifferent");
+                    when(contract.getLatestHash()).thenReturn(rfc);
+
+                    String contractAddr = getServiceStaticString("CONTRACT_ADDRESS");
+                    try (MockedStatic<TariffAuditLog> talStatic = mockStatic(TariffAuditLog.class)) {
+                        talStatic.when(() -> TariffAuditLog.load(eq(contractAddr), any(Web3j.class), any(TransactionManager.class), any(ContractGasProvider.class)))
+                                .thenReturn(contract);
+
+                        // call main - it prints to stdout which we captured
+                        BlockchainAuditService.main(new String[]{});
+                    }
+                }
+            }
+
+            System.out.flush();
+            String output = baos.toString("UTF-8");
+            assertTrue(output.contains("❌ Database hash mismatch!"));
+        } finally {
+            System.setOut(originalOut);
         }
     }
-
-
 }
