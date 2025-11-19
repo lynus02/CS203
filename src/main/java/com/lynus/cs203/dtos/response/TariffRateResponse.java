@@ -47,5 +47,5 @@ public class TariffRateResponse {
     @Schema(
             description = "Tariff rate value"
     )
-    private double value;
+    private int value;
 }

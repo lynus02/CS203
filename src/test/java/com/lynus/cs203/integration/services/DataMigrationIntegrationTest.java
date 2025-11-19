@@ -95,12 +95,12 @@ public class DataMigrationIntegrationTest {
 
     private void createTestTradeAgreementCsv() {
         String csvContent = """
-            agreement_name,agreement_type,effective_date,expiration_date,signatories
-            "USMCA","Free Trade Agreement","1/1/2020","31/12/2030","United States;Canada;Mexico"
-            "ASEAN FTA","Regional Agreement","1/1/2015","31/12/2035","Singapore;Malaysia;Thailand"
-            """;
+                    agreement_name,agreement_type,signatories
+                    "USMCA","Free Trade Agreement","United States;Canada;Mexico"
+                    "ASEAN FTA","Regional Agreement","Singapore;Malaysia;Thailand"
+                    """;
 
-        File testFile = new File("src/test/resources/data/Cleaned_Trade_Agreements1.csv");
+        File testFile = new File("src/test/resources/data/trade_agreement.csv");
         testFile.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(testFile)) {
             writer.write(csvContent);
@@ -130,9 +130,9 @@ public class DataMigrationIntegrationTest {
         List<Product> productList = productRepository.findAll();
         assertThat(productList.size()).isGreaterThanOrEqualTo(3);
 
-        Optional<Product> wheatFlour = productRepository.findByProductCode("1001");
-        Optional<Product> cornMeal = productRepository.findByProductCode("1002");
-        Optional<Product> rice = productRepository.findByProductCode("1003");
+        Optional<Product> wheatFlour = productRepository.findByProductCode(1001);
+        Optional<Product> cornMeal = productRepository.findByProductCode(1002);
+        Optional<Product> rice = productRepository.findByProductCode(1003);
 
         assertThat(wheatFlour).isPresent();
         assertThat(cornMeal).isPresent();
@@ -236,8 +236,8 @@ public class DataMigrationIntegrationTest {
     @Test
     @DisplayName("Should run full data import process without errors")
     void testDataImportRunner_ShouldRunFullImportProcess() throws Exception {
-        dataMigrationService.migrateData();
-        tradeAgreementMigrationService.migrateTradeAgreements();
+        // Run the data import runner
+        dataImportRunner.runMigrations();
 
         // Debug: Check what migration statuses exist
         List<MigrationStatus> allStatuses = migrationStatusRepository.findAll();
@@ -263,9 +263,9 @@ public class DataMigrationIntegrationTest {
         assertThat(countryRepository.findByCountryCode("TH")).isPresent();
 
         // Verify products migrated
-        assertThat(productRepository.findByProductCode("1001")).isPresent();
-        assertThat(productRepository.findByProductCode("1002")).isPresent();
-        assertThat(productRepository.findByProductCode("1003")).isPresent();
+        assertThat(productRepository.findByProductCode(1001)).isPresent();
+        assertThat(productRepository.findByProductCode(1002)).isPresent();
+        assertThat(productRepository.findByProductCode(1003)).isPresent();
 
         // Verify tariffs migrated
         assertThat(tariffRepository.count()).isGreaterThanOrEqualTo(7);

@@ -24,6 +24,10 @@ import ProfilePageUser from "./components/authen/auth/ProfilePageUser";
 import ResetPasswordPage from "./components/authen/ResetPasswordPage";
 import api from "./services/api";
 
+// Context: Saved Products (from DB)
+import {SavedProductConfig} from "./components/SavedProducts";
+import MySavedProductsButton from "./components/MySavedProductsButton";
+
 // Import Light/Dark mode theme
 import ThemeToggle from "./components/togglethemebutton/ThemeToggle";
 
@@ -42,6 +46,7 @@ export default function App() {
     const [leftCustomsResults, setLeftCustomsResults] = useState(null);
     const [rightCustomsResults, setRightCustomsResults] = useState(null);
     const [shippingResults, setShippingResults] = useState(null);
+    const [savedConfigToLoad, setSavedConfigToLoad] = useState<SavedProductConfig | undefined>(undefined);
 
     // Choose which customs result to feed downstream calculators
     const displayedCustomsResults = splitView ? (leftCustomsResults ?? rightCustomsResults ?? null) : customsResults;
@@ -53,6 +58,14 @@ export default function App() {
     const [showProfile, setShowProfile] = useState(false);              // Profile page
     const [showResetPassword, setShowResetPassword] = useState(false);  // Reset password page
     const [showForgotPassword, setShowForgotPassword] = useState(false);    // Forgot password page
+
+    // ========= EVENT HANDLERS ========= //
+    const handleLoadProduct = (config: SavedProductConfig) => {
+        setSavedConfigToLoad(config);
+        setActiveTab("customs");
+        // Clear after a brief delay to allow re-loading the same config multiple times
+        setTimeout(() => setSavedConfigToLoad(undefined), 500);
+    };
 
     const handleLogin = (userData) => {
         setUser(userData); // stores the logged-in user's data in state
@@ -107,7 +120,6 @@ export default function App() {
     };
 
     const handleBackFromLogin = () => {
-        console.log('Back button clicked from login');
         setShowLogin(false); //hides the login page and returns to main app
     };
 
@@ -142,10 +154,9 @@ export default function App() {
         {
             icon: Database,
             title: "Food Tariff Database",
-            description: "Search current food tariff rates by HS code and country. Verify data integrity with blockchain"
+            description: "Search current food tariff rates by HS code and country"
         }
     ];
-
 
     // ========== useEffect - Authentication: validate token on refresh
     useEffect(() => {
@@ -214,7 +225,7 @@ export default function App() {
     if (showSignup) {
         return (
             <SignupPage
-                onSignup={handleSignupSuccess}
+                onSignup={handleSignupSuccess} // You'll need this function too
                 onBack={() => setShowSignup(false)}
                 onLogin={() => {
                     setShowSignup(false);
@@ -259,6 +270,7 @@ export default function App() {
     }
 
     if (showProfile) {
+        // when navigating to reset password from profile, close profile first
         return <ProfilePageUser onBack={() => setShowProfile(false)} onLogout={handleLogout} onReset={() => {
             setShowProfile(false);
             setShowResetPassword(true);
@@ -276,14 +288,17 @@ export default function App() {
                             {/* Header with logo and theme toggle */}
                             <div className="px-8 py-8 flex items-center gap-4">
                                 <a href="/" className="flex items-center gap-2 hover:opacity-80">
-                                    <Globe className="h-6 w-6 text-foreground"/>
-                                    <span className="text-xl font-medium text-foreground">FoodTariff Pro</span>
+                                    <Globe className="h-6 w-6 text-white"/>
+                                    <span className="text-xl font-medium text-white">FoodTariff Pro</span>
                                 </a>
                                 <ThemeToggle/>
                             </div>
 
                             {/* Right side */}
                             <div className="flex items-center gap-4">
+                                {/* My Saved Products button (left of login) */}
+                                <MySavedProductsButton onLoadProduct={handleLoadProduct}/>
+
                                 {/* Login/User Button */}
                                 {user ? (
                                     <div className="flex items-center gap-2">
@@ -314,7 +329,7 @@ export default function App() {
                         <div className="text-center mb-8">
                             <div className="flex items-center justify-center gap-2 mb-4">
                                 <Globe className="h-8 w-8 text-primary"/>
-                                <h1 className="text-3xl text-white">FoodTariff Pro</h1>
+                                <h1 className="text-3xl">FoodTariff Pro</h1>
                             </div>
                             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                                 Specialized tariff and shipping cost calculator for food imports and exports.
@@ -342,17 +357,11 @@ export default function App() {
                         {/* Main Calculator Tabs */}
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                             <TabsList className="bg-primary grid w-full" style={{gridTemplateColumns: "75% 25%"}}>
-                                <TabsTrigger
-                                    value="customs"
-                                    className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
-                                >
+                                <TabsTrigger value="customs" className="flex items-center gap-2">
                                     <Calculator className="h-4 w-4"/>
                                     <span className="hidden sm:inline">Food Duty</span>
                                 </TabsTrigger>
-                                <TabsTrigger
-                                    value="database"
-                                    className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
-                                >
+                                <TabsTrigger value="database" className="flex items-center gap-2">
                                     <Database className="h-4 w-4"/>
                                     <span className="hidden sm:inline">Database</span>
                                 </TabsTrigger>
@@ -367,14 +376,9 @@ export default function App() {
                                                 <Calculator className="h-5 w-5"/>
                                                 Food Duty Calculator
                                             </CardTitle>
-                                            <div className="flex items-center gap-2 text-primary">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    className="text-primary border-primary hover:bg-primary/10"
-                                                    onClick={() => setSplitView(!splitView)}
-                                                >
-                                                    {splitView ? "Single Product View" : "Compare with another product"}
+                                            <div className="flex items-center gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => setSplitView(!splitView)}>
+                                                    {splitView ? "Single View" : "Compare with another product"}
                                                 </Button>
                                             </div>
                                         </CardHeader>
@@ -383,13 +387,16 @@ export default function App() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <CustomsDutyCalculator
                                                         onResultsChange={setLeftCustomsResults}
+                                                        savedConfig={savedConfigToLoad}
                                                     />
                                                     <CustomsDutyCalculator
                                                         onResultsChange={setRightCustomsResults}
+                                                        savedConfig={savedConfigToLoad}
                                                     />
                                                 </div>
                                             ) : (
-                                                <CustomsDutyCalculator onResultsChange={setCustomsResults}/>
+                                                <CustomsDutyCalculator onResultsChange={setCustomsResults}
+                                                                       savedConfig={savedConfigToLoad}/>
                                             )}
                                         </CardContent>
                                     </Card>
@@ -480,20 +487,14 @@ export default function App() {
                 <Dialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt}>
                     <DialogContent>
                         <div className="p-4">
-                            <h3 className="text-lg text-primary font-medium mb-2">Login required</h3>
+                            <h3 className="text-lg font-medium mb-2">Login required</h3>
                             <p className="text-sm text-muted-foreground mb-4">Login to view your saved products</p>
                             <div className="flex justify-end gap-2">
-                                <Button variant="outline" className="text-primary border-primary hover:bg-primary/10" onClick={() => setShowLoginPrompt(false)}>
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        setShowLoginPrompt(false);
-                                        setShowLogin(true);
-                                    }}
-                                >
-                                    Login
-                                </Button>
+                                <Button variant="outline" onClick={() => setShowLoginPrompt(false)}>Cancel</Button>
+                                <Button onClick={() => {
+                                    setShowLoginPrompt(false);
+                                    setShowLogin(true);
+                                }}>Login</Button>
                             </div>
                         </div>
                     </DialogContent>

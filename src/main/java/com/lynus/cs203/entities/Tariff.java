@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @RequiredArgsConstructor
 @Getter
 @Setter
@@ -30,6 +28,4 @@ public class Tariff {
     @Column(name = "tariff_rate")
     private double tariffRate; // original "value" column
 
-    @Column(name = "effective_date", nullable = false)
-    private LocalDate effectiveDate = LocalDate.of(2020, 1, 1);
 }

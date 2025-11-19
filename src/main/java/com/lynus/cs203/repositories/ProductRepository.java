@@ -11,12 +11,12 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Optional<Product> findByProductCode(String productCode);
+    Optional<Product> findByProductCode(Integer productCode);
 
     @Query("""
         SELECT p FROM Product p
         WHERE LOWER(p.productDescription) LIKE LOWER(CONCAT('%', :q, '%'))
-           OR p.productCode LIKE CONCAT('%', :q, '%')
+           OR CAST(p.productCode AS string) LIKE CONCAT('%', :q, '%')
     """)
     List<Product> findByDescriptionOrCode(@Param("q") String q);
 

@@ -324,10 +324,10 @@ export function TariffRateDatabase() {
               Showing {filteredRates.length} of {tariffRates.length} food tariff rates
             </span>
           </div>
-            <Button variant="secondary" size="sm">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Export Results
-            </Button>
+          <Button variant="outline" size="sm">
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Export Results
+          </Button>
         </div>
 
         {/* Results Table */}

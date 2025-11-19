@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -56,14 +55,11 @@ public class TariffCalculationService {
         log.debug("Looking up export country with code: {}", request.getDesCountryCode());
         Country desCountry = countryRepository.findByCountryCode(request.getDesCountryCode())
                 .orElseThrow(() -> {
-                    log.warn("Country not found with code: {}", request.getDesCountryCode());
+                    log.warn("Country not found with code: {}", request.getExportCountryCode());
                     return new IllegalArgumentException(
-                            "Invalid destination country code: " + request.getDesCountryCode());
+                            "Invalid export country code: " + request.getExportCountryCode());
                 });
         log.debug("Found destination country with code: {})", desCountry.getCountryCode());
-
-        // Use effective_date / expiry_date
-        LocalDate dateToUse = request.getDate() != null ? request.getDate() : LocalDate.now();
 
         // Find tariff
         log.debug("Looking up tariff for Product: {} and Country: {}",
@@ -80,14 +76,11 @@ public class TariffCalculationService {
                 tariff.getTariffRate(), product.getProductCode(), desCountry.getCountryCode());
 
         // Calculate sensitivity tier from hscode
-        String sensitivityTier = calculateSensitivityTier(
-                String.valueOf(product.getProductCode()).substring(0, 2)
-        );
+        String sensitivityTier = calculateSensitivityTier(Integer.toString(product.getProductCode()).substring(0, 2));
         log.debug("Calculated sensitivity tier: {} for HS Code: {}", sensitivityTier, product.getProductCode());
 
         // Check for trade agreements and calculate preferential rate
-        List<Long> tradeAgreementIds = agreementCountryRepository.findAgreementsBetweenCountriesOnDate(
-                exportCountry.getCountryName(), desCountry.getCountryName(), dateToUse);
+        List<Long> tradeAgreementIds = agreementCountryRepository.findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName());
 
         log.debug("Found {} trade agreements between Export Country: {} and Destination Country: {}",
                 tradeAgreementIds.size(), exportCountry.getCountryName(), desCountry.getCountryName());
@@ -96,7 +89,6 @@ public class TariffCalculationService {
         double baseRate = tariff.getTariffRate();
         double bestFinalRate = baseRate;
         String bestAgreementType = "MFN"; // set default to Most Favored Nation
-        String bestAgreementName = "No Trade Agreement";
 
         if (!tradeAgreementIds.isEmpty()) {
             for (Long agreementId : tradeAgreementIds) {
@@ -115,7 +107,6 @@ public class TariffCalculationService {
                         if (discountedRate < bestFinalRate) {
                             bestFinalRate = discountedRate;
                             bestAgreementType = agreementType.trim();
-                            bestAgreementName = agreement.getAgreementName();
                         }
                     }
                 }
@@ -123,7 +114,7 @@ public class TariffCalculationService {
         }
         // Calculate tariff amount
         double tariffAmount = (bestFinalRate / 100.0) * request.getCustomsValue();
-        log.info("Tariff calculation trade name: {}", bestAgreementName);
+
         log.info("Tariff calculation completed. Tariff Amount: {}", tariffAmount);
         return TariffCalculationResponse.builder()
                 .productCode(product.getProductCode())

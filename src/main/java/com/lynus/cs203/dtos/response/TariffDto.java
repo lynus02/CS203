@@ -56,7 +56,7 @@ public class TariffDto {
                 .trade_id(tariff.getTradeId())
                 .productId(tariff.getProduct().getProductId())
                 .hsDescription(tariff.getProduct().getProductDescription())
-                .productCode6(tariff.getProduct().getProductCode())
+                .productCode6(String.valueOf(tariff.getProduct().getProductCode()))
                 .food_category(tariff.getProduct().getFoodCategory())
                 .value(tariff.getTariffRate())
                 .reporterName(tariff.getCountry().getCountryName())

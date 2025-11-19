@@ -1,3 +1,4 @@
+// java
 package com.lynus.cs203.services;
 
 import com.lynus.cs203.dtos.request.TariffCalculationRequest;
@@ -15,8 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Test;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tariff Calculation Service Test")
@@ -53,12 +51,11 @@ class TariffCalculationServiceTest {
     private Country desCountry;
     private Tariff testTariff;
     private TariffCalculationRequest validRequest;
-    private LocalDate dateToUse;
 
     @BeforeEach
     void setUp() {
         testProduct = new Product();
-        testProduct.setProductCode("1001");
+        testProduct.setProductCode(1001);
 
         exportCountry = new Country();
         exportCountry.setCountryCode("US");
@@ -72,15 +69,14 @@ class TariffCalculationServiceTest {
         testTariff.setTariffRate(5.0);
 
         validRequest = TariffCalculationRequest.builder()
-                .productCode("1001")
+                .productCode(1001)
                 .exportCountryCode("US")
                 .desCountryCode("CN")
                 .customsValue(1000.0)
-                .date(LocalDate.of(2025, 11, 11))
                 .build();
     }
 
-  @Test
+    @Test
     @DisplayName("Should calculate tariff with trade agreements")
     void calculateTariff_WithNoTradeAgreements_ShouldCalculateTariff() throws Exception {
         // Arrange
@@ -93,15 +89,15 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
-                .thenReturn(Collections.emptyList());
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
+                .thenReturn(List.of());
 
         // Act
         TariffCalculationResponse response = tariffCalculationService.calculateTariff(validRequest);
 
         // Assert
         assertThat(response).isNotNull();
-        assertThat(response.getProductCode()).isEqualTo("1001");
+        assertThat(response.getProductCode()).isEqualTo(1001);
         assertThat(response.getExportCountryCode()).isEqualTo("US");
         assertThat(response.getDesCountryCode()).isEqualTo("CN");
         assertThat(response.getCustomsValue()).isEqualTo(1000.0);
@@ -112,15 +108,15 @@ class TariffCalculationServiceTest {
         verify(productRepository).findByProductCode(validRequest.getProductCode());
         verify(countryRepository, times(2)).findByCountryCode(anyString());
         verify(tariffRepository).findByProductAndCountry(testProduct, desCountry);
-        verify(agreementCountryRepository).findAgreementsBetweenCountriesOnDate(
-                exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate());
+        verify(agreementCountryRepository).findAgreementsBetweenCountries(
+                exportCountry.getCountryName(), desCountry.getCountryName());
     }
 
     @Test
     @DisplayName("Should calculate tariff with FTA agreement")
     void calculateTariff_WithFTAAgreement_ShouldCalculatePreferentialTariff() throws Exception {
         // Arrange
-        testProduct.setProductCode("1001");       // HIGH sensitivity
+        testProduct.setProductCode(1001);       // HIGH sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -135,7 +131,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -153,7 +149,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should calculate tariff with multiple agreement types")
     void calculateTariff_WithMultipleAgreementTypes_ShouldUseBestRate() throws Exception {
         // Arrange
-        testProduct.setProductCode("2001");       // MEDIUM sensitivity
+        testProduct.setProductCode(2001);       // MEDIUM sensitivity
 
         TradeAgreement multiAgreement = new TradeAgreement();
         multiAgreement.setAgreementId(1L);
@@ -168,7 +164,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(multiAgreement));
@@ -186,7 +182,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should calculate tariff with EIA agreement for low sensitivity product")
     void calculateTariff_WithEIAAgreementLowSensitivity_ShouldCalculatePreferentialTariff() throws Exception {
         // Arrange
-        testProduct.setProductCode("5001");       // LOW sensitivity
+        testProduct.setProductCode(5001);       // LOW sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -201,7 +197,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -218,15 +214,14 @@ class TariffCalculationServiceTest {
     @DisplayName("Should throw exception for invalid product code")
     void calculateTariff_InvalidProductCode_ShouldThrowException() {
         // Arrange
-        when(productRepository.findByProductCode("9999"))
+        when(productRepository.findByProductCode(9999))
                 .thenReturn(Optional.empty());
 
         TariffCalculationRequest request = TariffCalculationRequest.builder()
-                .productCode("9999")
+                .productCode(9999)
                 .exportCountryCode("US")
                 .desCountryCode("CN")
                 .customsValue(1000.0)
-                .date(LocalDate.of(2025, 11, 11))
                 .build();
 
         // Act & Assert
@@ -235,7 +230,7 @@ class TariffCalculationServiceTest {
                 .hasMessageContaining("Invalid product code");
 
         // Verify
-        verify(productRepository).findByProductCode("9999");
+        verify(productRepository).findByProductCode(9999);
         verifyNoInteractions(countryRepository, tariffRepository, agreementCountryRepository, tradeAgreementRepository);
     }
 
@@ -243,17 +238,16 @@ class TariffCalculationServiceTest {
     @DisplayName("Should throw exception when export country not found")
     void calculateTariff_ExportCountryNotFound_ShouldThrowException() {
         // Arrange
-        when(productRepository.findByProductCode("1001"))
+        when(productRepository.findByProductCode(1001))
                 .thenReturn(Optional.of(testProduct));
         when(countryRepository.findByCountryCode("XX"))
                 .thenReturn(Optional.empty());
 
         TariffCalculationRequest request = TariffCalculationRequest.builder()
-                .productCode("1001")
+                .productCode(1001)
                 .exportCountryCode("XX")
                 .desCountryCode("CN")
                 .customsValue(1000.0)
-                .date(LocalDate.of(2025, 11, 11))
                 .build();
 
         // Act & Assert
@@ -262,7 +256,7 @@ class TariffCalculationServiceTest {
                 .hasMessageContaining("Invalid export country code");
 
         // Verify
-        verify(productRepository).findByProductCode("1001");
+        verify(productRepository).findByProductCode(1001);
         verify(countryRepository).findByCountryCode("XX");
         verifyNoInteractions(tariffRepository, agreementCountryRepository, tradeAgreementRepository);
     }
@@ -271,7 +265,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should throw exception when destination country not found")
     void calculateTariff_DesCountryNotFound_ShouldThrowException() {
         // Arrange
-        when(productRepository.findByProductCode("1001"))
+        when(productRepository.findByProductCode(1001))
                 .thenReturn(Optional.of(testProduct));
         when(countryRepository.findByCountryCode("US"))
                 .thenReturn(Optional.of(exportCountry));
@@ -279,7 +273,7 @@ class TariffCalculationServiceTest {
                 .thenReturn(Optional.empty());
 
         TariffCalculationRequest request = TariffCalculationRequest.builder()
-                .productCode("1001")
+                .productCode(1001)
                 .exportCountryCode("US")
                 .desCountryCode("YY")
                 .customsValue(1000.0)
@@ -288,10 +282,10 @@ class TariffCalculationServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> tariffCalculationService.calculateTariff(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Invalid destination country code");
+                .hasMessageContaining("Invalid export country code");
 
         // Verify
-        verify(productRepository).findByProductCode("1001");
+        verify(productRepository).findByProductCode(1001);
         verify(countryRepository).findByCountryCode("US");
         verify(countryRepository).findByCountryCode("YY");
         verifyNoInteractions(tariffRepository, agreementCountryRepository, tradeAgreementRepository);
@@ -301,7 +295,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should throw exception when tariff not found")
     void calculateTariff_TariffNotFound_ShouldThrowException() {
         // Arrange
-        when(productRepository.findByProductCode("1001"))
+        when(productRepository.findByProductCode(1001))
                 .thenReturn(Optional.of(testProduct));
         when(countryRepository.findByCountryCode("US"))
                 .thenReturn(Optional.of(exportCountry));
@@ -371,7 +365,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.empty());
@@ -401,7 +395,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -418,7 +412,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should calculate tariff with PSA agreement for high sensitivity product")
     void calculateTariff_WithPSAAgreementHighSensitivity_ShouldCalculatePreferentialTariff() {
         // Arrange
-        testProduct.setProductCode("1001");       // HIGH sensitivity
+        testProduct.setProductCode(1001);       // HIGH sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -433,7 +427,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -450,7 +444,7 @@ class TariffCalculationServiceTest {
     @DisplayName("should calculate tariff with CU agreement for high sensitivity product")
     void calculateTariff_WithCUAgreementHighSensitivity_ShouldCalculatePreferentialTariff() {
         // Arrange
-        testProduct.setProductCode("1001");       // HIGH sensitivity
+        testProduct.setProductCode(1001);       // HIGH sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -465,7 +459,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -482,7 +476,7 @@ class TariffCalculationServiceTest {
     @DisplayName("should calculate tariff with EIA agreement for medium sensitivity product")
     void calculateTariff_WithEIAAgreementMediumSensitivity_ShouldCalculatePreferentialTariff() {
         // Arrange
-        testProduct.setProductCode("2001");       // MEDIUM sensitivity
+        testProduct.setProductCode(2001);       // MEDIUM sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -497,7 +491,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -514,7 +508,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should calculate tariff with other agreement for medium sensitivity product")
     void calculateTariff_WithOtherAgreementMediumSensitivity_ShouldCalculateMFNTariff() {
         // Arrange
-        testProduct.setProductCode("2001");       // MEDIUM sensitivity
+        testProduct.setProductCode(2001);       // MEDIUM sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -529,7 +523,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -547,7 +541,7 @@ class TariffCalculationServiceTest {
     void getDiscountMultiplier_DefaultSensitivityTier_ShouldReturnNoDiscount() {
         // This tests the default case in getDiscountMultiplier method
         // Arrange
-        testProduct.setProductCode("9999");       // Will default to MEDIUM sensitivity
+        testProduct.setProductCode(9999);       // Will default to MEDIUM sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -562,7 +556,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));
@@ -579,7 +573,7 @@ class TariffCalculationServiceTest {
     @DisplayName("Should handle tariff with FTA with LOW sensitivity product")
     void calculateTariff_WithFTAAgreementLowSensitivity_ShouldCalculatePreferentialTariff() {
         // Arrange
-        testProduct.setProductCode("5001");       // LOW sensitivity
+        testProduct.setProductCode(5001);       // LOW sensitivity
 
         TradeAgreement tradeAgreement = new TradeAgreement();
         tradeAgreement.setAgreementId(1L);
@@ -594,7 +588,7 @@ class TariffCalculationServiceTest {
         when(tariffRepository.findByProductAndCountry(testProduct, desCountry))
                 .thenReturn(Optional.of(testTariff));
         when(agreementCountryRepository
-                .findAgreementsBetweenCountriesOnDate(exportCountry.getCountryName(), desCountry.getCountryName(), validRequest.getDate()))
+                .findAgreementsBetweenCountries(exportCountry.getCountryName(), desCountry.getCountryName()))
                 .thenReturn(List.of(1L));
         when(tradeAgreementRepository.findByAgreementId(1L))
                 .thenReturn(Optional.of(tradeAgreement));

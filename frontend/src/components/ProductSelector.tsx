@@ -233,7 +233,7 @@ export function ProductSelector({ onProductSelected }: { onProductSelected?: (re
                   </div>
                   <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="outline" className="text-xs">
                       HS: {product.hsCode}
                     </Badge>
                     <Badge variant="secondary" className="text-xs">
