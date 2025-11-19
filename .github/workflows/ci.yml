@@ -76,4 +76,4 @@ jobs:
 
       # Builds the complete application (backend + frontend)
       - name: Build application
-        run: mvn -B package -DskipTests
+        run: mvn -B clean package -DskipTests
