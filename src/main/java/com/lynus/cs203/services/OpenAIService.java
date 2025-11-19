@@ -28,7 +28,7 @@ public class OpenAIService {
     private final TariffCalculationService calculationService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Value("${open.api.key}")
+    @Value("${open.api.key:${OPENAI_API_KEY:}}")
     private String apiKey;
 
     public OpenAIService(TariffRepository tariffRepo, TradeAgreementRepository tradeRepo, AgreementCountryRepository agreementCountryRepo, TariffCalculationService calculationService) {
