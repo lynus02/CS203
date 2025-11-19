@@ -7,7 +7,17 @@ import { Input } from "../../ui/input";
 import { Card, CardContent, CardHeader } from "../../ui/card";
 import ThemeToggle from "../../togglethemebutton/ThemeToggle";
 import api from "../../../services/api";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "../../ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "../../ui/alert-dialog";
 import MySavedProductsButton from "../../MySavedProductsButton";
 
 interface ProfilePageProps {
@@ -82,6 +92,7 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
 
     // open confirmation dialog (will call performDeleteAccount when user confirms)
     const handleDeleteAccount = () => {
+        setIsEditOpen(false);
         setShowDeleteConfirm(true);
     };
 
@@ -91,7 +102,13 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
             await api.delete('/users/profile');
             // after deletion, call onLogout to clear client state and redirect
             setShowDeleteConfirm(false);
+
+            // Clear state
             onLogout();
+            localStorage.removeItem("token");
+
+            // Redirect to homepage
+            window.location.href = "/";
         } catch (err: any) {
             console.error('Failed to delete account', err);
             alert(err.response?.data?.message || 'Failed to delete account');
@@ -303,22 +320,50 @@ const ProfilePageUser: React.FC<ProfilePageProps> = ({ onBack, onLogout, onReset
              </Dialog>
 
              {/* Delete account confirmation dialog */}
-             <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-                 <DialogContent className="max-w-md">
-                     <DialogHeader>
-                         <DialogTitle>Confirm Account Deletion</DialogTitle>
-                     </DialogHeader>
-                     <div className="py-2">
-                         <p className="text-sm text-muted-foreground">Are you sure want to delete your account?</p>
-                         <div className="mt-4 flex justify-end gap-2">
-                             <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleteLoading}>Cancel</Button>
-                             <Button variant="destructive" onClick={performDeleteAccount} disabled={deleteLoading}>{deleteLoading ? 'Deleting...' : 'Confirm'}</Button>
-                         </div>
-                     </div>
-                 </DialogContent>
-             </Dialog>
+             {/*<Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>*/}
+             {/*    <DialogContent className="max-w-md">*/}
+             {/*        <DialogHeader>*/}
+             {/*            <DialogTitle>Confirm Account Deletion</DialogTitle>*/}
+             {/*        </DialogHeader>*/}
+             {/*        <div className="py-2">*/}
+             {/*            <p className="text-sm text-muted-foreground">Are you sure want to delete your account?</p>*/}
+             {/*            <div className="mt-4 flex justify-end gap-2">*/}
+             {/*                <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleteLoading}>Cancel</Button>*/}
+             {/*                <Button variant="destructive" onClick={performDeleteAccount} disabled={deleteLoading}>{deleteLoading ? 'Deleting...' : 'Confirm'}</Button>*/}
+             {/*            </div>*/}
+             {/*        </div>*/}
+             {/*    </DialogContent>*/}
+             {/*</Dialog>*/}
+            <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Account?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your account and all associated data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
 
-             {/* subtle footer separator */}
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={deleteLoading}
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+
+                        <AlertDialogAction
+                            variant="destructive"
+                            onClick={performDeleteAccount}
+                            disabled={deleteLoading}
+                        >
+                            {deleteLoading ? "Deleting..." : "Delete Account"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+
+            {/* subtle footer separator */}
              <footer className="w-full border-t border-gray-200 mt-12 pt-6 px-8">
                  <div className="max-w-7xl mx-auto text-sm text-muted-foreground">
                      <div className="flex items-center justify-between">
