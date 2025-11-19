@@ -40,3 +40,7 @@ logging:
     org.testcontainers: ERROR
   pattern:
     console: "%d{HH:mm:ss.SSS} %-5level %-30logger{30} - %msg%n"
+
+open:
+  api:
+    key: dummy-test-key

@@ -24,6 +24,6 @@ server:
   error:
     include-message: always
 
-openai:
+open:
   api:
-    key: sk-your-open-api-key
+    key: ${OPEN_API_KEY:${open.api.key:}}
